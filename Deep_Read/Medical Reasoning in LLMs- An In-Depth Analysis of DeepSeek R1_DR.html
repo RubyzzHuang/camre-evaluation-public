@@ -1,0 +1,312 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  .camre { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 18px; font-size: .9rem; }
+  .camre .tag { font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-right: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill.harm { color: var(--harm); background: var(--harm-soft); }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* protocol steps */
+  .proto { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 18px; }
+  @media (max-width: 700px) { .proto { grid-template-columns: 1fr; } }
+  .pstep { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); }
+  .pstep .n { font-family: var(--mono); font-size: .68rem; font-weight: 700; color: var(--accent); letter-spacing: .08em; }
+  .pstep h4 { margin: 6px 0 5px; font-size: .96rem; }
+  .pstep p { margin: 0; font-size: .84rem; color: var(--muted); }
+
+  /* Flagship: length signal */
+  .lensig { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 22px; }
+  .lane { position: relative; height: 54px; border-bottom: 1px dashed var(--line); margin-top: 6px; }
+  .lane .tag { position: absolute; left: 0; top: 4px; font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .dot { position: absolute; top: 24px; width: 15px; height: 15px; border-radius: 50%; transform: translate(-50%,-50%); border: 2px solid var(--card); transition: opacity .2s; }
+  .dot.correct { background: var(--good); }
+  .dot.incorrect { background: var(--harm); }
+  .dot.flagged { box-shadow: 0 0 0 3px var(--warn); }
+  .dot.dim { opacity: .35; }
+  .axis { position: relative; height: 20px; margin-top: 2px; font-family: var(--mono); font-size: .64rem; color: var(--muted); }
+  .axis span { position: absolute; transform: translateX(-50%); }
+  .threshline { position: absolute; top: -116px; height: 116px; width: 2px; background: var(--warn); z-index: 3; }
+  .threshline::after { content: attr(data-l); position: absolute; top: -18px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-family: var(--mono); font-size: .64rem; color: var(--warn); font-weight: 700; }
+  .lanewrap { position: relative; padding-top: 8px; }
+  .sliderrow { display: flex; align-items: center; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+  .sliderrow input[type=range] { flex: 1; min-width: 200px; accent-color: var(--warn); }
+  .readout { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 18px; }
+  @media (max-width: 600px) { .readout { grid-template-columns: 1fr; } }
+  .ro { border: 1px solid var(--line); border-radius: 10px; padding: 12px; text-align: center; background: var(--paper); }
+  .ro .n { font-size: 1.5rem; font-weight: 850; font-variant-numeric: tabular-nums; }
+  .ro .l { font-size: .74rem; color: var(--muted); }
+
+  /* bias explorer */
+  .biasrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .biaschip { cursor: pointer; font-family: var(--font); font-size: .84rem; font-weight: 600; padding: 8px 14px; border-radius: 100px; border: 1px solid var(--line); background: var(--card); color: var(--ink); transition: .14s; }
+  .biaschip:hover { border-color: var(--accent); }
+  .biaschip.active { border-color: var(--harm); background: var(--harm-soft); color: var(--harm); }
+  .biasdetail { margin-top: 14px; padding: 16px 18px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--card); font-size: .9rem; min-height: 40px; }
+  .biasdetail .case { font-family: var(--mono); font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; color: var(--harm); }
+
+  /* mapping */
+  .maprow { display: grid; grid-template-columns: 220px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .maprow + .maprow { margin-top: 12px; }
+  @media (max-width: 700px) { .maprow { grid-template-columns: 1fr; } }
+  .maprow .from { padding: 16px 18px; background: var(--paper); border-right: 1px solid var(--line); }
+  @media (max-width: 700px) { .maprow .from { border-right: none; border-bottom: 1px solid var(--line); } }
+  .maprow .from .mech { font-weight: 750; font-size: .95rem; }
+  .maprow .from .dim { font-family: var(--mono); font-size: .64rem; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+  .maprow .to { padding: 16px 18px; font-size: .9rem; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">CAMRE · Eval Literature Deep-Read</div>
+      <h1>Dissecting DeepSeek R1's<br>medical reasoning</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> “Medical Reasoning in LLMs: An In-Depth Analysis of DeepSeek R1” · Moëll, Sand Aronsson, Akbar (KTH · Karolinska · Region Stockholm) · April 2025</p>
+      <p class="lead" style="margin-top:20px">Unlike the benchmark papers, this is an <strong>audit</strong>: a clinician reads DeepSeek R1's actual reasoning on 100 MedQA cases and asks <em>how</em> it thinks, not just whether it's right (it's right 93% of the time). The two findings that matter for us: a taxonomy of <strong>how the reasoning fails</strong>, and a surprising, cheap signal for <strong>when to distrust it</strong>.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">93%</div><div class="l">accuracy on 100 MedQA cases</div></div>
+        <div class="stat"><div class="n">7</div><div class="l">error cases dissected by a clinician</div></div>
+        <div class="stat"><div class="n">8,118 vs 3,648</div><div class="l">avg reasoning chars: wrong vs right</div></div>
+        <div class="stat"><div class="n">p = 0.032</div><div class="l">longer reasoning → more errors</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">CAMRE dimensions this paper informs:</span>
+        <span class="chip on">Metacognition / Uncertainty (D5 — our biggest gap)</span>
+        <span class="chip on">Reasoning-process accuracy</span>
+        <span class="chip on">Safety (cognitive-bias errors)</span>
+      </div>
+    </section>
+
+    <!-- WHAT KIND OF PAPER -->
+    <section>
+      <div class="eyebrow">What this paper is</div>
+      <h2>An audit of the reasoning, by a clinician</h2>
+      <p class="sub">No new benchmark or model — instead, evaluate <em>how</em> a reasoning model arrives at its answer. The method is a simple, repeatable reasoning-audit protocol.</p>
+      <div class="proto">
+        <div class="pstep"><div class="n">STEP 1</div><h4>Ground-truth check</h4><p>Compare the model's final answer to the MedQA reference to find the error cases.</p></div>
+        <div class="pstep"><div class="n">STEP 2</div><h4>Decompose the reasoning chain</h4><p>Split the chain-of-thought into discrete decision points (identify → rule out → compare options → decide), map each to a hypothetico-deductive step (data → problem representation → differential → treatment choice), and tag errors with a cognitive-bias category.</p></div>
+        <div class="pstep"><div class="n">STEP 3</div><h4>Expert validation</h4><p>A practising clinician reads every error case and judges where and why the reasoning deviated from medical-reasoning best practice.</p></div>
+      </div>
+      <p class="callout"><strong>How rigorously did the paper actually do this?</strong> Loosely — the "taxonomy" is not a published codebook, and Step 3 was a <strong>single clinician</strong> reading <strong>7</strong> error cases, with no second rater and no inter-rater agreement reported. Borrow the shape, not the rigor.</p>
+    </section>
+
+    <!-- FLAGSHIP: length signal -->
+    <section>
+      <div class="eyebrow">Try it — the flagship finding</div>
+      <h2>Reasoning length as a "reverse certainty" signal</h2>
+      <p class="sub">The most useful result: <strong>wrong answers had far longer reasoning</strong> (mean 8,118 chars) than right ones (mean 3,648; Welch t = −2.74, p = 0.032). Verbose reasoning may signal uncertainty — or the model rationalizing a wrong conclusion. Drag the threshold: flag any output longer than it as "low-confidence" and watch how well length alone catches errors.</p>
+
+      <div class="lensig" style="margin-top:20px">
+        <div class="lanewrap">
+          <div class="threshline" id="threshLine" data-l=""></div>
+          <div class="lane"><span class="tag" style="color:var(--harm)">✗ incorrect (7)</span><div id="laneWrong"></div></div>
+          <div class="lane" style="border-bottom:none"><span class="tag" style="color:var(--good)">✓ correct (sample)</span><div id="laneRight"></div></div>
+        </div>
+        <div class="axis" id="axis"></div>
+        <div class="sliderrow">
+          <span class="muted" style="font-size:.82rem">Flag if longer than</span>
+          <input type="range" id="thresh" min="3000" max="12000" step="100" value="5000" oninput="renderLen()">
+          <strong id="threshVal" style="font-family:var(--mono);color:var(--warn)">5,000</strong>
+          <span class="muted" style="font-size:.82rem">chars</span>
+        </div>
+        <div class="readout">
+          <div class="ro"><div class="n" id="roCaught" style="color:var(--good)">—</div><div class="l">errors caught (recall)</div></div>
+          <div class="ro"><div class="n" id="roFalse" style="color:var(--warn)">—</div><div class="l">correct wrongly flagged</div></div>
+          <div class="ro"><div class="n" id="roMiss" style="color:var(--harm)">—</div><div class="l">errors missed</div></div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.8rem;margin-top:10px">Points are illustrative, anchored to the paper's reported means (wrong ≈ 8,118 · right ≈ 3,648) and the ~5,000-char threshold; the paper reports the aggregate statistics, not per-case lengths.</p>
+    </section>
+
+    <!-- BIAS EXPLORER -->
+    <section>
+      <div class="eyebrow">How the reasoning failed</div>
+      <h2>A taxonomy of cognitive-bias errors</h2>
+      <p class="sub">All 7 failures were <em>reasoning</em> errors — the kind a knowledgeable doctor makes, not random guessing. Click a failure mode to see its exemplar case.</p>
+      <div class="biasrow" id="biasRow"></div>
+      <div class="biasdetail" id="biasDetail">← Click a failure mode above.</div>
+    </section>
+
+    <!-- STRENGTHS + CAVEAT -->
+    <section>
+      <div class="eyebrow">Balance</div>
+      <h2>What it got right — and a caveat to keep</h2>
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card"><div class="k">Sound reasoning</div><h3>Real hypothetico-deductive structure</h3><p class="muted" style="font-size:.9rem">In the 93% it got right, the reasoning was genuinely clinical: gather data → form a problem representation → build a differential → eliminate/compare options → decide (e.g. choosing nitrofurantoin for cystitis in pregnancy by ruling out contraindicated/broad/resistant options).</p></div>
+        <div class="card"><div class="k">Caveat</div><h3>Mind the anthropomorphization</h3><p class="muted" style="font-size:.9rem">The authors flag it themselves: labelling an LLM's mistakes "anchoring bias" is <strong>inferred from the reasoning text</strong> and is somewhat speculative. Useful for human understanding, but we shouldn't assume the model has human-like cognition. Also: n = 100, only 7 errors, MCQ format, one model.</p></div>
+      </div>
+    </section>
+
+    <!-- APPLY TO CAMRE -->
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>CAMRE Eval Literature Deep-Read<br>
+      “Medical Reasoning in LLMs: An In-Depth Analysis of DeepSeek R1” · Moëll, Sand Aronsson, Akbar · April 2025</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // ---- Flagship: length signal ----
+  const MAXLEN = 13000;
+  const wrong = [4800, 6400, 7200, 8100, 8800, 9500, 11200];               // 7 errors, mean ≈ 8,118
+  const right = [1500,1900,2200,2500,2700,2900,3100,3300,3500,3600,3700,3900,4100,4400,4800,5200,5600,6100]; // sample, mean ≈ 3,648
+  function pct(v){ return (v/MAXLEN*100); }
+  function renderLen(){
+    const t = +document.getElementById('thresh').value;
+    document.getElementById('threshVal').textContent = t.toLocaleString();
+    const line = document.getElementById('threshLine');
+    line.style.left = pct(t) + '%';
+    line.setAttribute('data-l', t.toLocaleString());
+    document.getElementById('laneWrong').innerHTML = wrong.map(v=>
+      `<div class="dot incorrect ${v>t?'flagged':'dim'}" style="left:${pct(v)}%" title="${v.toLocaleString()} chars"></div>`).join('');
+    document.getElementById('laneRight').innerHTML = right.map(v=>
+      `<div class="dot correct ${v>t?'flagged':''}" style="left:${pct(v)}%" title="${v.toLocaleString()} chars"></div>`).join('');
+    const caught = wrong.filter(v=>v>t).length;
+    const falsef = right.filter(v=>v>t).length;
+    document.getElementById('roCaught').textContent = caught + ' / ' + wrong.length;
+    document.getElementById('roFalse').textContent = falsef + ' / ' + right.length;
+    document.getElementById('roMiss').textContent = (wrong.length-caught) + ' / ' + wrong.length;
+  }
+  // axis ticks
+  document.getElementById('axis').innerHTML = [0,3000,5000,8000,11000,13000].map(v=>
+    `<span style="left:${pct(v)}%">${v>=1000?(v/1000)+'k':v}</span>`).join('');
+
+  // ---- Bias explorer ----
+  const biases = [
+    { name:'Anchoring bias', case:'Neonatal bilious vomiting', desc:'<strong>Plain English:</strong> latches onto the first diagnosis and won\'t let go, even when later evidence points elsewhere. Here it fixed on duodenal atresia and couldn\'t take in the conflicting clues — often paired with <em>confirmation bias</em> (only noticing evidence that fits the first guess, dismissing the rest).' },
+    { name:'Protocol misapplication', case:'Acute limb ischemia', desc:'<strong>Plain English:</strong> skips required steps in the standard care pathway. Here it rushed straight to surgery, skipping the anticoagulation and imaging that should come first.' },
+    { name:'Etiology-consequence confusion', case:'Pulmonary artery fibrosis', desc:'<strong>Plain English:</strong> mixes up cause and effect — treats a downstream result as if it were the root problem. Here it called artery-wall remodelling the disease itself, when it\'s actually a <em>consequence</em> of an underlying vasculitis.' },
+    { name:'Lab value overinterpretation', case:'Porphyria cutanea tarda', desc:'<strong>Plain English:</strong> reads too much into a single lab number, letting it override the bigger clinical picture.' },
+    { name:'Isoform misunderstanding', case:'Enzyme kinetics', desc:'<strong>Plain English:</strong> not really a "bias" — a plain knowledge gap. It confused two very similar molecules (mistook hexokinase for glucokinase).' },
+    { name:'Overinvestigation / commission', case:'Niacin-induced flushing', desc:'<strong>Plain English:</strong> the urge to "do more" — over-escalates and over-intervenes, adding needless risk. Here it blamed harmless niacin flushing on a rare tumour, and elsewhere over-pushed surgery on a stable infant. (Opposite of <em>omission</em>: failing to act when action is needed.)' },
+  ];
+  function renderBias(){
+    document.getElementById('biasRow').innerHTML = biases.map((b,i)=>
+      `<button class="biaschip" id="bias${i}" onclick="pickBias(${i})">${b.name}</button>`).join('');
+  }
+  function pickBias(i){
+    document.querySelectorAll('.biaschip').forEach((el,idx)=>el.classList.toggle('active', idx===i));
+    const b = biases[i];
+    document.getElementById('biasDetail').innerHTML = `<span class="case">Exemplar · ${b.case}</span><br>${b.desc}`;
+  }
+
+  // ---- Quiz ----
+  const quiz = [
+    { q:'What was the paper\'s most useful quantitative finding?',
+      opts:['Longer reasoning correlated with higher accuracy','Longer reasoning correlated with errors (wrong ≈ 8,118 vs right ≈ 3,648 chars)','Reasoning length had no relationship to correctness','Accuracy was only 50%'],
+      correct:1, ex:'Incorrect answers had roughly double the reasoning length (Welch t = −2.74, p = 0.032). Verbose reasoning may signal uncertainty or rationalizing a wrong conclusion.' },
+    { q:'How can reasoning length be used in practice?',
+      opts:['Reward the longest answers','As a reverse-certainty score — flag/auto-recheck long outputs as low-confidence','Truncate all outputs to 5,000 chars','Ignore it'],
+      correct:1, ex:'Length becomes a cheap, model-agnostic uncertainty proxy: flag verbose outputs, route to review, or re-run long traces with a "this may be wrong" prompt. Calibrate the threshold on our own data.' },
+    { q:'What did the error analysis reveal about HOW the reasoning failed?',
+      opts:['Random mistakes','Recognizable cognitive biases (anchoring, confirmation, omission/commission, attribution)','Only spelling errors','The model refused to answer'],
+      correct:1, ex:'The 7 failures were structured reasoning errors — the kind a knowledgeable clinician makes — not random guessing. That makes them a learnable failure-mode taxonomy.' },
+    { q:'What caveat do the authors themselves raise?',
+      opts:['The model is closed-source','Labelling an LLM\'s mistakes as human "biases" is inferred from text and somewhat speculative (anthropomorphization)','Accuracy was not measured','MedQA is not a medical dataset'],
+      correct:1, ex:'Bias labels are interpretive aids grounded in the reasoning text, not claims about model cognition. Plus small n (7 errors), MCQ format, single model.' },
+  ];
+  function renderQuiz(){
+    document.getElementById('quizWrap').innerHTML = quiz.map((q,qi)=>`
+      <div class="quiz"><div class="q">${qi+1}. ${q.q}</div>
+        <div class="opts">${q.opts.map((o,oi)=>`<button class="opt" id="q${qi}o${oi}" onclick="answer(${qi},${oi})">${o}</button>`).join('')}</div>
+        <div class="explain" id="q${qi}ex">${q.ex}</div></div>`).join('');
+  }
+  const answered={};
+  function answer(qi,oi){
+    if(answered[qi]) return; answered[qi]=true;
+    const c=quiz[qi].correct;
+    document.getElementById(`q${qi}o${c}`).classList.add('correct');
+    if(oi!==c) document.getElementById(`q${qi}o${oi}`).classList.add('wrong');
+    document.getElementById(`q${qi}ex`).classList.add('show');
+  }
+
+  // init
+  renderLen(); renderBias(); pickBias(0); renderQuiz();
+</script>

@@ -1,0 +1,364 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  .camre { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 18px; font-size: .9rem; }
+  .camre .tag { font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-right: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill.harm { color: var(--harm); background: var(--harm-soft); }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* 10 tasks table */
+  .tscroll { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--line); margin-top: 18px; }
+  table.tasks { border-collapse: collapse; width: 100%; min-width: 640px; background: var(--card); }
+  table.tasks th, table.tasks td { padding: 11px 13px; text-align: left; border-bottom: 1px solid var(--line); font-size: .85rem; vertical-align: top; color: var(--ink); }
+  table.tasks thead th { font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  table.tasks tbody td:nth-child(3), table.tasks tbody td:nth-child(4) { color: var(--muted); }
+  table.tasks tr.proc { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  table.tasks tr.proc td { color: var(--ink); }
+  table.tasks tr.proc td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+  .ttag { font-family: var(--mono); font-size: .6rem; text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line); color: var(--muted); }
+
+  /* Touchpoints flagship */
+  .tp { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .tp-track { display: flex; gap: 0; padding: 18px 22px 0; align-items: center; }
+  .tp-dot { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; position: relative; }
+  .tp-dot .c { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); display: grid; place-items: center; font-weight: 800; font-size: .82rem; font-family: var(--mono); color: var(--muted); transition: .2s; z-index: 2; }
+  .tp-dot.active .c { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .tp-dot.done .c { border-color: var(--accent); color: var(--accent); }
+  .tp-dot .lab { font-size: .66rem; color: var(--muted); font-family: var(--mono); }
+  .tp-dot::before { content:""; position: absolute; top: 15px; left: -50%; width: 100%; height: 2px; background: var(--line); z-index: 1; }
+  .tp-dot:first-child::before { display: none; }
+  .tp-dot.done::before, .tp-dot.active::before { background: var(--accent); }
+  .tp-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 12px; }
+  @media (max-width: 780px) { .tp-body { grid-template-columns: 1fr; } }
+  .tp-case { padding: 20px 22px; border-right: 1px solid var(--line); }
+  @media (max-width: 780px) { .tp-case { border-right: none; border-bottom: 1px solid var(--line); } }
+  .tp-case .lbl { font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .tp-snip { font-size: .88rem; padding: 9px 0; border-bottom: 1px dashed var(--line); }
+  .tp-snip:last-child { border-bottom: none; }
+  .tp-snip.new { color: var(--accent); font-weight: 600; }
+  .tp-ddx { padding: 20px 22px; }
+  .ddx-item { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: center; padding: 7px 9px; border-radius: 8px; margin-bottom: 5px; font-size: .86rem; background: var(--paper); border: 1px solid transparent; transition: .25s; }
+  .ddx-item .rk { font-family: var(--mono); font-weight: 700; color: var(--muted); text-align: center; font-size: .78rem; }
+  .ddx-item.correct { background: var(--good-soft); border-color: var(--good); font-weight: 650; }
+  .ddx-item.correct .rk { color: var(--good); }
+  .tp-foot { padding: 16px 22px; background: var(--paper); border-top: 1px solid var(--line); display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .tp-foot .rnk { font-size: 2rem; font-weight: 850; font-variant-numeric: tabular-nums; color: var(--good); }
+  .tp-foot .lbl { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+  .rankseq { display: flex; gap: 5px; align-items: center; font-family: var(--mono); font-size: .8rem; }
+  .rankseq span { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 6px; background: var(--line); color: var(--muted); font-weight: 700; }
+  .rankseq span.on { background: var(--good); color: #fff; }
+  .tp-btns { display: flex; gap: 8px; margin-left: auto; }
+  .tp-btns button { cursor: pointer; font-family: var(--font); font-weight: 650; font-size: .84rem; padding: 8px 16px; border-radius: 9px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  .tp-btns button:hover { border-color: var(--accent); }
+  .tp-btns button:disabled { opacity: .4; cursor: default; }
+
+  /* mapping */
+  .maprow { display: grid; grid-template-columns: 230px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .maprow + .maprow { margin-top: 12px; }
+  @media (max-width: 700px) { .maprow { grid-template-columns: 1fr; } }
+  .maprow .from { padding: 16px 18px; background: var(--paper); border-right: 1px solid var(--line); }
+  @media (max-width: 700px) { .maprow .from { border-right: none; border-bottom: 1px solid var(--line); } }
+  .maprow .from .mech { font-weight: 750; font-size: .95rem; }
+  .maprow .from .dim { font-family: var(--mono); font-size: .64rem; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+  .maprow .to { padding: 16px 18px; font-size: .9rem; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">CAMRE · Eval Literature Deep-Read</div>
+      <h1>CPC-Bench &amp; Dr. CaBot<br>Evaluating the <em>process</em>, not just the diagnosis</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> “Teaching large language models to reason like expert diagnosticians” · Buckley, Conci, … Rodman, Manrai (Harvard Medical School · Beth Israel Deaconess) · 2025 · cpcbench.com</p>
+      <p class="lead" style="margin-top:20px">For a century, AI has been tested on the NEJM Clinicopathologic Conferences — but only on the <em>final diagnosis</em>. This paper argues the real work of an expert is the <strong>reasoning</strong>: arguing a nuanced differential, grounding each step in the literature, integrating conflicting data, navigating uncertainty. It builds a benchmark (CPC-Bench) and an agent (Dr. CaBot) to evaluate exactly that.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">7,102</div><div class="l">CPC cases</div></div>
+        <div class="stat"><div class="n">47,648</div><div class="l">questions · 10 tasks</div></div>
+        <div class="stat"><div class="n">74%</div><div class="l">of the time physicians couldn't tell AI from human</div></div>
+        <div class="stat"><div class="n">F1 89%</div><div class="l">LLM judge vs physician annotations</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">CAMRE dimensions this paper informs:</span>
+        <span class="chip on">Reasoning-process accuracy</span>
+        <span class="chip on">Appropriateness (management plan)</span>
+        <span class="chip on">Completeness</span>
+        <span class="chip on">Evaluator validation</span>
+      </div>
+    </section>
+
+    <!-- THESIS -->
+    <section>
+      <div class="eyebrow">The core argument</div>
+      <h2>A final diagnosis is the tip; the reasoning is the iceberg</h2>
+      <p class="sub">Prior CPC evaluations scored only whether the model named the right disease. But a CPC's value is the <em>process</em> an expert demonstrates to peers. This paper reorients evaluation toward that process.</p>
+      <div class="grid g2" style="margin-top:22px">
+        <div class="card"><div class="k">The old way</div><h3>Final-diagnosis accuracy only</h3><p class="muted" style="font-size:.9rem">Score the model on whether the right disease appears in its answer. Misses everything that makes diagnosis hard: weighing competing hypotheses, citing evidence, updating as new information arrives, handling missing data.</p></div>
+        <div class="card"><div class="k">This paper</div><h3>Evaluate the reasoning itself</h3><p class="muted" style="font-size:.9rem">Argue a complete differential with supporting/refuting evidence, ground each claim in the literature, update the diagnosis as the case unfolds, and stay robust when key findings are withheld. CPC-Bench scores all of these.</p></div>
+      </div>
+    </section>
+
+    <!-- 10 TASKS -->
+    <section>
+      <div class="eyebrow">CPC-Bench</div>
+      <h2>10 tasks — most of them about process</h2>
+      <p class="sub">One benchmark, ten task types. Highlighted rows are the <strong>process/reasoning-oriented</strong> ones most relevant to CAMRE; the rest test knowledge or perception.</p>
+      <div class="tscroll">
+        <table class="tasks">
+          <thead><tr><th>#</th><th>Task</th><th>What it tests</th><th>Scoring</th></tr></thead>
+          <tbody>
+            <tr class="proc"><td>1</td><td><strong>Differential Diagnosis</strong></td><td>Ranked DDx from the initial presentation</td><td>Validated LLM judge: presence + rank of true dx</td></tr>
+            <tr class="proc"><td>2</td><td><strong>Testing / Management Plan</strong></td><td>Next test or management step</td><td>Judge rubric <strong>0 / 1 / 2</strong> (see below)</td></tr>
+            <tr><td>3</td><td>Literature Search</td><td>Find the correct citation for a clinical claim</td><td>Correct source in top-10</td></tr>
+            <tr class="proc"><td>4</td><td><strong>Diagnostic Touchpoints</strong></td><td>DDx re-issued as the case is revealed in ≤5 rounds</td><td>Rank of true dx at each round</td></tr>
+            <tr><td>5</td><td>Question-Answering (QA)</td><td>MCQ about the presentation</td><td>Exact match</td></tr>
+            <tr class="proc"><td>6</td><td><strong>Clinical Reasoning</strong></td><td>Confirmatory / disconfirmatory evidence per diagnosis</td><td>Precision/recall of (dx, evidence, ±) triples vs expert</td></tr>
+            <tr class="proc"><td>7</td><td><strong>Information Omission</strong></td><td>DDx with the explicit "normal" findings removed</td><td>Accuracy drop vs full case</td></tr>
+            <tr><td>8</td><td>Visual QA</td><td>MCQ image interpretation</td><td>Exact match</td></tr>
+            <tr><td>9</td><td>Visual Differential Dx</td><td>DDx from images/tables only</td><td>Validated LLM judge</td></tr>
+            <tr><td>10</td><td>NEJM Image Challenge</td><td>MCQ on image + vignette</td><td>Exact match</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FLAGSHIP: touchpoints -->
+    <section>
+      <div class="eyebrow">Try it — the flagship task</div>
+      <h2>Diagnostic Touchpoints: watch the differential update</h2>
+      <p class="sub">Real diagnosis is iterative — information arrives over time and the differential re-ranks. This task feeds the case in rounds (the paper averages ~8 events per case) and scores the <strong>rank of the correct diagnosis at each step</strong>. Step through an illustrative case and watch the true diagnosis climb.</p>
+
+      <div class="tp" style="margin-top:20px">
+        <div class="tp-track" id="tpTrack"></div>
+        <div class="tp-body">
+          <div class="tp-case">
+            <div class="lbl">Case so far (information accrues)</div>
+            <div id="tpCase"></div>
+          </div>
+          <div class="tp-ddx">
+            <div class="lbl" style="font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Model's ranked differential</div>
+            <div id="tpDdx"></div>
+          </div>
+        </div>
+        <div class="tp-foot">
+          <div><div class="rnk" id="tpRank">—</div><div class="lbl">rank of correct dx</div></div>
+          <div><div class="rankseq" id="tpSeq"></div><div class="lbl" style="margin-top:4px">rank across rounds</div></div>
+          <div class="tp-btns">
+            <button id="tpPrev" onclick="tpStep(-1)">◀ Prev</button>
+            <button id="tpNext" onclick="tpStep(1)">Next ▶</button>
+          </div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.8rem;margin-top:10px">Illustrative case (infective endocarditis) reconstructed to show the mechanic; the paper reports o3 gaining ~28 percentage points of accuracy from Event 1 to Event 5.</p>
+    </section>
+
+    <!-- TWO MORE EVAL DESIGNS -->
+    <section>
+      <div class="eyebrow">Three more designs worth stealing</div>
+      <h2>Scoring reasoning, plans, and missing data</h2>
+      <div class="grid g3" style="margin-top:20px">
+        <div class="card">
+          <span class="pill good">Reasoning</span>
+          <h3 style="margin-top:10px">Evidence triples</h3>
+          <p class="muted" style="font-size:.88rem">The <strong>Clinical Reasoning</strong> task scores <em>(diagnosis, evidence, confirm/disconfirm)</em> triples with precision &amp; recall against the expert's discussion. It grades whether the model gives the <strong>right supporting and refuting evidence per hypothesis</strong> — reasoning, not just the answer.</p>
+        </div>
+        <div class="card">
+          <span class="pill warn">Plans · supports P1</span>
+          <h3 style="margin-top:10px">Testing-plan 0/1/2 rubric</h3>
+          <p class="muted" style="font-size:.88rem"><strong>2</strong> = matches or is a superset of the actual plan · <strong>1</strong> = different but would still have helped reach the diagnosis · <strong>0</strong> = wouldn't have helped. The "1" tier explicitly <strong>credits valid-but-different plans</strong>.</p>
+        </div>
+        <div class="card">
+          <span class="pill harm">Robustness</span>
+          <h3 style="margin-top:10px">Information Omission</h3>
+          <p class="muted" style="font-size:.88rem">Remove the <em>explicitly-normal</em> findings — the negatives a clinician must actively seek ("no lymphadenopathy", "CT unremarkable") — and measure the accuracy drop (~2–3%). Tests reliance on actively-gathered context.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALIDATION -->
+    <section>
+      <div class="eyebrow">Is the evaluation trustworthy?</div>
+      <h2>Two layers of validation</h2>
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card">
+          <div class="k">Blinded pairwise (Turing-style)</div>
+          <h3>Physicians couldn't tell AI from human</h3>
+          <p class="muted" style="font-size:.9rem">Across 62 paired differentials (CaBot vs the original NEJM discussant), blinded physicians identified the source correctly only <strong>26%</strong> of the time — i.e. misclassified <strong>74%</strong>. They then scored each on a Likert scale for four dimensions: overall differential quality, justification of each item, citation quality/accuracy, and learner engagement — rating CaBot consistently favourably.</p>
+        </div>
+        <div class="card">
+          <div class="k">Physician-validated LLM judge</div>
+          <h3>The automatic scorer tracks physicians</h3>
+          <p class="muted" style="font-size:.9rem">A GPT-4.1 judge grades the free-text tasks. Validated against <strong>1,467</strong> physician-annotated differentials: <strong>86% accuracy, F1 89%</strong>. For the Testing-Plan rubric, 84% accuracy / weighted F1 83% against physician scores. Only then is the judge trusted at scale.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPLY TO CAMRE -->
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>CAMRE Eval Literature Deep-Read<br>
+      “Teaching large language models to reason like expert diagnosticians” · Buckley et al., Harvard Medical School · cpcbench.com</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // ---- Touchpoints flagship ----
+  const CORRECT = 'Infective endocarditis';
+  const events = [
+    { snip:'45-year-old: 3 weeks of fever, fatigue, and night sweats.',
+      ddx:['Occult infection','Lymphoma / malignancy','Autoimmune / vasculitis','Tuberculosis','Infective endocarditis','Thyroid disease'] },
+    { snip:'Adds: 4 kg unintentional weight loss; no localizing symptoms.',
+      ddx:['Lymphoma / malignancy','Occult infection','Tuberculosis','Infective endocarditis','Autoimmune / vasculitis','Thyroid disease'] },
+    { snip:'Exam: new diastolic murmur; splinter haemorrhages under the nails.',
+      ddx:['Infective endocarditis','Autoimmune / vasculitis','Atrial myxoma','Lymphoma / malignancy','Occult infection','Tuberculosis'] },
+    { snip:'Labs: anaemia, elevated ESR & CRP, microscopic haematuria.',
+      ddx:['Infective endocarditis','ANCA-associated vasculitis','Atrial myxoma','SLE','Lymphoma / malignancy','Tuberculosis'] },
+    { snip:'Echo: aortic-valve vegetation. Blood cultures: growing Streptococcus.',
+      ddx:['Infective endocarditis','Nonbacterial thrombotic endocarditis','Atrial myxoma','ANCA-associated vasculitis','SLE','Lymphoma / malignancy'] },
+  ];
+  const rankAt = events.map(e => e.ddx.indexOf(CORRECT) + 1);
+  let tpCur = 0;
+  function renderTP(){
+    // track
+    document.getElementById('tpTrack').innerHTML = events.map((e,i)=>`
+      <div class="tp-dot ${i===tpCur?'active':(i<tpCur?'done':'')}" onclick="tpGo(${i})">
+        <div class="c">${i+1}</div><div class="lab">Event ${i+1}</div>
+      </div>`).join('');
+    // case cumulative
+    document.getElementById('tpCase').innerHTML = events.slice(0,tpCur+1).map((e,i)=>
+      `<div class="tp-snip ${i===tpCur?'new':''}">${i===tpCur?'▸ ':''}${e.snip}</div>`).join('');
+    // ddx
+    document.getElementById('tpDdx').innerHTML = events[tpCur].ddx.map((d,i)=>
+      `<div class="ddx-item ${d===CORRECT?'correct':''}"><span class="rk">${i+1}</span><span>${d}${d===CORRECT?' &nbsp;✓':''}</span></div>`).join('');
+    // rank
+    const rk = rankAt[tpCur];
+    document.getElementById('tpRank').textContent = '#'+rk;
+    document.getElementById('tpRank').style.color = rk===1?'var(--good)':rk<=3?'var(--warn)':'var(--harm)';
+    // seq
+    document.getElementById('tpSeq').innerHTML = rankAt.map((r,i)=>
+      `<span class="${i<=tpCur?'on':''}">${r}</span>${i<rankAt.length-1?'<span style="background:none;color:var(--muted);width:auto">→</span>':''}`).join('');
+    document.getElementById('tpPrev').disabled = tpCur===0;
+    document.getElementById('tpNext').disabled = tpCur===events.length-1;
+  }
+  function tpStep(d){ tpCur = Math.max(0, Math.min(events.length-1, tpCur+d)); renderTP(); }
+  function tpGo(i){ tpCur = i; renderTP(); }
+
+  // ---- Quiz ----
+  const quiz = [
+    { q:'What is the paper\'s central critique of how AI was evaluated on CPC cases?',
+      opts:['The cases were too easy','Evaluation focused on the final diagnosis only, not the reasoning process','There were too few cases','Physicians were not involved'],
+      correct:1, ex:'A CPC\'s value is the expert\'s reasoning — arguing a differential, citing evidence, integrating conflicting data. Prior evals scored only the final answer.' },
+    { q:'What does the Diagnostic Touchpoints task measure?',
+      opts:['One-shot accuracy','How the differential updates as case information is revealed in rounds','Image interpretation','Citation accuracy'],
+      correct:1, ex:'It feeds the case incrementally and scores the rank of the correct diagnosis at each round — capturing iterative reasoning, not a single guess.' },
+    { q:'In the Testing-Plan rubric, a plan that differs from what was actually done but would still have reached the diagnosis scores…',
+      opts:['0 (wrong)','1 (partial credit)','2 (full credit)','It is not scored'],
+      correct:1, ex:'The "1" tier credits valid-but-different plans — a concrete way to evaluate plans without assuming a single gold answer (supports CAMRE\'s P1).' },
+    { q:'How was the automatic scoring shown to be trustworthy?',
+      opts:['It matched ROUGE','The LLM judge was validated against physician annotations (F1 89%); and blinded physicians misclassified AI vs human 74% of the time','It was not validated','Only exact-match was used'],
+      correct:1, ex:'Two layers: a physician-validated LLM judge for scoring, plus a blinded pairwise design where physicians couldn\'t reliably distinguish CaBot from human discussants.' },
+  ];
+  function renderQuiz(){
+    document.getElementById('quizWrap').innerHTML = quiz.map((q,qi)=>`
+      <div class="quiz"><div class="q">${qi+1}. ${q.q}</div>
+        <div class="opts">${q.opts.map((o,oi)=>`<button class="opt" id="q${qi}o${oi}" onclick="answer(${qi},${oi})">${o}</button>`).join('')}</div>
+        <div class="explain" id="q${qi}ex">${q.ex}</div></div>`).join('');
+  }
+  const answered={};
+  function answer(qi,oi){
+    if(answered[qi]) return; answered[qi]=true;
+    const c=quiz[qi].correct;
+    document.getElementById(`q${qi}o${c}`).classList.add('correct');
+    if(oi!==c) document.getElementById(`q${qi}o${oi}`).classList.add('wrong');
+    document.getElementById(`q${qi}ex`).classList.add('show');
+  }
+
+  // init
+  renderTP(); renderQuiz();
+</script>

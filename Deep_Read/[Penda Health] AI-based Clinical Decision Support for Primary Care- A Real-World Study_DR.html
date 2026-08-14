@@ -1,0 +1,540 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  .camre { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 18px; font-size: .9rem; }
+  .camre .tag { font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-right: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill.harm { color: var(--harm); background: var(--harm-soft); }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* traffic light */
+  .lights { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .light { flex: 1; min-width: 200px; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--card); border-left-width: 4px; }
+  .light.g { border-left-color: var(--good); }
+  .light.y { border-left-color: var(--warn); }
+  .light.r { border-left-color: var(--harm); }
+  .light .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+  .light.g .dot { background: var(--good); } .light.y .dot { background: var(--warn); } .light.r .dot { background: var(--harm); }
+
+  /* visit demo */
+  .demo { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 22px; margin-top: 20px; position: relative; overflow: hidden; }
+  .demo .dhead { font-family: var(--mono); font-size: .66rem; letter-spacing:.08em; text-transform:uppercase; color: var(--muted); margin-bottom: 10px; }
+  .vnode { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--line); opacity: .38; transition: opacity .3s; }
+  .vnode:last-of-type { border-bottom: none; }
+  .vnode.on { opacity: 1; }
+  .vnode .ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8rem; background: var(--line); color: var(--muted); }
+  .vnode.res-green .ic { background: var(--good); color:#fff; }
+  .vnode.res-yellow .ic { background: var(--warn); color:#fff; }
+  .vnode.res-red .ic { background: var(--harm); color:#fff; }
+  .vnode .nm { font-weight: 650; font-size: .9rem; }
+  .vnode .msg { font-size: .84rem; color: var(--muted); margin-top: 3px; }
+  .vnode .advtoggle { cursor: pointer; font-size: .8rem; color: var(--warn); font-weight: 650; border: 1px solid var(--warn); background: var(--warn-soft); border-radius: 100px; padding: 3px 11px; display:inline-flex; gap:6px; align-items:center; margin-top: 7px; }
+  .vnode .advbody { display:none; margin-top: 8px; font-size:.84rem; padding: 10px 12px; background: var(--warn-soft); border-radius: 8px; }
+  .vnode .advbody.show { display:block; }
+  .demo-controls { margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .pbtn { cursor: pointer; font-family: var(--font); font-weight: 700; font-size: .88rem; padding: 9px 18px; border-radius: 10px; border: none; background: var(--accent); color: #fff; }
+  .pbtn:disabled { opacity: .45; cursor: not-allowed; }
+  .redmodal { position: absolute; inset: 0; background: rgba(0,0,0,.45); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 5; }
+  .redmodal.show { display: flex; }
+  .redmodal .box { background: var(--card); border: 2px solid var(--harm); border-radius: 14px; padding: 20px; max-width: 440px; box-shadow: var(--shadow); }
+  .redmodal .box .lbl { color: var(--harm); font-weight: 800; font-family: var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; }
+  .redmodal .box h4 { margin: 8px 0; font-size: 1.05rem; }
+  .redmodal .box .act { margin-top: 10px; padding: 10px 12px; background: var(--harm-soft); border-radius: 8px; font-size: .86rem; }
+  .redmodal .box button { margin-top: 14px; cursor: pointer; font-weight: 700; font-size:.86rem; padding: 9px 16px; border-radius: 10px; border: 1px solid var(--harm); background: var(--card); color: var(--harm); }
+  .demo-done { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: var(--good-soft); color: var(--ink); font-size: .88rem; display:none; }
+  .demo-done.show { display:block; }
+
+  /* likert reference */
+  details.likert { margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); overflow: hidden; }
+  details.likert > summary { cursor: pointer; padding: 14px 18px; font-weight: 700; font-size: .92rem; list-style: none; }
+  details.likert > summary::-webkit-details-marker { display: none; }
+  details.likert > summary::before { content: "▸ "; color: var(--accent); }
+  details.likert[open] > summary::before { content: "▾ "; }
+  details.likert[open] > summary { border-bottom: 1px solid var(--line); }
+  .lkwrap { padding: 6px 18px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; }
+  @media (max-width: 720px) { .lkwrap { grid-template-columns: 1fr; } }
+  .lktable h4 { margin: 12px 0 4px; font-size: .88rem; }
+  .lktable table { border-collapse: collapse; width: 100%; }
+  .lktable td { padding: 6px 8px; font-size: .79rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .lktable td.s { font-family: var(--mono); font-weight: 800; width: 22px; text-align: center; color: var(--good); }
+  .lktable tr.err td { background: var(--harm-soft); }
+  .lktable tr.err td.s { color: var(--harm); }
+  .lktable .lab { font-weight: 650; }
+  .lklegend { padding: 0 18px 16px; font-size: .8rem; color: var(--muted); }
+
+  /* dashboard */
+  .dash { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 22px; }
+  .bar-row { display: grid; grid-template-columns: 150px 1fr 54px; gap: 12px; align-items: center; padding: 8px 0; cursor: pointer; border-radius: 8px; transition: .15s; }
+  .bar-row:hover { background: var(--accent-soft); }
+  .bar-row.active { background: var(--accent-soft); }
+  .bar-row .nm { font-size: .86rem; font-weight: 650; }
+  .bar-row .track { height: 22px; background: var(--line); border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-row .fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--accent-bright)); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+  .bar-row .pctv { font-family: var(--mono); font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; color: var(--accent); }
+  @media (max-width: 560px) { .bar-row { grid-template-columns: 110px 1fr 46px; } }
+  .detail { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .detail .mstats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 560px) { .detail .mstats { grid-template-columns: 1fr; } }
+  .ms { border: 1px solid var(--line); border-radius: 10px; padding: 12px; text-align: center; background: var(--paper); }
+  .ms .n { font-size: 1.4rem; font-weight: 850; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .ms .l { font-size: .72rem; color: var(--muted); }
+  .modes { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mode { font-size: .8rem; padding: 5px 10px; border-radius: 100px; background: var(--harm-soft); color: var(--harm); border: 1px solid var(--harm); }
+
+  /* evaluator compare */
+  .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  @media (max-width: 640px) { .cmp { grid-template-columns: 1fr; } }
+  .cmpcard { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); }
+  .cmpcard h4 { margin: 0 0 12px; font-size: .96rem; }
+  .cmpbar { display: grid; grid-template-columns: 68px 1fr 44px; gap: 8px; align-items: center; margin: 7px 0; font-size: .78rem; }
+  .cmpbar .track { height: 14px; background: var(--line); border-radius: 100px; overflow: hidden; }
+  .cmpbar.phys .track > i { background: var(--accent); }
+  .cmpbar.llm .track > i { background: var(--warn); }
+  .cmpbar .track > i { display: block; height: 100%; border-radius: 100px; }
+  .cmpbar .v { font-family: var(--mono); font-weight: 700; text-align: right; }
+
+  /* rigor checklist */
+  .rig { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  @media (max-width: 700px) { .rig { grid-template-columns: 1fr; } }
+  .rigitem { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--card); font-size: .86rem; }
+  .rigitem .h { font-weight: 700; font-size: .9rem; }
+  .rigitem .h::before { content: "✓ "; color: var(--good); font-weight: 800; }
+
+  /* mapping */
+  .maprow { display: grid; grid-template-columns: 220px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .maprow + .maprow { margin-top: 12px; }
+  @media (max-width: 700px) { .maprow { grid-template-columns: 1fr; } }
+  .maprow .from { padding: 16px 18px; background: var(--paper); border-right: 1px solid var(--line); }
+  @media (max-width: 700px) { .maprow .from { border-right: none; border-bottom: 1px solid var(--line); } }
+  .maprow .from .mech { font-weight: 750; font-size: .95rem; }
+  .maprow .from .dim { font-family: var(--mono); font-size: .64rem; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+  .maprow .to { padding: 16px 18px; font-size: .9rem; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">CAMRE · Eval Literature Deep-Read</div>
+      <h1>Penda Health &amp; AI Consult<br>Does it actually help — in a real clinic?</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> “AI-based Clinical Decision Support for Primary Care: A Real-World Study” · Korom, Kiptinness et al. (Penda Health) · Arora, Singhal et al. (OpenAI) · 2025</p>
+      <p class="lead" style="margin-top:20px">Every other paper here evaluated models <em>offline</em>. This one deploys an LLM safety-net (AI Consult) into <strong>live primary care</strong> in Nairobi and measures whether it reduces real clinical errors — across 39,849 visits, 106 clinicians, 15 clinics. It's the template for what "does CAMRE actually help?" ultimately looks like.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">39,849</div><div class="l">patient visits</div></div>
+        <div class="stat"><div class="n">16% / 13%</div><div class="l">fewer diagnostic / treatment errors</div></div>
+        <div class="stat"><div class="n">100%</div><div class="l">clinicians said quality improved (75% “substantial”)</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">cases where AI advice caused harm</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">CAMRE dimensions this paper informs:</span>
+        <span class="chip on">Real-world validity</span>
+        <span class="chip on">Safety</span>
+        <span class="chip on">Appropriateness / Completeness</span>
+        <span class="chip on">Evaluator validation</span>
+      </div>
+    </section>
+
+    <!-- WHY DIFFERENT -->
+    <section>
+      <div class="eyebrow">Why this paper matters</div>
+      <h2>Offline capability ≠ real-world impact</h2>
+      <p class="sub">A model can ace HealthBench and still fail in a clinic if clinicians don't trust it, don't see the alert in time, or it doesn't fit the workflow. Penda found three factors <em>all</em> had to be present.</p>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card"><div class="k">Factor 1</div><h3>Model performance</h3><p class="muted" style="font-size:.9rem">A capable prompted model (GPT-4o — chosen for <strong>low latency</strong> over raw capability, so feedback is timely enough to act on).</p></div>
+        <div class="card"><div class="k">Factor 2</div><h3>Clinically-aligned implementation</h3><p class="muted" style="font-size:.9rem">Many iterations to fit the EMR workflow, local epidemiology, and Kenyan guidelines — surfacing alerts only at decision points, minimizing interruption.</p></div>
+        <div class="card"><div class="k">Factor 3</div><h3>Active deployment</h3><p class="muted" style="font-size:.9rem">Strategies to build clinician understanding and buy-in. The effect grew <strong>after</strong> an induction period drove uptake.</p></div>
+      </div>
+    </section>
+
+    <!-- INTERVENTION -->
+    <section>
+      <div class="eyebrow">The intervention</div>
+      <h2>A traffic-light safety net</h2>
+      <p class="sub">AI Consult runs asynchronously in the background at each decision node (history, investigations, diagnosis, treatment) and surfaces guidance only when needed — the clinician keeps full control.</p>
+      <p class="sub" style="margin-top:6px">For each decision node the model returns a <strong>colour + rationale + suggested action</strong>. The front-end maps the colour to escalating intrusiveness:</p>
+      <div class="lights">
+        <div class="light g"><span class="dot"></span><strong>Green</strong><p class="muted" style="font-size:.84rem;margin:4px 0 0">Just a green <strong>checkmark</strong> — no interruption at all.</p></div>
+        <div class="light y"><span class="dot"></span><strong>Yellow</strong><p class="muted" style="font-size:.84rem;margin:4px 0 0">A ringing <strong>bell</strong> the clinician can <em>choose</em> to open — advisory, non-blocking.</p></div>
+        <div class="light r"><span class="dot"></span><strong>Red</strong><p class="muted" style="font-size:.84rem;margin:4px 0 0">A <strong>pop-up</strong> the clinician must view &amp; acknowledge — safety-critical (but they still keep the final call).</p></div>
+      </div>
+
+      <div class="demo">
+        <div class="dhead">Walk through a patient visit — click Proceed at each decision node</div>
+        <div id="vnodes"></div>
+        <div class="demo-controls">
+          <button class="pbtn" id="pbtn" onclick="advanceVisit()">▶ Proceed to next decision</button>
+          <span class="muted" id="pnote" style="font-size:.8rem">AI Consult runs in the background after each node — no button-press needed in the real tool.</span>
+        </div>
+        <div class="demo-done" id="demoDone">✓ Visit complete. AI Consult reviewed every node silently and interrupted only once — for the red (an unnecessary antibiotic) — while the clinician kept the final decision throughout.</div>
+        <div class="redmodal" id="redModal">
+          <div class="box">
+            <div class="lbl">🔴 Red · review required</div>
+            <h4 id="rmTitle"></h4>
+            <div id="rmRationale" style="font-size:.88rem;color:var(--muted)"></div>
+            <div class="act" id="rmAction"></div>
+            <button onclick="ackRed()">Acknowledge — I keep the final decision</button>
+          </div>
+        </div>
+      </div>
+      <p class="callout">The prompt gives the model Penda-specific context + a guideline summary + category definitions + few-shot red/yellow/green examples. <strong>Model-agnostic by design</strong> — any model can be swapped in; Penda chose GPT-4o for <strong>low latency</strong> (fast feedback matters more for adoption than raw capability).</p>
+    </section>
+
+    <!-- FLAGSHIP: dashboard -->
+    <section>
+      <div class="eyebrow">Explore — the headline result</div>
+      <h2>Fewer errors at every stage of the visit</h2>
+      <p class="sub">Clinicians were <strong>cluster-assigned</strong> — half the clinicians in each clinic got AI Consult (AI group), half didn't (non-AI). Independent physicians rated each de-identified visit on a <strong>5-point Likert per stage</strong> (History · Investigations · Diagnosis · Treatment); <strong>Likert 1–2 = a clinically meaningful error</strong> (see the full scale below). Each bar is the <strong>relative risk reduction in that error rate, AI vs non-AI</strong> (Table 3), cluster- and covariate-adjusted; <strong>NNT</strong> = visits per one averted error; "yearly errors averted" projects to Penda's ~400,000 annual visits. <strong>Click a stage</strong> to see its RRR, NNT, yearly errors averted, and which failure modes dropped.</p>
+
+      <div class="dash" style="margin-top:20px">
+        <div id="bars"></div>
+        <div class="detail" id="detail"></div>
+      </div>
+      <details class="likert">
+        <summary>The exact 5-point scale behind "error" — click to expand</summary>
+        <div class="lkwrap">
+          <div class="lktable">
+            <h4>History &amp; Examination</h4>
+            <table>
+              <tr><td class="s">5</td><td><span class="lab">Thorough</span> — key HPI/history + relevant exam + vitals documented</td></tr>
+              <tr><td class="s">4</td><td><span class="lab">Reasonably thorough</span> — some elements + most relevant vitals</td></tr>
+              <tr><td class="s">3</td><td><span class="lab">Limited</span> — sparse symptom detail / limited exam</td></tr>
+              <tr class="err"><td class="s">2</td><td><span class="lab">Deficient</span> — misses the most important elements</td></tr>
+              <tr class="err"><td class="s">1</td><td><span class="lab">Very poor</span> — almost no history/exam; critical vitals missing</td></tr>
+            </table>
+          </div>
+          <div class="lktable">
+            <h4>Investigations</h4>
+            <table>
+              <tr><td class="s">5</td><td><span class="lab">Appropriate &amp; targeted</span> — all tests indicated (or none needed &amp; none done)</td></tr>
+              <tr><td class="s">4</td><td><span class="lab">Minor overordering</span> — mostly fine, slight overtesting</td></tr>
+              <tr><td class="s">3</td><td><span class="lab">Overly broad</span> — unjustified tests ordered</td></tr>
+              <tr class="err"><td class="s">2</td><td><span class="lab">Deficient</span> — potentially helpful tests missing</td></tr>
+              <tr class="err"><td class="s">1</td><td><span class="lab">Very poor</span> — critical omissions risking misdiagnosis/harm</td></tr>
+            </table>
+          </div>
+          <div class="lktable">
+            <h4>Diagnosis</h4>
+            <table>
+              <tr><td class="s">5</td><td><span class="lab">Excellent</span> — primary dx most likely; nothing relevant missed</td></tr>
+              <tr><td class="s">4</td><td><span class="lab">Good</span> — dx among top few; extra dx not clearly relevant</td></tr>
+              <tr><td class="s">3</td><td><span class="lab">Adequate</span> — plausible but not most likely, or important extra dx missing</td></tr>
+              <tr class="err"><td class="s">2</td><td><span class="lab">Deficient</span> — poorly supported / catch-all / critical extra dx missing</td></tr>
+              <tr class="err"><td class="s">1</td><td><span class="lab">Very poor</span> — dx missing or clinically inappropriate</td></tr>
+            </table>
+          </div>
+          <div class="lktable">
+            <h4>Treatment</h4>
+            <table>
+              <tr><td class="s">5</td><td><span class="lab">Appropriate &amp; complete</span> — correct meds/referrals + patient education/follow-up</td></tr>
+              <tr><td class="s">4</td><td><span class="lab">Appropriate, less complete</span> — correct, but no patient education/follow-up documented</td></tr>
+              <tr><td class="s">3</td><td><span class="lab">Adequate</span> — reasonable/safe but not first-line, or non-critical referral missing</td></tr>
+              <tr class="err"><td class="s">2</td><td><span class="lab">Deficient</span> — somewhat inappropriate meds / minor dosage errors / needed referral missing</td></tr>
+              <tr class="err"><td class="s">1</td><td><span class="lab">Very poor</span> — clearly wrong or unsafe management</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="lklegend">🔴 Shaded rows (Likert 1–2) are counted as clinically meaningful errors. Note the high bar: e.g. a Treatment scored <strong>4</strong> (correct meds but no patient education/follow-up documented) is <em>not</em> counted as an error.</div>
+      </details>
+    </section>
+
+    <!-- EVALUATOR COMPARE -->
+    <section>
+      <div class="eyebrow">Who measures matters</div>
+      <h2>Physician vs LLM evaluators disagreed — by a lot</h2>
+      <p class="sub">They re-ran the whole error analysis with LLM raters (o3, GPT-4.1). The LLM raters found <strong>larger</strong> error reductions than physicians did — a caution for anyone leaning on LLM-as-judge at scale.</p>
+      <div class="cmp">
+        <div class="cmpcard">
+          <h4>Diagnostic error reduction</h4>
+          <div class="cmpbar phys"><span>Physician</span><div class="track"><i style="width:64%"></i></div><span class="v">16%</span></div>
+          <div class="cmpbar llm"><span>GPT-4.1</span><div class="track"><i style="width:76%"></i></div><span class="v">19%</span></div>
+        </div>
+        <div class="cmpcard">
+          <h4>Treatment error reduction</h4>
+          <div class="cmpbar phys"><span>Physician</span><div class="track"><i style="width:51%"></i></div><span class="v">13%</span></div>
+          <div class="cmpbar llm"><span>GPT-4.1</span><div class="track"><i style="width:88%"></i></div><span class="v">22%</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>How they measured "agreement" — and the twist</h3>
+        <p class="muted" style="font-size:.9rem;margin:4px 0 10px">Two measures, each computed for <strong>physician↔physician</strong> (baseline) and <strong>model↔physician</strong>:</p>
+        <div class="grid g2" style="gap:12px">
+          <div style="border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--paper)">
+            <div style="font-weight:700;font-size:.9rem">Within 1 Likert point</div>
+            <p class="muted" style="font-size:.82rem;margin:4px 0 8px">On the 5-pt scale, "agree" if scores are within ±1 — lenient ordinal closeness.</p>
+            <div style="font-family:var(--mono);font-size:.82rem;font-variant-numeric:tabular-nums;line-height:1.9">
+              Physician ↔ physician &nbsp;<strong>77.8%</strong><br>
+              GPT-4.1 ↔ physician &nbsp;<strong style="color:var(--good)">87.0%</strong><br>
+              o3 ↔ physician &nbsp;<strong style="color:var(--good)">86.6%</strong><br>
+              <span style="color:var(--muted)">(history category)</span>
+            </div>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--paper)">
+            <div style="font-weight:700;font-size:.9rem">Fleiss' κ on error vs no-error</div>
+            <p class="muted" style="font-size:.82rem;margin:4px 0 8px">Collapse to error (Likert 1–2) vs not (3–5), then chance-correct (0 = chance, higher = better; ~0.2–0.3 = "fair").</p>
+            <div style="font-family:var(--mono);font-size:.82rem;font-variant-numeric:tabular-nums;line-height:1.9">
+              Physician ↔ physician &nbsp;<strong>0.260</strong><br>
+              GPT-4.1 ↔ physician &nbsp;<strong style="color:var(--good)">0.283</strong><br>
+              o3 ↔ physician &nbsp;<strong style="color:var(--good)">0.306</strong><br>
+              <span style="color:var(--muted)">(history errors)</span>
+            </div>
+          </div>
+        </div>
+        <p class="callout" style="margin:14px 0 0"><strong>The twist:</strong> model↔physician agreement actually <strong>exceeded</strong> physician↔physician agreement — yet the LLMs still reported <strong>larger</strong> effect sizes. Agreeing with any single rater is not the same as being unbiased on the aggregate number.</p>
+      </div>
+    </section>
+
+    <!-- RIGOR -->
+    <section>
+      <div class="eyebrow">The evaluation machinery</div>
+      <h2>What made the error-rating trustworthy</h2>
+      <p class="sub">The rating pipeline is the transferable gold here — a checklist of the discipline behind the numbers.</p>
+      <div class="rig">
+        <div class="rigitem"><div class="h">Golden reference examples</div>Consensus of 3 physician investigators set a worked example for each Likert value, shared with the rater panel to anchor scoring.</div>
+        <div class="rigitem"><div class="h">Rater training</div>Video onboarding, "office hours", ongoing clarification — reducing subjectivity across the panel.</div>
+        <div class="rigitem"><div class="h">Double-rating + agreement</div>~25% of visits (1,387 / 5,666) rated by two physicians; agreement within one Likert point, and error-agreement vs chance via Fleiss' κ.</div>
+        <div class="rigitem"><div class="h">Blinded to arm & identity</div>Records stripped of patient and clinician identifiers before rating.</div>
+        <div class="rigitem"><div class="h">Clinically interpretable stats</div>Relative risk reduction + NNT; Fisher's exact test; Katz-method CIs; covariate- and cluster-adjusted (Poisson/GEE). <span class="muted">Plain: report the effect in units clinicians read instantly, and account for patients clustering within the same clinician/clinic (they aren't independent).</span></div>
+        <div class="rigitem"><div class="h">Multiple-comparison control</div>Benjamini-Hochberg across the four clinical domains to control false-discovery rate. <span class="muted">Plain: because four things were tested at once, tighten the bar so a lucky fluke doesn't get counted as a real effect.</span></div>
+        <div class="rigitem"><div class="h">Safety-report classification</div>All 12 patient safety reports independently reviewed on three axes — AI never caused harm. <span class="muted">Full breakdown below.</span></div>
+        <div class="rigitem"><div class="h">Patient-reported outcomes</div>8-day follow-up calls: 3.8% (AI) vs 4.3% (non-AI) "not feeling better" — reassuring, though not statistically significant.</div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>Safety-report classification — in detail</h3>
+        <p class="muted" style="font-size:.9rem;margin:4px 0 12px"><strong style="color:var(--ink)">Where the 12 reports came from:</strong> Penda's existing <strong>Patient Safety Reporting (PSR)</strong> system (running since 2020) — any staff member can raise a quality/safety concern, most often the customer-service team when a patient experiences harm or potential harm. It captures both unavoidable harm (e.g. a new drug allergy) and near-misses (serious errors that didn't cause harm). Over the 10-week study there were <strong>12 PSRs: 5 in the non-AI group, 7 in the AI group.</strong></p>
+        <p style="font-size:.9rem;margin:0 0 8px"><strong>Each report was independently reviewed on three axes:</strong></p>
+        <div class="grid g3" style="gap:10px">
+          <div style="border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--paper)"><div style="font-weight:700;font-size:.88rem">1 · Quality lapse?</div><p class="muted" style="font-size:.82rem;margin:4px 0 0">Was there a clinical quality lapse at all?</p></div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--paper)"><div style="font-weight:700;font-size:.88rem">2 · Severity</div><p class="muted" style="font-size:.82rem;margin:4px 0 0">How serious was the event?</p></div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--paper)"><div style="font-weight:700;font-size:.88rem">3 · AI Consult's role</div><p class="muted" style="font-size:.82rem;margin:4px 0 0">Did it <em>cause</em> harm, <em>fail to prevent</em> it, or <em>could have prevented</em> it?</p></div>
+        </div>
+
+        <p style="font-size:.9rem;margin:16px 0 8px"><strong>What the review found — on axis 3:</strong></p>
+        <div class="grid g3" style="gap:10px">
+          <div style="border:1px solid var(--good);border-radius:10px;padding:12px;background:var(--good-soft)"><div style="font-weight:800;font-size:1.1rem;color:var(--good)">0</div><div style="font-size:.82rem">caused harm / created new risk</div></div>
+          <div style="border:1px solid var(--warn);border-radius:10px;padding:12px;background:var(--warn-soft)"><div style="font-weight:800;font-size:1.1rem;color:var(--warn)">3</div><div style="font-size:.82rem">AI-group cases it <strong>failed to prevent</strong> (peptic-ulcer misdiagnosis, contraindicated drug in first-trimester pregnancy, missed positive H. pylori) — it didn't suggest a safer alternative</div></div>
+          <div style="border:1px solid var(--accent);border-radius:10px;padding:12px;background:var(--accent-soft)"><div style="font-weight:800;font-size:1.1rem;color:var(--accent)">~½</div><div style="font-size:.82rem">of reports: harm <strong>could have been prevented</strong> if AI Consult were used and its guidance followed</div></div>
+        </div>
+
+        <p class="callout" style="margin:16px 0 0"><strong>Careful — that "~half could have been prevented" mixes two different situations:</strong><br>
+        <strong>(a) Control group had no tool.</strong> Some were non-AI-group visits where AI Consult <em>would</em> have raised a red, but those clinicians simply didn't have it — so "not prevented" reflects absence of the tool, not a tool failure.<br>
+        <strong>(b) AI group didn't follow / didn't see the alert.</strong> Other cases were AI-group visits where a critical alert was ignored, or wasn't reliably visible (one occurred early in the induction period before red alerts displayed dependably). This is an <strong>adherence &amp; visibility</strong> gap, not a reasoning gap.<br>
+        Both deaths reviewed were judged potentially preventable with correct AI Consult use — underscoring that the bottleneck is often <strong>whether guidance is seen and heeded</strong>, not just whether the model is right.</p>
+      </div>
+    </section>
+
+    <!-- BEYOND ACCURACY -->
+    <section>
+      <div class="eyebrow">Second-order effects</div>
+      <h2>The tool also upskilled the clinicians</h2>
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card"><div class="k">Learning effect</div><h3>Red alerts fell 45% → 35%</h3><p class="muted" style="font-size:.9rem">Over the study, AI-group clinicians increasingly avoided "red" mistakes <em>before</em> being flagged — the safety net taught better practice, not just caught errors. An outcome worth measuring in its own right.</p></div>
+        <div class="card"><div class="k">Adoption &amp; trust</div><h3>100% positive, 75% “substantial”</h3><p class="muted" style="font-size:.9rem">All surveyed AI-group clinicians said it improved their care. Adoption (thumbs-up rate, visit duration, doc length) was tracked as a first-class outcome — because an unused tool has zero clinical benefit.</p></div>
+      </div>
+    </section>
+
+    <!-- APPLY TO CAMRE -->
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>CAMRE Eval Literature Deep-Read<br>
+      “AI-based Clinical Decision Support for Primary Care: A Real-World Study” · Penda Health &amp; OpenAI · 2025</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // ---- Dashboard ----
+  const stages = [
+    { id:'History & Examination', rrr:31.8, ci:'21.9–40.5', nnt:11.3, averted:'35,383', modes:['Key history details missing','Inadequate physical exam'] },
+    { id:'Investigations', rrr:10.3, ci:'1.0–18.8', nnt:27.8, averted:'14,388', modes:['Key investigations missing','Inappropriate tests ordered'] },
+    { id:'Diagnosis', rrr:16.0, ci:'6.9–24.2', nnt:18.1, averted:'22,102', modes:['Incorrect primary diagnosis','Relevant comorbid diagnosis missed'] },
+    { id:'Treatment', rrr:12.7, ci:'6.8–18.3', nnt:13.9, averted:'28,880', modes:['Inappropriate medications','Missing patient education','Missing follow-up plan'] },
+  ];
+  const MAXRRR = 40;
+  let cur = 0;
+  function renderBars(){
+    document.getElementById('bars').innerHTML = stages.map((s,i)=>`
+      <div class="bar-row ${i===cur?'active':''}" onclick="pickStage(${i})">
+        <div class="nm">${s.id}</div>
+        <div class="track"><div class="fill" style="width:${s.rrr/MAXRRR*100}%"></div></div>
+        <div class="pctv">${s.rrr}%</div>
+      </div>`).join('');
+  }
+  function pickStage(i){
+    cur=i; renderBars();
+    const s = stages[i];
+    document.getElementById('detail').innerHTML = `
+      <div class="mstats">
+        <div class="ms"><div class="n">${s.rrr}%</div><div class="l">relative risk reduction<br>(95% CI ${s.ci})</div></div>
+        <div class="ms"><div class="n">${s.nnt}</div><div class="l">number needed to treat</div></div>
+        <div class="ms"><div class="n">${s.averted}</div><div class="l">errors averted / year at Penda</div></div>
+      </div>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:7px">Failure modes that dropped in <strong>${s.id}</strong>:</div>
+      <div class="modes">${s.modes.map(m=>`<span class="mode">${m}</span>`).join('')}</div>`;
+  }
+
+  // ---- Visit demo (traffic-light interaction) ----
+  const visit = [
+    { name:'History & Examination', color:'green', msg:'Green — history and exam adequately documented for the complaint.' },
+    { name:'Investigations', color:'yellow', msg:'Yellow — an advisory is available.', adv:'Given fever with a travel history, consider a malaria RDT before narrowing the workup.' },
+    { name:'Diagnosis', color:'green', msg:'Green — the diagnosis is consistent with the documented findings.' },
+    { name:'Treatment / Medications', color:'red', title:'Unnecessary antibiotic', rationale:'An antibiotic is prescribed for a documented viral upper-respiratory infection — not indicated by guidelines.', action:'Suggested action: remove the antibiotic; advise symptomatic care and clear return precautions.' },
+  ];
+  let vStep = -1, redPending = false;
+  function iconFor(n, on, i){ if(!on) return i+1; return n.color==='green'?'✓':n.color==='yellow'?'!':'✗'; }
+  function renderVisit(){
+    document.getElementById('vnodes').innerHTML = visit.map((n,i)=>{
+      const on = i<=vStep;
+      let inner = '';
+      if(on){
+        inner = `<div class="msg">${n.color==='red' ? 'Red — a pop-up flagged this for mandatory review (see above).' : n.msg}</div>`;
+        if(n.color==='yellow'){
+          inner += `<span class="advtoggle" onclick="toggleAdv(${i})">🔔 View advisory</span><div class="advbody" id="adv${i}">${n.adv}</div>`;
+        }
+      }
+      return `<div class="vnode ${on?'on':''} ${on?('res-'+n.color):''}"><div class="ic">${iconFor(n,on,i)}</div><div><div class="nm">${n.name}</div>${inner}</div></div>`;
+    }).join('');
+  }
+  function advanceVisit(){
+    if(redPending || vStep >= visit.length-1) return;
+    vStep++; renderVisit();
+    const n = visit[vStep];
+    if(n.color==='red'){
+      redPending = true;
+      document.getElementById('rmTitle').textContent = n.title;
+      document.getElementById('rmRationale').textContent = n.rationale;
+      document.getElementById('rmAction').textContent = n.action;
+      document.getElementById('redModal').classList.add('show');
+    }
+    updateVisitControls();
+  }
+  function ackRed(){ redPending = false; document.getElementById('redModal').classList.remove('show'); updateVisitControls(); }
+  function toggleAdv(i){ document.getElementById('adv'+i).classList.toggle('show'); }
+  function updateVisitControls(){
+    const done = vStep >= visit.length-1 && !redPending;
+    const btn = document.getElementById('pbtn');
+    btn.disabled = redPending || done;
+    document.getElementById('demoDone').classList.toggle('show', done);
+    if(redPending) document.getElementById('pnote').textContent = 'A red pop-up needs your review before you can proceed.';
+    else if(done){ btn.textContent = 'Visit complete'; document.getElementById('pnote').textContent = ''; }
+  }
+
+  // ---- Quiz ----
+  const quiz = [
+    { q:'What makes this study different from the other papers here?',
+      opts:['It proposes a new benchmark','It deploys an LLM tool in live primary care and measures real clinical-error reduction (39,849 visits)','It fine-tunes a new model','It is a survey of clinicians only'],
+      correct:1, ex:'It is a real-world, cluster-assigned deployment study — measuring whether the tool actually reduces errors in practice, not offline capability.' },
+    { q:'How were clinical errors measured?',
+      opts:['Automatically by the tool itself','Independent physicians rated de-identified records on a 5-point Likert across 4 stages (1–2 = error), with golden examples, ~25% double-rating and Fleiss’ κ','Patient star ratings','Only by LLMs'],
+      correct:1, ex:'A trained physician panel rated four stages (history/investigations/diagnosis/treatment) with golden reference examples and inter-rater agreement; primary metric was relative risk reduction + NNT.' },
+    { q:'What happened when they used LLM raters instead of physicians?',
+      opts:['Identical results','LLMs (GPT-4.1) found LARGER error reductions than physicians (22% vs 13% treatment)','LLMs found no effect','LLMs refused to rate'],
+      correct:1, ex:'LLM evaluators over-estimated the effect relative to physicians — a concrete reason to validate/calibrate an LLM judge against clinicians before trusting it at scale (P2).' },
+    { q:'Beyond fewer errors, what second-order effect did they observe?',
+      opts:['Clinicians got slower','Clinicians upskilled — initial "red" alerts fell from 45% to 35% as they avoided mistakes before being flagged','Patients stopped coming','The tool replaced clinicians'],
+      correct:1, ex:'The safety net taught better practice over time, not just caught errors — plus adoption/trust were tracked as first-class outcomes.' },
+  ];
+  function renderQuiz(){
+    document.getElementById('quizWrap').innerHTML = quiz.map((q,qi)=>`
+      <div class="quiz"><div class="q">${qi+1}. ${q.q}</div>
+        <div class="opts">${q.opts.map((o,oi)=>`<button class="opt" id="q${qi}o${oi}" onclick="answer(${qi},${oi})">${o}</button>`).join('')}</div>
+        <div class="explain" id="q${qi}ex">${q.ex}</div></div>`).join('');
+  }
+  const answered={};
+  function answer(qi,oi){
+    if(answered[qi]) return; answered[qi]=true;
+    const c=quiz[qi].correct;
+    document.getElementById(`q${qi}o${c}`).classList.add('correct');
+    if(oi!==c) document.getElementById(`q${qi}o${oi}`).classList.add('wrong');
+    document.getElementById(`q${qi}ex`).classList.add('show');
+  }
+
+  // init
+  renderBars(); pickStage(0); renderVisit(); updateVisitControls(); renderQuiz();
+</script>

@@ -1,0 +1,531 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.5rem); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  .camre { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 18px; font-size: .9rem; }
+  .camre .tag { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-right: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill.harm { color: var(--harm); background: var(--harm-soft); }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* Taxonomy explorer */
+  .tax { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
+  @media (max-width: 860px) { .tax { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 520px) { .tax { grid-template-columns: 1fr; } }
+  .taxcat { cursor: pointer; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--card); transition: .16s; text-align: left; font-family: var(--font); color: var(--ink); }
+  .taxcat:hover { border-color: var(--accent); }
+  .taxcat.active { border-color: var(--accent); background: var(--accent-soft); }
+  .taxcat .cn { font-family: var(--mono); font-size: .64rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .taxcat h4 { margin: 6px 0 8px; font-size: .92rem; line-height: 1.25; }
+  .taxcat .bar { height: 6px; border-radius: 100px; background: var(--line); overflow: hidden; }
+  .taxcat .bar > i { display: block; height: 100%; border-radius: 100px; }
+  .taxcat .rng { font-family: var(--mono); font-size: .66rem; color: var(--muted); margin-top: 5px; }
+  .taxdetail { margin-top: 14px; border: 1px solid var(--accent); border-radius: var(--radius); background: var(--accent-soft); padding: 18px; }
+  .taxdetail .subs { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-top: 10px; }
+  @media (max-width: 640px) { .taxdetail .subs { grid-template-columns: 1fr; } }
+  .subitem { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px; font-size: .84rem; }
+  .subitem .task { display: block; font-size: .74rem; color: var(--muted); margin-top: 2px; }
+
+  /* Jury flagship */
+  .jury { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .jtop { display: grid; grid-template-columns: 1fr 1.15fr; }
+  @media (max-width: 860px) { .jtop { grid-template-columns: 1fr; } }
+  .jtask { padding: 22px; border-right: 1px solid var(--line); background: linear-gradient(180deg, var(--accent-soft), transparent 130px); }
+  @media (max-width: 860px) { .jtask { border-right: none; border-bottom: 1px solid var(--line); } }
+  .jlabel { font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .notebox { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: .82rem; margin-top: 8px; white-space: pre-wrap; }
+  .resp-toggle { display: flex; gap: 8px; margin: 16px 0 8px; }
+  .resp-toggle button { flex: 1; cursor: pointer; font-family: var(--font); font-size: .84rem; font-weight: 650; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); transition: .15s; }
+  .resp-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .respbox { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: .85rem; margin-top: 6px; }
+
+  .jpanel { padding: 22px; }
+  table.jgrid { border-collapse: collapse; width: 100%; }
+  table.jgrid th, table.jgrid td { padding: 9px 6px; text-align: center; font-size: .82rem; border-bottom: 1px solid var(--line); }
+  table.jgrid thead th { font-family: var(--mono); font-size: .64rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  table.jgrid tbody th { text-align: left; font-weight: 650; font-size: .8rem; }
+  .cellv { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; font-variant-numeric: tabular-nums; font-weight: 700; font-family: var(--mono); transition: .25s; }
+  .composite { font-family: var(--mono); font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .jfinal { padding: 18px 22px; background: var(--paper); border-top: 1px solid var(--line); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .jfinal .big { font-size: 2.3rem; font-weight: 850; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .jfinal .lbl { font-family: var(--mono); font-size: .78rem; color: var(--muted); }
+  .varnote { font-family: var(--mono); font-size: .78rem; color: var(--muted); }
+
+  /* ICC bars */
+  .icc { margin-top: 18px; display: grid; gap: 8px; }
+  .iccrow { display: grid; grid-template-columns: 190px 1fr 48px; align-items: center; gap: 12px; font-size: .84rem; }
+  @media (max-width: 560px) { .iccrow { grid-template-columns: 130px 1fr 42px; } }
+  .iccrow .track { height: 14px; background: var(--line); border-radius: 100px; overflow: hidden; }
+  .iccrow .track > i { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent-bright)); }
+  .iccrow.baseline .track > i { background: var(--muted); }
+  .iccrow .val { font-family: var(--mono); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Benchmark anatomy */
+  .anat { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 18px; }
+  @media (max-width: 760px) { .anat { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 460px) { .anat { grid-template-columns: 1fr; } }
+  .anat .cell { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--card); }
+  .anat .cell .n { font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .tiers3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 16px; }
+  @media (max-width: 760px) { .tiers3 { grid-template-columns: 1fr; } }
+
+  /* axis definitions */
+  .axisdef { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 16px; }
+  @media (max-width: 760px) { .axisdef { grid-template-columns: 1fr; } }
+  .axiscard { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); }
+  .axiscard .an { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .axiscard h4 { margin: 6px 0 6px; font-size: 1rem; }
+  .axiscard .op { margin-top: 10px; padding: 9px 12px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; font-size: .82rem; }
+  .axiscard .op .k { display: block; font-family: var(--mono); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+
+  /* benchmark example toggle */
+  .bex-toggle { display: flex; gap: 8px; margin: 14px 0 12px; }
+  .bex-toggle button { flex: 1; cursor: pointer; font-family: var(--font); font-size: .85rem; font-weight: 650; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); transition: .15s; }
+  .bex-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .bex { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .bexrow { display: grid; grid-template-columns: 130px 1fr; border-bottom: 1px solid var(--line); }
+  .bexrow:last-child { border-bottom: none; }
+  .bexrow .slot { padding: 12px 14px; background: var(--paper); border-right: 1px solid var(--line); font-family: var(--mono); font-size: .64rem; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .bexrow .content { padding: 12px 14px; font-size: .85rem; white-space: pre-wrap; line-height: 1.5; }
+  .bexrow .content .ph { font-family: var(--mono); background: var(--accent-soft); color: var(--accent); padding: 1px 5px; border-radius: 5px; }
+  @media (max-width: 560px) { .bexrow { grid-template-columns: 1fr; } .bexrow .slot { border-right: none; border-bottom: 1px solid var(--line); } }
+
+  /* mapping */
+  .maprow { display: grid; grid-template-columns: 210px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .maprow + .maprow { margin-top: 12px; }
+  @media (max-width: 700px) { .maprow { grid-template-columns: 1fr; } }
+  .maprow .from { padding: 16px 18px; background: var(--paper); border-right: 1px solid var(--line); }
+  @media (max-width: 700px) { .maprow .from { border-right: none; border-bottom: 1px solid var(--line); } }
+  .maprow .from .mech { font-weight: 750; font-size: .95rem; }
+  .maprow .from .dim { font-family: var(--mono); font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+  .maprow .to { padding: 16px 18px; font-size: .9rem; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">CAMRE · Eval Literature Deep-Read</div>
+      <h1>MedHELM<br>From exam scores to real clinical work</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> “MedHELM: Holistic Evaluation of Large Language Models for Medical Tasks” · Bedi, Cui, Fuentes, Unell et al. (Stanford), Shah et al. · arXiv:2505.23802 (May 2025)</p>
+      <p class="lead" style="margin-top:20px">LLMs already ace medical licensing exams — but that says little about the messy day-to-day work of medicine. MedHELM answers a structural question HealthBench doesn't: <strong>what is the full landscape of medical tasks, and how do we measure a model across all of it?</strong> Its answer — a clinician-validated task taxonomy — is the <strong>skeleton</strong> CAMRE's evaluation plan can be organized around.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">5</div><div class="l">categories</div></div>
+        <div class="stat"><div class="n">22</div><div class="l">subcategories</div></div>
+        <div class="stat"><div class="n">121</div><div class="l">clinical tasks</div></div>
+        <div class="stat"><div class="n">35</div><div class="l">benchmarks (full coverage)</div></div>
+        <div class="stat"><div class="n">29</div><div class="l">validating clinicians</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">CAMRE dimensions this paper informs:</span>
+        <span class="chip on">Evaluation scaffold / coverage</span>
+        <span class="chip on">Appropriateness (guideline adherence)</span>
+        <span class="chip on">Completeness</span>
+        <span class="chip on">LLM-as-judge trust</span>
+        <span class="chip">Cost-awareness</span>
+      </div>
+    </section>
+
+    <!-- THE GAP -->
+    <section>
+      <div class="eyebrow">Why it exists</div>
+      <h2>Exam accuracy is not clinical competence</h2>
+      <p class="sub">MedHELM identifies three structural gaps in how medical LLMs were being evaluated — and positions itself as complementary to HealthBench, not a replacement.</p>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card"><div class="k">Gap 1</div><h3>Synthetic, narrow tasks</h3><p class="muted" style="font-size:.9rem">Benchmarks lean on synthetic vignettes or exam questions, missing real diagnostic work like extracting the relevant details from a patient record.</p></div>
+        <div class="card"><div class="k">Gap 2</div><h3>Almost no real EHR data</h3><p class="muted" style="font-size:.9rem">Only ~5% of medical LLM evaluations use real EHR data — which carries the ambiguity, inconsistency, and shorthand synthetic data can't reproduce.</p></div>
+        <div class="card"><div class="k">Gap 3</div><h3>Task monoculture</h3><p class="muted" style="font-size:.9rem">~64% of evaluations focus only on licensing exams and diagnosis — ignoring documentation, patient messaging, and administrative work that fill a clinician's day.</p></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>MedHELM vs HealthBench — complementary lenses</h3>
+        <div class="grid g2" style="margin-top:10px">
+          <div><span class="pill warn">HealthBench</span><p class="muted" style="font-size:.88rem;margin-top:8px">5,000 single-turn, direct-to-patient dialogues; model acts <strong>autonomously</strong>. Physician rubrics reward exhaustive, risk-averse answers — a stress test for a fully autonomous chatbot. But synthetic, no task taxonomy, no co-pilot / structured-workflow tasks.</p></div>
+          <div><span class="pill good">MedHELM</span><p class="muted" style="font-size:.88rem;margin-top:8px">A <strong>taxonomy-guided</strong> suite across real clinician workflows — an assistive <strong>co-pilot</strong> doing note generation, order review, literature summarization, billing. Uses real EHR data and cost-aware metrics.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTRIB 1: TAXONOMY -->
+    <section>
+      <div class="eyebrow">Contribution 1 · The skeleton</div>
+      <h2>A clinician-validated task taxonomy</h2>
+      <p class="sub">Five categories → 22 subcategories → 121 discrete tasks, built with 29 clinicians across 14 specialties. Click a category to expand its subcategories. The bar shows how well current models do there — note where they struggle.</p>
+
+      <div class="tax" id="taxRow"></div>
+      <div class="taxdetail" id="taxDetail"></div>
+
+      <div class="grid g2" style="margin-top:18px">
+        <div class="card"><div class="k">Validation</div><h3>96.7% category-assignment agreement</h3><p class="muted" style="font-size:.88rem">Clinicians independently re-assigned each subcategory to a top-level category and matched the intended one 96.7% of the time — evidence the structure reflects how clinicians actually conceptualize their work. Comprehensiveness rated 4.21 / 5.</p></div>
+        <div class="card"><div class="k">Two design rules</div><h3>Medical relevance + clear boundaries</h3><p class="muted" style="font-size:.88rem">Every task maps to something providers routinely do; categories are drawn to minimize overlap while keeping meaningful functional distinctions. This is what makes the taxonomy usable as a reporting scaffold.</p></div>
+      </div>
+    </section>
+
+    <!-- CONTRIB 2: BENCHMARK SUITE -->
+    <section>
+      <div class="eyebrow">Contribution 2 · Full coverage</div>
+      <h2>35 benchmarks, one per corner of the taxonomy</h2>
+      <p class="sub">A taxonomy is only useful if every cell is actually measured. MedHELM built a suite covering all 22 subcategories with a three-tiered curation strategy — and standardized how any dataset becomes a benchmark.</p>
+
+      <div class="tiers3">
+        <div class="card"><span class="pill good">17 existing</span><h3 style="margin-top:8px">Adopt</h3><p class="muted" style="font-size:.86rem">Public/gated benchmarks that already fit a subcategory (MedQA, MIMIC-IV billing, ACI-Bench).</p></div>
+        <div class="card"><span class="pill warn">5 reformulated</span><h3 style="margin-top:8px">Transform</h3><p class="muted" style="font-size:.86rem">Un-evaluated medical datasets turned into benchmarks by adding a standardized prompt template + metric.</p></div>
+        <div class="card"><span class="pill harm">13 new</span><h3 style="margin-top:8px">Create</h3><p class="muted" style="font-size:.86rem">Private Stanford Healthcare datasets for under-served Administration &amp; Workflow tasks (referral triage, scheduling).</p></div>
+      </div>
+
+      <h3 style="margin-top:26px">Every benchmark item has the same anatomy</h3>
+      <div class="anat">
+        <div class="cell"><div class="n">Context</div><p class="muted" style="font-size:.84rem;margin:6px 0 0">Raw input — a clinical note, patient message, or structured EHR record.</p></div>
+        <div class="cell"><div class="n">Prompt</div><p class="muted" style="font-size:.84rem;margin:6px 0 0">Standardized instruction template (“answer in 2–3 sentences”, MCQ framing…).</p></div>
+        <div class="cell"><div class="n">Metric</div><p class="muted" style="font-size:.84rem;margin:6px 0 0">Matched to task type — see below.</p></div>
+        <div class="cell"><div class="n">Gold response <span style="text-transform:none">(optional)</span></div><p class="muted" style="font-size:.84rem;margin:6px 0 0">Reference output; framework also supports benchmarks without one.</p></div>
+      </div>
+      <p class="callout"><strong>Metric matched to task type</strong> — exact-match accuracy for single-token/numeric answers · micro-F1 for multi-label tasks (e.g. ICD-10 coding) · <strong>LLM-jury</strong> for open-ended text generation. One benchmark suite, several scoring regimes.</p>
+
+      <h3 style="margin-top:26px">One skeleton, any task type — watch it fill in</h3>
+      <p class="sub">The four slots absorb a multiple-choice item and a free-text dialogue alike — a raw dataset becomes an evaluable unit by slotting into <code>{Context}</code>. Toggle the two real MedHELM benchmarks (Table 4) and note how the <strong>metric switches with the task type</strong>.</p>
+      <div class="bex-toggle">
+        <button id="bexA" class="active" onclick="pickBex('A')">Closed-ended · HeadQA → Exact Match</button>
+        <button id="bexB" onclick="pickBex('B')">Open-ended · MedDialog → LLM-Jury</button>
+      </div>
+      <div class="bex" id="bexBox"></div>
+      <p class="muted" id="bexNote" style="font-size:.85rem;margin-top:10px"></p>
+    </section>
+
+    <!-- CONTRIB 3: LLM-JURY (flagship interactive) -->
+    <section>
+      <div class="eyebrow">Contribution 3 · Try it — the flagship method</div>
+      <h2>Scoring open-ended answers with an LLM-Jury</h2>
+      <p class="sub">A single LLM judge is noisy and biased. MedHELM instead convenes a <strong>3-member jury</strong> (GPT-4o, Claude 3.7 Sonnet, LLaMA 3.3 70B — deliberately different providers), each scoring on a <strong>1–5 Likert scale across 3 axes</strong>. The final score is the mean of all 9 ratings. Switch responses and watch the grid — then see how a single judge would have misled us.</p>
+
+      <div class="jury" style="margin-top:20px">
+        <div class="jtop">
+          <div class="jtask">
+            <div class="jlabel">Open-ended task · ACI-Bench (Clinical Note Generation)</div>
+            <div class="notebox">Prompt: Summarize the patient-doctor dialogue into a clinical note.
+
+Dialogue (excerpt): Patient reports 4 days of burning epigastric pain, worse after meals and at night, with mild nausea; partial relief from OTC antacids. Denies black stools, weight loss, or trouble swallowing. Takes ibuprofen most days for back pain.</div>
+            <div class="jlabel" style="margin-top:16px">Model response under evaluation</div>
+            <div class="resp-toggle">
+              <button id="btnA" class="active" onclick="pickResp('A')">Response A · Strong</button>
+              <button id="btnB" onclick="pickResp('B')">Response B · Weak</button>
+            </div>
+            <div class="respbox" id="respBox"></div>
+          </div>
+
+          <div class="jpanel">
+            <div class="jlabel">Jury scorecard · 3 judges × 3 axes = 9 ratings (1–5)</div>
+            <table class="jgrid" style="margin-top:8px">
+              <thead><tr><th>Judge</th><th>Accuracy</th><th>Completeness</th><th>Clarity</th><th>Composite</th></tr></thead>
+              <tbody id="juryBody"></tbody>
+            </table>
+            <div class="varnote" id="varNote" style="margin-top:12px"></div>
+          </div>
+        </div>
+        <div class="jfinal">
+          <div><div class="big" id="juryBig">—</div><div class="lbl">jury score (mean of 9)</div></div>
+          <div style="flex:1;min-width:180px">
+            <div class="lbl" id="juryDetail"></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">The exact rubric each judge is given <span class="pill good" style="vertical-align:middle">copy this for CAMRE</span></h3>
+      <p class="sub">Two levels of definition. The top line is the conceptual axis; the highlighted line is the <strong>verbatim question the judge model actually answers</strong> (from the ACI-Bench jury prompt, Appendix F). Each score is on a 1–5 scale (1 = very poor, 5 = excellent).</p>
+      <div class="axisdef">
+        <div class="axiscard">
+          <div class="an">Axis 1</div>
+          <h4>Accuracy</h4>
+          <p class="muted" style="font-size:.85rem;margin:0">Factual correctness <strong>and adherence to medical guidelines</strong>.</p>
+          <div class="op"><span class="k">What the judge is asked (1–5)</span>“Does the note provide correct clinical information based on the conversation?”</div>
+        </div>
+        <div class="axiscard">
+          <div class="an">Axis 2</div>
+          <h4>Completeness</h4>
+          <p class="muted" style="font-size:.85rem;margin:0">Thoroughness in addressing all aspects of the query.</p>
+          <div class="op"><span class="k">What the judge is asked (1–5)</span>“Does the note include all important medical details from the conversation?”</div>
+        </div>
+        <div class="axiscard">
+          <div class="an">Axis 3</div>
+          <h4>Clarity</h4>
+          <p class="muted" style="font-size:.85rem;margin:0">Organization, readability, easy-to-understand language.</p>
+          <div class="op"><span class="k">What the judge is asked (1–5)</span>“Is the note written clearly and organized in a standard clinical format for clinicians?”</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3 style="font-size:.98rem">Four operational details that make this usable</h3>
+        <ul class="muted" style="font-size:.86rem;margin:8px 0 0;padding-left:18px;line-height:1.7">
+          <li><strong>Justification is mandatory.</strong> Each judge must return strict JSON — <code>{"accuracy":{"score":…,"explanation":"…"}, …}</code> — so every number is auditable, not a black box.</li>
+          <li><strong>Gold is used "when needed".</strong> The prompt says compare to the reference note <em>only when needed</em> — which is why low-quality gold answers didn't shift model rankings.</li>
+          <li><strong>Axes are swappable per task.</strong> For NoteExtract (reformat with no gold), <strong>Completeness → Structure</strong> (did it reorganize into the requested format?).</li>
+          <li><strong>Final score = mean of 9</strong> (3 judges × 3 axes), decoded at temperature 0 for determinism.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <h3>Does the jury actually match clinicians? (meta-evaluation)</h3>
+        <p class="muted" style="font-size:.88rem;margin:4px 0 0">Validated on ACI-Bench + MEDIQA subsets via ICC (z-scored). Higher = closer to clinician judgment. The jury not only beats lexical metrics — it slightly <strong>exceeds the agreement clinicians have with each other</strong>.</p>
+        <div class="icc">
+          <div class="iccrow"><span>LLM-Jury</span><div class="track"><i style="width:47%"></i></div><span class="val">0.47</span></div>
+          <div class="iccrow baseline"><span>Clinician–Clinician</span><div class="track"><i style="width:43%"></i></div><span class="val">0.43</span></div>
+          <div class="iccrow baseline"><span>BERTScore-F</span><div class="track"><i style="width:44%"></i></div><span class="val">0.44</span></div>
+          <div class="iccrow baseline"><span>ROUGE-L</span><div class="track"><i style="width:36%"></i></div><span class="val">0.36</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section>
+      <div class="eyebrow">What the numbers said</div>
+      <h2>Where models are strong — and where they aren't</h2>
+      <p class="sub">Reasoning models led (DeepSeek R1 66% win-rate, o3-mini 64%), but Claude 3.5 Sonnet matched ~63% at ~40% lower cost. More useful than the ranking is the <strong>per-category gradient</strong>: the taxonomy reveals a consistent weak spot.</p>
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card">
+          <h3>Performance gradient by category</h3>
+          <div id="catBars" style="margin-top:10px;display:grid;gap:10px"></div>
+        </div>
+        <div class="card">
+          <h3>The cost-performance lesson</h3>
+          <p class="muted" style="font-size:.9rem">Reasoning models cost most (DeepSeek R1 ~$1,806, o3-mini ~$1,722 per full run) for the top win-rates; Claude 3.5 Sonnet (~$1,571) sat on the efficient frontier. One full leaderboard update ≈ <strong>$11,739</strong>.</p>
+          <p class="muted" style="font-size:.9rem;margin-top:10px"><strong>Takeaway:</strong> Administration &amp; Workflow is the universal weak spot (0.53–0.63). The taxonomy didn't just rank models — it <strong>localized</strong> where they fail, which a single aggregate score would have hidden.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPLY TO CAMRE -->
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>CAMRE Eval Literature Deep-Read<br>
+      “MedHELM: Holistic Evaluation of Large Language Models for Medical Tasks” · Bedi et al., Stanford · arXiv:2505.23802</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // ---- Taxonomy ----
+  const cats = [
+    { name:'Clinical Decision Support', lo:0.61, hi:0.76, color:'var(--warn)',
+      subs:[['Supporting Diagnostic Decisions','Generate differential diagnoses'],['Planning Treatments','Recommend guideline-based therapy'],['Predicting Patient Risks & Outcomes','Estimate readmission risk'],['Providing Clinical Knowledge Support','Answer a point-of-care question']] },
+    { name:'Clinical Note Generation', lo:0.74, hi:0.85, color:'var(--good)',
+      subs:[['Documenting Patient Visits','Generate visit progress notes'],['Recording Procedures','Write a procedure note'],['Documenting Diagnostic Reports','Draft a radiology report'],['Documenting Care Plans','Write a care-plan summary']] },
+    { name:'Patient Communication & Education', lo:0.76, hi:0.89, color:'var(--good)',
+      subs:[['Patient-Provider Messaging','Triage and route patient messages'],['Delivering Personalized Care Instructions','Tailor discharge instructions'],['Providing Patient Education Resources','Explain a diagnosis in plain language'],['Enhancing Patient Understanding & Accessibility','Simplify to a lower reading level'],['Facilitating Patient Engagement & Support','Draft a follow-up reminder']] },
+    { name:'Medical Research Assistance', lo:0.65, hi:0.75, color:'var(--warn)',
+      subs:[['Conducting Literature Research','Summarize evidence on a question'],['Analyzing Clinical Research Data','Statistically analyze trial data'],['Recording Research Processes','Draft a study protocol section'],['Ensuring Clinical Research Quality','Check protocol compliance'],['Managing Research Enrollment','Screen eligibility criteria']] },
+    { name:'Administration & Workflow', lo:0.53, hi:0.63, color:'var(--harm)',
+      subs:[['Scheduling Resources & Staff','Optimize appointment scheduling'],['Overseeing Financial Activities','Generate billing codes'],['Care Coordination & Planning','Draft a referral / prior-auth letter'],['Organizing Workflow Processes','Route an operational task']] },
+  ];
+  function renderTax(){
+    document.getElementById('taxRow').innerHTML = cats.map((c,i)=>`
+      <button class="taxcat ${i===0?'active':''}" onclick="showCat(${i})">
+        <div class="cn">${c.subs.length} subcats</div>
+        <h4>${c.name}</h4>
+        <div class="bar"><i style="width:${c.hi*100}%;background:${c.color}"></i></div>
+        <div class="rng">model range ${c.lo.toFixed(2)}–${c.hi.toFixed(2)}</div>
+      </button>`).join('');
+  }
+  function showCat(i){
+    document.querySelectorAll('.taxcat').forEach((el,idx)=>el.classList.toggle('active', idx===i));
+    const c = cats[i];
+    document.getElementById('taxDetail').innerHTML =
+      `<strong>${c.name}</strong> · ${c.subs.length} subcategories · example tasks shown
+       <div class="subs">${c.subs.map(s=>`<div class="subitem">${s[0]}<span class="task">e.g. ${s[1]}</span></div>`).join('')}</div>`;
+  }
+
+  // ---- Jury flagship ----
+  const judges = ['GPT-4o','Claude 3.7 Sonnet','LLaMA 3.3 70B'];
+  const respText = {
+    A: "S: 4 days of burning epigastric pain, worse post-prandially and at night, with mild nausea; partial relief with OTC antacids. Denies melena, weight loss, dysphagia, fever. Daily ibuprofen for back pain.\nO: [vitals/exam as available].\nA: Dyspepsia, likely NSAID-associated gastritis/PUD; GERD on differential.\nP: Stop ibuprofen, trial PPI, review red-flag symptoms, consider H. pylori testing; follow up in 2–4 weeks or sooner if alarm features.",
+    B: "Patient has stomach pain for a few days and is taking antacids. Advised to eat healthy and follow up if it gets worse."
+  };
+  // scores[resp][judgeIndex] = [accuracy, completeness, clarity]
+  const scores = {
+    A: [[5,4,5],[5,5,5],[4,4,4]],
+    B: [[3,2,4],[2,2,3],[3,2,3]]
+  };
+  let curR = 'A';
+  function comp(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+  function cellColor(v){ return v>=4.5?'var(--good)':v>=3.5?'var(--good)':v>=2.5?'var(--warn)':'var(--harm)'; }
+  function cellBg(v){ return v>=3.5?'var(--good-soft)':v>=2.5?'var(--warn-soft)':'var(--harm-soft)'; }
+  function renderJury(){
+    const s = scores[curR];
+    document.getElementById('juryBody').innerHTML = judges.map((j,ji)=>{
+      const row = s[ji];
+      const cells = row.map(v=>`<td><span class="cellv" style="color:${cellColor(v)};background:${cellBg(v)}">${v}</span></td>`).join('');
+      return `<tr><th>${j}</th>${cells}<td class="composite">${comp(row).toFixed(2)}</td></tr>`;
+    }).join('');
+    const all = s.flat();
+    const mean = all.reduce((a,b)=>a+b,0)/all.length;
+    const norm = (mean-1)/4;
+    const big = document.getElementById('juryBig');
+    big.textContent = mean.toFixed(2) + ' / 5';
+    big.style.color = norm>=0.66?'var(--good)':norm>=0.4?'var(--warn)':'var(--harm)';
+    document.getElementById('juryDetail').innerHTML = `normalized 0–1 = (mean − 1) ÷ 4 = <strong>${norm.toFixed(2)}</strong> · axes: Accuracy (correctness + guideline adherence), Completeness, Clarity`;
+    // variance note: per-judge composites
+    const comps = s.map(r=>comp(r));
+    const mn = Math.min(...comps), mx = Math.max(...comps);
+    document.getElementById('varNote').innerHTML =
+      `Single-judge composites range <strong>${mn.toFixed(2)}–${mx.toFixed(2)}</strong> — pick the wrong lone judge and the verdict shifts. The jury mean (${mean.toFixed(2)}) is the stabilized result. Odd panel size also avoids ties.`;
+  }
+  function pickResp(r){
+    curR=r;
+    document.getElementById('btnA').classList.toggle('active', r==='A');
+    document.getElementById('btnB').classList.toggle('active', r==='B');
+    document.getElementById('respBox').textContent = respText[r];
+    renderJury();
+  }
+
+  // ---- Category bars (results) ----
+  function renderCatBars(){
+    const data = [...cats].sort((a,b)=>b.hi-a.hi);
+    document.getElementById('catBars').innerHTML = data.map(c=>`
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px">
+          <span>${c.name}</span><span style="font-family:var(--mono);color:var(--muted)">${c.lo.toFixed(2)}–${c.hi.toFixed(2)}</span></div>
+        <div style="height:10px;background:var(--line);border-radius:100px;overflow:hidden">
+          <i style="display:block;height:100%;width:${c.hi*100}%;background:${c.color};border-radius:100px"></i></div>
+      </div>`).join('');
+  }
+
+  // ---- Quiz ----
+  const quiz = [
+    { q:'What is MedHELM\'s headline contribution — the "skeleton"?',
+      opts:['A new reasoning model','A clinician-validated taxonomy of 5 categories / 22 subcategories / 121 tasks','A single aggregate medical score','A patient-facing chatbot'],
+      correct:1, ex:'The taxonomy is the backbone: it guarantees coverage of real medical work and is the axis every result is reported against.' },
+    { q:'Why an LLM-Jury instead of a single LLM judge?',
+      opts:['It is cheaper than one judge','Multiple diverse-provider judges reduce single-model bias and variance; odd size avoids ties','Juries never disagree','To replace clinicians entirely'],
+      correct:1, ex:'A lone judge is noisy and biased. Three judges from different providers (GPT-4o, Claude 3.7, LLaMA 3.3), each scoring 3 axes, are averaged over 9 ratings for a stabler score.' },
+    { q:'How is the jury shown to be trustworthy?',
+      opts:['It matches ROUGE-L','ICC agreement with clinicians (0.47) exceeds clinician–clinician agreement (0.43) and lexical baselines','It always scores 5/5','Clinicians were not involved'],
+      correct:1, ex:'Meta-evaluation via ICC: the jury tracks clinician judgment better than ROUGE/BERTScore and even slightly beats inter-clinician agreement.' },
+    { q:'Which category is the universal weak spot the taxonomy exposed?',
+      opts:['Patient Communication','Clinical Note Generation','Administration & Workflow (0.53–0.63)','Medical Research'],
+      correct:2, ex:'Admin & Workflow scored lowest across models — a gap an aggregate score would hide but a taxonomy localizes.' },
+  ];
+  function renderQuiz(){
+    document.getElementById('quizWrap').innerHTML = quiz.map((q,qi)=>`
+      <div class="quiz"><div class="q">${qi+1}. ${q.q}</div>
+        <div class="opts">${q.opts.map((o,oi)=>`<button class="opt" id="q${qi}o${oi}" onclick="answer(${qi},${oi})">${o}</button>`).join('')}</div>
+        <div class="explain" id="q${qi}ex">${q.ex}</div></div>`).join('');
+  }
+  const answered={};
+  function answer(qi,oi){
+    if(answered[qi]) return; answered[qi]=true;
+    const c=quiz[qi].correct;
+    document.getElementById(`q${qi}o${c}`).classList.add('correct');
+    if(oi!==c) document.getElementById(`q${qi}o${oi}`).classList.add('wrong');
+    document.getElementById(`q${qi}ex`).classList.add('show');
+  }
+
+  // ---- Benchmark anatomy example ----
+  const bex = {
+    A: { context:"Question: In the stools of a 6-year-old boy with diarrhea and abdominal pain, a packet of parasite eggs surrounded by a transparent membrane is observed. Which treatment is most appropriate?\nA. Praziquantel   B. Azithromycin   C. Metronidazole   D. Albendazole",
+      prompt:"You are a highly knowledgeable AI assistant specializing in biomedical sciences. Answer the multiple-choice question accurately. Select the correct answer by outputting only the letter (A, B, C, or D).\nQuestion: {CONTEXT}\nAnswer:",
+      metric:"Exact Match", metricColor:"good",
+      gold:"D   (Albendazole)",
+      note:"Closed-ended → deterministic scoring. The model emits a single letter; it either matches the gold letter or it doesn't. No ambiguity, essentially zero grading cost." },
+    B: { context:"Patient: I've had pain in my left arm down to my wrist — a sharp pain between armpit and chest, aching and throbbing, with numbness and weakness. It comes and goes but more often lately.\nDoctor: Take this seriously — it could be nerve compression or an infection. You need an in-person examination; please consult your doctor at the earliest.",
+      prompt:"Generate a one sentence summary of this patient-doctor conversation.\n{CONTEXT}",
+      metric:"LLM-Jury", metricColor:"warn",
+      gold:"A reference summary (the jury consults it only when needed)",
+      note:"Open-ended → no single correct string exists, so the 3-member jury scores Accuracy / Completeness / Clarity (1–5). The paper's example jury output for this item: Accuracy = 4.88." }
+  };
+  function pickBex(k){
+    document.getElementById('bexA').classList.toggle('active', k==='A');
+    document.getElementById('bexB').classList.toggle('active', k==='B');
+    const b = bex[k];
+    const promptHtml = b.prompt.replace('{CONTEXT}','<span class="ph">{Context}</span>');
+    document.getElementById('bexBox').innerHTML = `
+      <div class="bexrow"><div class="slot">Context</div><div class="content">${b.context}</div></div>
+      <div class="bexrow"><div class="slot">Prompt</div><div class="content">${promptHtml}</div></div>
+      <div class="bexrow"><div class="slot">Metric</div><div class="content"><span class="pill ${b.metricColor}">${b.metric}</span></div></div>
+      <div class="bexrow"><div class="slot">Gold <span style="text-transform:none;color:var(--muted)">(opt.)</span></div><div class="content">${b.gold}</div></div>`;
+    document.getElementById('bexNote').innerHTML = '↳ ' + b.note;
+  }
+
+  // init
+  renderTax(); showCat(0); pickResp('A'); renderCatBars(); pickBex('A'); renderQuiz();
+</script>

@@ -1,0 +1,340 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  .camre { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 18px; font-size: .9rem; }
+  .camre .tag { font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-right: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill.harm { color: var(--harm); background: var(--harm-soft); }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  .oc { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  @media (max-width: 700px) { .oc { grid-template-columns: 1fr; } }
+  .ocbox { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; background: var(--card); border-top-width: 4px; }
+  .ocbox.om { border-top-color: var(--harm); }
+  .ocbox.co { border-top-color: var(--warn); }
+
+  .scorer { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .sc-top { display: grid; grid-template-columns: 1.1fr 1fr; }
+  @media (max-width: 860px) { .sc-top { grid-template-columns: 1fr; } }
+  .sc-menu { padding: 20px 22px; border-right: 1px solid var(--line); }
+  @media (max-width: 860px) { .sc-menu { border-right: none; border-bottom: 1px solid var(--line); } }
+  .sc-lbl { font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .caseline { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-size: .86rem; margin-bottom: 14px; }
+  .action { display: flex; gap: 10px; align-items: flex-start; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 7px; cursor: pointer; transition: .14s; background: var(--paper); }
+  .action:hover { border-color: var(--accent); }
+  .action.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .action .box { flex: none; width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 800; color: transparent; margin-top: 1px; }
+  .action.sel .box { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .action .t { font-size: .86rem; }
+  .sc-panel { padding: 20px 22px; }
+  .harmbig { font-size: 1.7rem; font-weight: 850; letter-spacing: -.02em; }
+  .errlist { margin-top: 12px; display: grid; gap: 6px; }
+  .err { font-size: .82rem; padding: 8px 11px; border-radius: 8px; border-left: 3px solid; }
+  .err.om { background: var(--harm-soft); border-left-color: var(--harm); }
+  .err.co { background: var(--warn-soft); border-left-color: var(--warn); }
+  .err .sev { font-family: var(--mono); font-size: .6rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+  .sc-foot { padding: 14px 22px; background: var(--paper); border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .sc-foot button { cursor: pointer; font-family: var(--font); font-weight: 650; font-size: .82rem; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  .sc-foot button:hover { border-color: var(--accent); }
+  .dnnote { font-size: .8rem; color: var(--muted); }
+
+  .maprow { display: grid; grid-template-columns: 220px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .maprow + .maprow { margin-top: 12px; }
+  @media (max-width: 700px) { .maprow { grid-template-columns: 1fr; } }
+  .maprow .from { padding: 16px 18px; background: var(--paper); border-right: 1px solid var(--line); }
+  @media (max-width: 700px) { .maprow .from { border-right: none; border-bottom: 1px solid var(--line); } }
+  .maprow .from .mech { font-weight: 750; font-size: .95rem; }
+  .maprow .from .dim { font-family: var(--mono); font-size: .64rem; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+  .maprow .to { padding: 16px 18px; font-size: .9rem; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">CAMRE · Eval Literature Deep-Read</div>
+      <h1>First, do NO HARM<br>Measuring clinical <em>safety</em>, not just accuracy</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> “First, do NOHARM: a medical safety benchmark and randomized study of physician and AI teaming on clinical consultations” · Wu, Nateghi Haredasht et al. · Stanford / Harvard · 2025</p>
+      <p class="lead" style="margin-top:20px">Models that ace knowledge benchmarks can still give advice that carries potential for <strong>severe harm</strong>. NOHARM measures that directly — enumerating the many plausible actions in a consultation case and rating each for benefit-vs-harm, so it captures harm from <strong>doing the wrong thing</strong> <em>and</em> from <strong>omitting the right thing</strong>.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">1,100</div><div class="l">consultation tasks · 10 specialties</div></div>
+        <div class="stat"><div class="n">12,747</div><div class="l">expert annotations</div></div>
+        <div class="stat"><div class="n">2.9–24.6%</div><div class="l">of cases: potential for severe harm</div></div>
+        <div class="stat"><div class="n">&gt;80%</div><div class="l">of severe errors are omissions</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">CAMRE dimensions this paper anchors:</span>
+        <span class="chip on">Safety &amp; Risk (D4)</span>
+        <span class="chip on">Hallucination / error (omission)</span>
+        <span class="chip on">Appropriateness</span>
+        <span class="chip on">Human-AI teaming / adherence</span>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section>
+      <div class="eyebrow">Why it exists</div>
+      <h2>Knowledge scores don't measure safety</h2>
+      <p class="sub">Sampling-based expert review can adjudicate the cases it happens to look at, but it can't systematically catch the <em>rare, severe</em> failures that matter most — nor keep pace with new models. NOHARM makes harm a first-class, measurable quantity.</p>
+      <div class="oc">
+        <div class="ocbox co">
+          <span class="pill warn">Commission</span>
+          <h3 style="margin-top:10px">Harm of doing the wrong thing</h3>
+          <p class="muted" style="font-size:.9rem">Recommending an inappropriate action — an unnecessary scan, an over-broad antibiotic, a contraindicated drug. The "obvious" kind of harm.</p>
+        </div>
+        <div class="ocbox om">
+          <span class="pill harm">Omission</span>
+          <h3 style="margin-top:10px">Harm of leaving the right thing out</h3>
+          <p class="muted" style="font-size:.9rem">Failing to recommend a needed action — a missed red-flag screen, an omitted first-line treatment. NOHARM's headline finding: <strong>omissions are &gt;80% of severe errors.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- METHOD -->
+    <section>
+      <div class="eyebrow">The method</div>
+      <h2>"Numerous Options": rate every plausible action</h2>
+      <p class="sub">Instead of judging one recommendation holistically, each case gets a rubric enumerating <strong>all the plausible actions</strong> a clinician might take (diagnostic, medication, counseling, follow-up, procedural). Board-certified specialists rate each action on a combined scale.</p>
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card"><div class="k">Appropriateness</div><h3>RAND/UCLA method</h3><p class="muted" style="font-size:.9rem">Each action rated for how much its <strong>benefit outweighs harm</strong> — a validated appropriateness scale from health-services research.</p></div>
+        <div class="card"><div class="k">Severity</div><h3>WHO harm definitions</h3><p class="muted" style="font-size:.9rem">Combined with WHO International Classification for Patient Safety <strong>harm-severity</strong> levels, so an error is scored by <em>how bad</em> it could be, not just whether it's wrong.</p></div>
+      </div>
+      <p class="callout">Because each action is rated, a model's response can be scored for <strong>both</strong> the inappropriate actions it <em>included</em> (commission) and the appropriate actions it <em>omitted</em>. Expert concordance on the ratings was <strong>95.5%</strong>. A <strong>"Do Nothing"</strong> reference is scored on every case (severe-harm potential in <strong>37%</strong>) to anchor what inaction alone costs.</p>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — the scoring mechanic</div>
+      <h2>Build a recommendation, see the harm potential</h2>
+      <p class="sub">A simplified uncomplicated-UTI case. Select the actions to include in the recommendation. The panel scores <strong>omissions</strong> (appropriate actions left out) and <strong>commissions</strong> (inappropriate actions included), and reports the overall harm potential — with "Do Nothing" as the reference.</p>
+
+      <div class="scorer" style="margin-top:20px">
+        <div class="sc-top">
+          <div class="sc-menu">
+            <div class="caseline"><strong>Case:</strong> 27-year-old woman, 2 days of dysuria and urinary frequency, no fever, no flank pain, not pregnant. Uncomplicated lower-UTI picture.</div>
+            <div class="sc-lbl">Candidate actions — click to include in the recommendation</div>
+            <div id="actionList"></div>
+          </div>
+          <div class="sc-panel">
+            <div class="sc-lbl">Safety readout</div>
+            <div class="harmbig" id="harmBig">—</div>
+            <div class="muted" id="harmSummary" style="font-size:.82rem"></div>
+            <div class="errlist" id="errList"></div>
+          </div>
+        </div>
+        <div class="sc-foot">
+          <button onclick="doNothing()">▷ Try "Do Nothing"</button>
+          <button onclick="idealAnswer()">✓ Show ideal answer</button>
+          <span class="dnnote" id="dnNote"></span>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.8rem;margin-top:10px">Illustrative case &amp; ratings for the mechanic; NOHARM's real cases carry specialist RAND/UCLA × WHO ratings across 4,249 actions.</p>
+
+      <div class="card" style="margin-top:16px">
+        <h3>How NOHARM actually aggregates <span class="pill warn" style="vertical-align:middle">the widget above is simplified</span></h3>
+        <p class="muted" style="font-size:.88rem;margin:6px 0 12px">Each candidate action is first rated by specialists: <strong>RAND/UCLA appropriateness</strong> (a 1–9 expert-panel scale → appropriate / uncertain / inappropriate) × <strong>WHO harm severity</strong> (mild / moderate / severe weight). A model's free-text answer is mapped to the actions it recommended, giving per-response <strong>omission</strong> and <strong>commission</strong> counts. From those, the paper computes <em>two</em> things (not one "worst error" — that's just this widget's stand-in for the case-level severe flag):</p>
+        <div class="oc">
+          <div class="ocbox co">
+            <span class="pill good">Performance · ranking</span>
+            <h3 style="margin-top:10px">Severity-weighted Precision / Recall / F1</h3>
+            <p class="muted" style="font-size:.86rem;margin:0"><strong>Precision</strong> = of the actions it recommended, how many were appropriate → penalizes <strong>commission</strong>. <strong>Recall</strong> = of the appropriate actions, how many it included → penalizes <strong>omission</strong>. Severity-weighted <strong>F1</strong> (their AHRQ-like composite) is the main model ranking. Finding: <strong>recall &lt; precision</strong> across nearly all models — omission is the bigger gap.</p>
+          </div>
+          <div class="ocbox om">
+            <span class="pill harm">Safety · headline</span>
+            <h3 style="margin-top:10px">% of cases with a severe-tier error</h3>
+            <p class="muted" style="font-size:.86rem;margin:0">A response is flagged if it contains <strong>≥1 severe error</strong> (omission or commission). Aggregated across cases → the <strong>2.9–24.6%</strong> severe-harm rate, read against the <strong>"Do Nothing"</strong> reference (37%). This is what the widget's "harm potential" approximates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINDINGS -->
+    <section>
+      <div class="eyebrow">What they found</div>
+      <h2>Safety is uneven — and omission-driven</h2>
+      <div class="grid g3" style="margin-top:18px">
+        <div class="card"><div class="k">Omission dominates</div><h3>&gt;80% of severe errors</h3><p class="muted" style="font-size:.86rem">Models fail more by leaving out appropriate actions than by recommending bad ones. Accuracy benchmarks miss this entirely.</p></div>
+        <div class="card"><div class="k">Wide spread</div><h3>2.9% → 24.6% severe</h3><p class="muted" style="font-size:.86rem">Severe-harm potential varied ~8× across models. Clinical RAG tools had the lowest error rates; generalist LLMs the highest.</p></div>
+        <div class="card"><div class="k">Reference point</div><h3>"Do Nothing" = 37%</h3><p class="muted" style="font-size:.86rem">Inaction itself carries severe-harm potential in 37% of cases — the bar any tool must clearly beat.</p></div>
+      </div>
+      <p class="callout"><strong>Automation-bias warning:</strong> high answer accuracy can <em>increase</em> risk — confident, fluent output gets accepted without scrutiny, and today's models can't reliably signal the limits of their own knowledge. Safety ≠ average accuracy.</p>
+    </section>
+
+    <!-- HUMAN-AI TEAMING -->
+    <section>
+      <div class="eyebrow">The randomized study</div>
+      <h2>101 physicians, with and without AI</h2>
+      <p class="sub">Beyond the benchmark, they ran a randomized study of 101 U.S.-licensed generalist physicians on these cases.</p>
+      <div class="grid g2" style="margin-top:18px">
+        <div class="card"><div class="k">The good</div><h3>AI assistance helped</h3><p class="muted" style="font-size:.9rem">AI-assisted physicians outperformed those using conventional resources.</p></div>
+        <div class="card"><div class="k">The gap</div><h3>…but they left value on the table</h3><p class="muted" style="font-size:.9rem">Physicians frequently <strong>omitted valuable AI recommendations</strong> and still scored lower than many AI systems alone. Had they incorporated those recs, the combined human-AI answer would have beaten <em>both</em> — complementary strengths, unrealized.</p></div>
+      </div>
+    </section>
+
+    <!-- APPLY TO CAMRE -->
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>CAMRE Eval Literature Deep-Read<br>
+      “First, do NOHARM: a medical safety benchmark and randomized study of physician and AI teaming” · Wu, Nateghi Haredasht et al. · 2025</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // ---- Flagship harm scorer ----
+  const actions = [
+    { t:'Order urinalysis with reflex urine culture', kind:'appropriate', sev:2, note:'Confirms diagnosis and guides therapy.' },
+    { t:'Start nitrofurantoin 100 mg PO BID × 5 days', kind:'appropriate', sev:3, note:'Guideline first-line treatment — omitting it leaves the infection untreated.' },
+    { t:'Screen for pyelonephritis red flags (fever, flank pain, vomiting)', kind:'appropriate', sev:3, note:'Missing an upper-tract infection can be dangerous.' },
+    { t:'Counsel on hydration and return precautions', kind:'appropriate', sev:1, note:'Good practice; low harm if omitted.' },
+    { t:'Phenazopyridine for symptom relief', kind:'optional', sev:0, note:'Acceptable alternative — neither required nor harmful.' },
+    { t:'Empiric broad-spectrum ciprofloxacin', kind:'inappropriate', sev:2, note:'Over-broad for uncomplicated cystitis; drives resistance and side-effects.' },
+    { t:'Order CT abdomen / pelvis', kind:'inappropriate', sev:2, note:'Unnecessary radiation and cost for uncomplicated UTI.' },
+    { t:'Prescribe opioids for discomfort', kind:'inappropriate', sev:3, note:'Inappropriate; real risk of harm with no clear benefit.' },
+  ];
+  const sevName = {3:'severe', 2:'moderate', 1:'mild', 0:'none'};
+  const sevColor = {3:'var(--harm)', 2:'var(--warn)', 1:'var(--warn)', 0:'var(--good)'};
+  const sel = new Set();
+  function renderActions(){
+    document.getElementById('actionList').innerHTML = actions.map((a,i)=>`
+      <div class="action ${sel.has(i)?'sel':''}" onclick="toggleAction(${i})">
+        <div class="box">${sel.has(i)?'✓':''}</div><div class="t">${a.t}</div>
+      </div>`).join('');
+  }
+  function score(){
+    const omissions = actions.map((a,i)=>({a,i})).filter(x=>x.a.kind==='appropriate' && !sel.has(x.i));
+    const commissions = actions.map((a,i)=>({a,i})).filter(x=>x.a.kind==='inappropriate' && sel.has(x.i));
+    const worst = Math.max(0, ...omissions.map(x=>x.a.sev), ...commissions.map(x=>x.a.sev));
+    const big = document.getElementById('harmBig');
+    big.textContent = worst===0 ? 'No harm potential' : (sevName[worst][0].toUpperCase()+sevName[worst].slice(1)) + ' harm potential';
+    big.style.color = sevColor[worst];
+    document.getElementById('harmSummary').textContent =
+      `${commissions.length} commission ${commissions.length===1?'error':'errors'} · ${omissions.length} omission ${omissions.length===1?'error':'errors'} (overall harm = worst single error).`;
+    let html = '';
+    commissions.forEach(x=>{ html += `<div class="err co"><span class="sev" style="color:${sevColor[x.a.sev]}">Commission · ${sevName[x.a.sev]}</span><br>Included: ${x.a.t} — ${x.a.note}</div>`; });
+    omissions.forEach(x=>{ html += `<div class="err om"><span class="sev" style="color:${sevColor[x.a.sev]}">Omission · ${sevName[x.a.sev]}</span><br>Missed: ${x.a.t} — ${x.a.note}</div>`; });
+    if(!html) html = `<div class="err" style="background:var(--good-soft);border-left-color:var(--good)">Appropriate actions all included, no inappropriate ones — no harm potential.</div>`;
+    document.getElementById('errList').innerHTML = html;
+  }
+  function toggleAction(i){ sel.has(i)?sel.delete(i):sel.add(i); document.getElementById('dnNote').textContent=''; renderActions(); score(); }
+  function doNothing(){ sel.clear(); renderActions(); score(); document.getElementById('dnNote').textContent = 'Do Nothing → every appropriate action omitted → severe harm potential (NOHARM: 37% of cases).'; }
+  function idealAnswer(){ sel.clear(); actions.forEach((a,i)=>{ if(a.kind==='appropriate') sel.add(i); }); renderActions(); score(); document.getElementById('dnNote').textContent = 'Ideal = all appropriate actions, no inappropriate ones (optional items don\'t count either way).'; }
+
+  // ---- Quiz ----
+  const quiz = [
+    { q:'What is NOHARM\'s core methodological idea?',
+      opts:['Ask the model one question and grade the answer','Enumerate the many plausible actions per case and rate each for benefit-vs-harm, scoring omissions AND commissions','Only test overtly dangerous prompts','Measure accuracy on licensing exams'],
+      correct:1, ex:'Rating every plausible action lets it capture harm from inappropriate actions included (commission) and appropriate ones left out (omission).' },
+    { q:'What was the dominant type of severe error?',
+      opts:['Commission (doing the wrong thing)','Omission (leaving the right thing out) — >80% of severe errors','Typos','Refusals'],
+      correct:1, ex:'Omissions were >80% of severe errors — a failure mode accuracy benchmarks miss entirely, and one a reasoning model can make by silence.' },
+    { q:'Why score a "Do Nothing" reference on every case?',
+      opts:['To save compute','To anchor the harm of inaction (severe in 37%) so model harm is interpretable','Because doing nothing is always safe','To replace expert review'],
+      correct:1, ex:'Inaction itself carries severe-harm potential in 37% of cases — the baseline any tool must clearly beat.' },
+    { q:'What did the 101-physician randomized study show about teaming?',
+      opts:['AI made physicians worse','AI helped, but physicians omitted valuable AI recs and still trailed AI-alone; incorporating them would have beaten both','Physicians ignored the cases','No difference'],
+      correct:1, ex:'Complementary strengths went unrealized — plus an automation-bias caution: fluent, confident output can be over-trusted.' },
+  ];
+  function renderQuiz(){
+    document.getElementById('quizWrap').innerHTML = quiz.map((q,qi)=>`
+      <div class="quiz"><div class="q">${qi+1}. ${q.q}</div>
+        <div class="opts">${q.opts.map((o,oi)=>`<button class="opt" id="q${qi}o${oi}" onclick="answer(${qi},${oi})">${o}</button>`).join('')}</div>
+        <div class="explain" id="q${qi}ex">${q.ex}</div></div>`).join('');
+  }
+  const answered={};
+  function answer(qi,oi){
+    if(answered[qi]) return; answered[qi]=true;
+    const c=quiz[qi].correct;
+    document.getElementById(`q${qi}o${c}`).classList.add('correct');
+    if(oi!==c) document.getElementById(`q${qi}o${oi}`).classList.add('wrong');
+    document.getElementById(`q${qi}ex`).classList.add('show');
+  }
+
+  // init
+  renderActions(); score(); renderQuiz();
+</script>

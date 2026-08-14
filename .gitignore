@@ -1,0 +1,5 @@
+.DS_Store
+**/.DS_Store
+
+# README stays local-only (internal framework doc, not for the public repo)
+README.md
