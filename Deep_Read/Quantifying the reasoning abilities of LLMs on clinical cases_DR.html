@@ -77,6 +77,21 @@
   .mdef h4 { margin: 0 0 4px; font-size: .96rem; }
   .mdef .q { font-size: .82rem; color: var(--muted); font-style: italic; }
 
+  /* mechanics card */
+  .mech-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-top: 18px; }
+  .mech-step { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+  .mech-step:last-child { border-bottom: none; }
+  .mech-step .num { font-family: var(--mono); font-weight: 800; color: var(--accent); font-size: .82rem; }
+  .mech-step h5 { margin: 0 0 4px; font-size: .9rem; }
+  .mech-step p { margin: 0; font-size: .84rem; color: var(--muted); }
+  .formula { font-family: var(--mono); font-size: .84rem; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-top: 14px; display: inline-block; }
+  .promptchip { font-family: var(--mono); font-size: .68rem; padding: 1px 7px; border-radius: 5px; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .autochip { font-family: var(--mono); font-size: .62rem; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 100px; background: var(--good-soft); color: var(--good); font-weight: 700; }
+  .metatable { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .82rem; }
+  .metatable th, .metatable td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+  .metatable th { font-family: var(--mono); font-size: .66rem; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .metatable td { font-variant-numeric: tabular-nums; }
+
   /* flagship reasoning explorer */
   .rex { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
   .rex-toggle { display: flex; gap: 8px; padding: 16px 20px 0; flex-wrap: wrap; }
@@ -185,6 +200,45 @@
         <div class="mdef"><span class="pill warn">Completeness</span><h4 style="margin-top:8px">Completeness</h4><div class="q">"How many ground-truth steps are recalled?"</div><p class="muted" style="font-size:.84rem;margin:6px 0 0">Penalizes <strong>missing critical steps</strong> — the reasoning the case actually required.</p></div>
       </div>
       <p class="callout">The three are <strong>independent</strong> — a model can be factual but incomplete, or complete but inefficient. That decoupling is the whole point: "accuracy" hides all of it.</p>
+
+      <h3 style="margin-top:28px">The exact mechanics <span class="autochip">fully automated · GPT-4o agent + live web search</span></h3>
+      <p class="sub">No human grades individual steps at scoring time. The Reasoning Evaluator is an agentic pipeline — every judgment below is an LLM call on a fixed prompt template (numbered <span class="promptchip">Prompt 14–18</span> in the paper). Humans only re-check it afterward, on a sample (next section).</p>
+      <div class="mech-card">
+        <div class="mech-step">
+          <div class="num">01</div>
+          <div><h5>Classify every predicted step <span class="promptchip">Prompt 15</span></h5>
+          <p>Each reasoning step <code>r̂ᵢ</code> is sorted into one of four bins: <strong>Citation</strong> (just restates the input) · <strong>Repetition</strong> (restates an earlier conclusion) · <strong>Redundancy</strong> (irrelevant, no contribution) · <strong>Reasoning</strong> (adds real insight). Only "Reasoning" counts as <em>effective</em>: <code>eᵢ = 1</code>.</p></div>
+        </div>
+        <div class="mech-step">
+          <div class="num">02</div>
+          <div><h5>Fact-check — <em>but only the effective steps</em> <span class="promptchip">Prompt 16–17</span></h5>
+          <p>Steps that failed step 01 (<code>eᵢ = 0</code>) are skipped entirely — they never enter the factuality check. For each effective step: generate search keywords → query <strong>Google / Bing / DuckDuckGo</strong> live → summarize the top-3 pages → an LLM call judges the step consistent or contradicted against that summary → <code>cᵢ ∈ {0,1}</code>.</p></div>
+        </div>
+        <div class="mech-step">
+          <div class="num">03</div>
+          <div><h5>Decompose the ground truth, then check coverage <span class="promptchip">Prompt 14, 18</span></h5>
+          <p>Ground truth <code>R</code> is the <strong>Discussion section physicians wrote in the original case report</strong> — not re-annotated by hand. An LLM call splits it into steps <code>{r₁…r_M}</code>, then for each GT step, another LLM call checks whether it can be found <em>anywhere</em> in the model's full predicted reasoning (no position-matching required) → <code>fᵢ ∈ {0,1}</code>.</p></div>
+        </div>
+      </div>
+
+      <div class="grid g3" style="margin-top:14px">
+        <div class="mdef"><h4>Efficiency</h4><div class="formula">mean(eᵢ), over all N steps</div></div>
+        <div class="mdef"><h4>Factuality</h4><div class="formula">Σcᵢ ÷ Σeᵢ &nbsp;<span style="color:var(--muted)">(denominator = effective steps only)</span></div></div>
+        <div class="mdef"><h4>Completeness</h4><div class="formula">mean(fᵢ), over M ground-truth steps</div></div>
+      </div>
+      <p class="callout">The Factuality denominator is <strong>effective steps, not all steps</strong> — it measures "of what the model actually argued, how much holds up," not diluted by padding it already got penalized for in Efficiency.</p>
+
+      <h3 style="margin-top:26px">Is any of this human-graded? — validated after the fact, on a sample</h3>
+      <p class="sub">Six physicians independently re-did the same three judgments on a sampled subset, to check the automated pipeline is trustworthy (a meta-evaluation, per our <strong>P2</strong> principle) — they did not grade every case.</p>
+      <table class="metatable">
+        <thead><tr><th>Axis</th><th>Sampled steps (diagnosis)</th><th>Sampled steps (treatment)</th></tr></thead>
+        <tbody>
+          <tr><td>Efficiency</td><td>146</td><td>139</td></tr>
+          <tr><td>Factuality</td><td>89</td><td>100</td></tr>
+          <tr><td>Completeness</td><td>90</td><td>106</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="font-size:.82rem;margin-top:10px">The paper reports this agreement visually (Fig. 3b) rather than as a single headline number in the text. Separately, since Factuality depends on live web search, the authors re-ran the pipeline 4 months apart (Feb vs Jun 2025) and found key metrics stayed consistent — addressing the obvious "the internet changes" reproducibility concern.</p>
     </section>
 
     <!-- FLAGSHIP -->
