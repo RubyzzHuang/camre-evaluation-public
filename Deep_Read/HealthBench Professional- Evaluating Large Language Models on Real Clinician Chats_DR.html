@@ -122,6 +122,11 @@
         <div class="card"><div class="k">Selection</div><h3>Deliberately hunts for failures</h3><p class="muted" style="font-size:.86rem">Stratified sampling by Likert difficulty enriches "difficult" (1–2) examples by roughly 3.5× overall — 8× within good-faith examples alone — to keep the benchmark from saturating against current frontier models.</p></div>
       </div>
       <p class="callout">A trustworthiness safeguard tied to that last point: for every example flagged as "difficult" for OpenAI's own frontier models, <strong>two additional physicians had to independently confirm the model actually failed</strong> — the point being that a low score should reflect a real model limitation, not evaluation noise or an unclear rubric.</p>
+      <div class="card" style="margin-top:16px">
+        <div class="k">A precise reading of "difficulty"</div>
+        <p class="muted" style="font-size:.86rem;margin-top:8px">"Difficult" is not an independent judgment of how hard the underlying clinical question is — it is <em>defined by</em> the model's response quality. The paper's own wording: a difficult example is one <em>"on which a physician determined that one of OpenAI's frontier models performed poorly."</em> The Likert 1–7 rating is assigned to the actual response the authoring physician received (mostly from GPT-5.4-era ChatGPT for Clinicians), across 5 rubric dimensions — accuracy, completeness, clarity, instruction-following, overall impact — then thresholded: 3–7 → typical, 1–2 → difficult.</p>
+        <p class="muted" style="font-size:.86rem;margin-top:8px">Two consequences follow directly from that definition. First, "difficult" really means <em>difficult for OpenAI's own model family specifically</em>, not difficult in some model-agnostic sense — a different model family might fail on an entirely different set of cases that never entered this benchmark, since they were never observed failing GPT-5.4. The authors acknowledge this "partially confounds comparisons across models." Second, because the label comes from a single physician's single rating of a single response, it carries real single-rater noise — which is precisely the risk the "two more physicians must confirm" safeguard above exists to catch.</p>
+      </div>
     </section>
 
     <!-- SCORING -->
@@ -164,15 +169,34 @@
       </div>
     </section>
 
+    <!-- HOW SLICES ARE BUILT -->
+    <section>
+      <div class="eyebrow">Behind the slice buttons</div>
+      <h2>How an example ends up in one of these three buckets</h2>
+      <p class="sub">Every example carries two independent tags, decided at two different points in time — the slices above are just the combinations of those two tags that survive.</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>Tag 1 — usage mode (set at collection time)</h3><p class="muted" style="font-size:.86rem">Good Faith: the physician was using the system for genuine daily work. Red Teaming: the physician was deliberately, structurally trying to break it. This is about the physician's <em>intent</em>, decided before anyone knows how the model will respond.</p></div>
+        <div class="card"><h3>Tag 2 — difficulty (set after the fact)</h3><p class="muted" style="font-size:.86rem">Derived from the Likert 1–7 rating described above: 3–7 → typical, 1–2 → difficult. This is about the <em>outcome</em> — how the model's actual response scored.</p></div>
+      </div>
+      <p class="callout">Crossing the two tags gives four combinations, but only three survive into the benchmark. <strong>Red-Teaming Typical — adversarial attempts that the model actually handled fine — is dropped entirely</strong>, because "such examples provide limited signal for future benchmarking." The three that remain are exactly the three slice buttons above. From there, stratified sampling (weighted primarily by the difficulty tag) pulls the final 525 from the 15,079-example candidate pool, enriching the difficult tag ~3.5× overall and ~8× within good-faith examples specifically.</p>
+    </section>
+
     <!-- HARNESS -->
     <section>
       <div class="eyebrow">The model isn't the whole system</div>
       <h2>Most of the gain comes from the product harness — but not everywhere</h2>
-      <p class="sub">Three conditions share the same base model (GPT-5.4): the bare model, the model with only a browsing tool bolted on, and the full ChatGPT for Clinicians harness (browsing plus evidence retrieval across millions of peer-reviewed studies, plus other product scaffolding).</p>
+      <p class="sub" style="margin-bottom:14px">The three use cases, verbatim from the paper:</p>
+      <div class="grid g3">
+        <div class="card"><div class="k">Care consult</div><p class="muted" style="font-size:.84rem;margin-top:6px">"Reasoning through differentials, management, and treatment."</p></div>
+        <div class="card"><div class="k">Writing &amp; documentation</div><p class="muted" style="font-size:.84rem;margin-top:6px">"Note generation, summarization, medical coding, patient messaging, and structured documentation."</p></div>
+        <div class="card"><div class="k">Medical research</div><p class="muted" style="font-size:.84rem;margin-top:6px">"Finding and synthesizing evidence relevant to clinical or scientific questions."</p></div>
+      </div>
+      <p class="sub" style="margin-top:18px">Three conditions share the same base model (GPT-5.4): the bare model, the model with only a browsing tool bolted on ("a relatively simple harness"), and the full ChatGPT for Clinicians product harness. On what the full harness actually contains, the paper is only partly specific: it names one example — "tool use for evidence retrieval from millions of peer-reviewed studies" — and states plainly that "we do not release an official external implementation," so the complete list of scaffolding beyond that one named tool isn't disclosed.</p>
       <div class="grid g2" style="margin-top:16px">
-        <div class="card"><h3>Writing &amp; documentation: the harness matters most</h3><p class="muted" style="font-size:.86rem">64.1 (full harness) vs. 34.6 (base GPT-5.4, p=3.4×10⁻¹⁰) vs. 19.7 (browsing only, p=3.5×10⁻¹⁴). The product scaffolding — not just web access — is doing most of the work here.</p></div>
+        <div class="card"><h3>Writing &amp; documentation: the harness matters most</h3><p class="muted" style="font-size:.86rem">Full harness 64.1, base GPT-5.4 34.6 (p=3.4×10⁻¹⁰), browsing-only 19.7 (p=3.5×10⁻¹⁴). Notably, <strong>browsing-only scored below the bare model</strong> — bolting on a web-search tool with none of the product's other scaffolding made this use case worse, not better, while the full harness roughly doubled the bare model's score.</p></div>
         <div class="card"><h3>Care consult: harness advantage disappears</h3><p class="muted" style="font-size:.86rem">51.0 (full harness) vs. 42.7 (physicians, p=0.025) — a real edge over humans, but statistically indistinguishable from base GPT-5.4 (p=0.72) or browsing-only (p=0.32). For this use case, the underlying model's reasoning is doing the work, not the harness.</p></div>
       </div>
+      <p class="callout">A cross-reference worth flagging as <strong>this deep-read's own reading, not a connection the paper draws explicitly</strong>: writing &amp; documentation is also the use case with by far the highest share of Red-Teaming-Difficult examples (64.1% of its 142 examples, vs. 39.4% for care consult and just 4.8% for medical research — Table 2). Red-Teaming-Difficult is independently the slice where the harness/AI edge is largest overall (see the slice explorer above). So part of "the harness matters most for writing &amp; documentation" may be compositional — that use case simply contains the most examples of the kind where harness gains concentrate regardless of use case — rather than something intrinsic to writing and documentation tasks specifically. The paper reports both facts but does not connect them this way itself.</p>
     </section>
 
     <!-- READING THE SCORE HONESTLY -->
