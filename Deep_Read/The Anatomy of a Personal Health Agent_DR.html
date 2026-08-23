@@ -1,0 +1,354 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 66ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); max-width: 16ch; }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 760px) { .g3, .g2, .g4 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* CUJ cards */
+  .cujcard { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--card); }
+  .cujcard .qa { font-size: .82rem; margin-top: 8px; color: var(--muted); }
+
+  /* flagship: architecture map */
+  .archbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
+  .node-row { display: flex; gap: 8px; padding: 20px 20px 0; flex-wrap: wrap; }
+  .node-row button { cursor: pointer; font-family: var(--font); font-size: .84rem; font-weight: 650; padding: 10px 16px; border-radius: 100px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); transition: .15s; }
+  .node-row button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .archbody { padding: 18px 20px 20px; }
+  .role-blurb { font-size: .92rem; color: var(--muted); margin: 6px 0 12px; }
+  .cap-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .cap-chip { font-family: var(--mono); font-size: .68rem; padding: 4px 9px; border-radius: 100px; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .taskcard { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-top: 10px; background: var(--paper); }
+  .taskcard h4 { margin: 0 0 6px; font-size: .9rem; }
+  .taskcard .method { font-size: .82rem; color: var(--muted); margin: 0 0 8px; }
+  .taskcard .result { font-size: .84rem; font-weight: 600; padding: 8px 11px; border-radius: 8px; background: var(--good-soft); color: var(--good); }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>The Anatomy of a Personal Health Agent<br>An evaluation framework built one capability at a time</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> "The Anatomy of a Personal Health Agent" · Heydari, Gu, Srinivas, Yu et al. (Google Research · Google DeepMind)</p>
+      <p class="lead" style="margin-top:20px">This paper builds a consumer health agent out of three specialists (data science, medical knowledge, coaching) plus an orchestrator — but the more transferable contribution is <em>how</em> it evaluates that system: every architectural component is decomposed into named capabilities, and every capability gets its own purpose-built benchmark, before the pieces are ever assembled and re-tested as a whole.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">10</div><div class="l">independent benchmark tasks, one per capability</div></div>
+        <div class="stat"><div class="n">7,000+</div><div class="l">human annotations collected</div></div>
+        <div class="stat"><div class="n">1,120</div><div class="l">hours of expert + end-user effort</div></div>
+        <div class="stat"><div class="n">4</div><div class="l">architecture components, each independently benchmarked</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">What this deep-read is for:</span>
+        <span class="chip on">Evaluation framework design</span>
+        <span class="chip on">Architecture ↔ capability mapping</span>
+        <span class="chip on">Expert + end-user dual evaluation</span>
+      </div>
+    </section>
+
+    <!-- CUJ -->
+    <section>
+      <div class="eyebrow">Where the architecture comes from</div>
+      <h2>Four user needs, mined before a single agent was built</h2>
+      <p class="sub">The sub-agent boundaries were not chosen a priori. They were derived from analyzing real web-search and health-forum queries plus a user-centered design process with end-users and health experts, which converged on four critical user journeys (CUJs):</p>
+      <div class="grid g2" style="margin-top:18px">
+        <div class="cujcard"><h3>CUJ1 · General health &amp; wellness knowledge</h3><p class="qa">Open factual questions about medicine, fitness, and wellness — not tied to the asker's own data.</p></div>
+        <div class="cujcard"><h3>CUJ2 · Personal data insights</h3><p class="qa">"What is my average resting heart rate on days my sleep score is above 86?" — reading and interpreting one's own wearable/lab data.</p></div>
+        <div class="cujcard"><h3>CUJ3 · Wellness advice</h3><p class="qa">"To improve my sleep score, what time should I go to bed?" — actionable, often goal-oriented guidance.</p></div>
+        <div class="cujcard"><h3>CUJ4 · Personal medical symptoms</h3><p class="qa">"My throat is itchy and I have trouble swallowing — what might be going on?" — often needs back-and-forth to clarify.</p></div>
+      </div>
+      <p class="callout">The three sub-agents map onto these needs directly: the <strong>Data Science (DS) Agent</strong> answers CUJ2, the <strong>Domain Expert (DE) Agent</strong> answers CUJ1 and CUJ4, and the <strong>Health Coach (HC) Agent</strong> answers CUJ3 — with an Orchestrator handling queries (very common in practice) that need more than one at once.</p>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — architecture as an evaluation map</div>
+      <h2>Click a component, see exactly how it earned its numbers</h2>
+      <p class="sub">The paper's real discipline is this: nothing gets a system-level claim until each piece has been benchmarked on its own, against its own purpose-built test, with its own human raters. Every method and figure below is transcribed from the paper — nothing invented.</p>
+
+      <div class="archbox">
+        <div class="node-row" id="nodeRow"></div>
+        <div class="archbody">
+          <div id="roleBlurb" class="role-blurb"></div>
+          <div id="capChips" class="cap-chips"></div>
+          <div id="taskCards"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JUDGING THE JUDGE -->
+    <section>
+      <div class="eyebrow">A recurring discipline</div>
+      <h2>Before trusting an automated grader, it had to earn it</h2>
+      <p class="sub">Human expert time is the scarcest resource in this whole framework (1,120+ hours), so wherever an LLM autorater is used to scale up grading, it is first checked against the same experts it's meant to replace — not assumed reliable.</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>The DS Agent's plan-quality autorater</h3><p class="muted" style="font-size:.86rem">Built from 141 expert-rated query→plan pairs (10 data scientists, 47 hours, 6,157 rubric-item annotations). A Gemini 2.0 Flash autorater trained on part of that set was checked against a held-out 96-case test set: <strong>ICC(3,1) = 0.838</strong> agreement with the human experts — high enough to trust for scaling the comparison.</p></div>
+        <div class="card"><h3>The human raters agreed with each other too</h3><p class="muted" style="font-size:.86rem">Before the autorater was even built, the 10 expert data scientists' own ratings were checked for consistency: <strong>80.2% average agreement</strong>, Bennett's S = 0.622 — a moderate-to-good inter-rater reliability baseline the autorater then had to be measured against, not an assumed ceiling.</p></div>
+      </div>
+    </section>
+
+    <!-- CLOSING THE LOOP -->
+    <section>
+      <div class="eyebrow">Evaluation feeding back into design</div>
+      <h2>A measured weakness, fixed before the next evaluation</h2>
+      <p class="sub">The Health Coach (HC) Agent was evaluated on six expert-derived capabilities (HC1–HC6: goal identification, active listening, context clarification, user empowerment, SMART recommendations, feedback incorporation). It won 5 of 6 head-to-head comparisons against a baseline coach — but lost, clearly and consistently, on one:</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>End-users noticed it too</h3><p class="muted" style="font-size:.86rem">In live, 1.5-hour sessions with 31 real participants (48 human-hours), the HC Agent lost specifically on "progress measurement": 48.7±3.9% vs. the baseline's 61.3±4.5% (p=0.010) — the one theme where a simpler agent that "covers everything" had an edge over the more structured one.</p></div>
+        <div class="card"><h3>So did the coaching experts</h3><p class="muted" style="font-size:.86rem">Three of the same experts who defined HC1–HC6 re-rated the transcripts, blind to condition, and found the identical gap on progress-measurement (46.7% vs. 50.3%, p&lt;0.001) — converging evidence from two independent rater pools.</p></div>
+      </div>
+      <p class="callout">The paper is explicit that this finding was acted on directly: the Health Coach module was rebalanced to give more weight to progress-tracking <em>before</em> it was wired into the full multi-agent system evaluated next — a visible instance of a benchmark result becoming an architecture change, not just a footnote.</p>
+    </section>
+
+    <!-- ORCHESTRATOR / SYSTEM LEVEL DEEPER -->
+    <section>
+      <div class="eyebrow">Assembling the pieces</div>
+      <h2>Two baselines, chosen to isolate what the orchestrator actually adds</h2>
+      <p class="sub">Rather than only comparing the full system to "no system," the evaluation isolates <em>which design choice</em> matters by testing two deliberately weaker multi-agent baselines side by side with the same three specialist agents and the same base model:</p>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><div class="k">Baseline A</div><h3>Single agent (PHIA)</h3><p class="muted" style="font-size:.85rem">One monolithic agent tries to do data science, domain expertise, and coaching itself. No specialization at all.</p></div>
+        <div class="card"><div class="k">Baseline B</div><h3>Parallel multi-agent</h3><p class="muted" style="font-size:.85rem">All three specialists answer the same query independently and simultaneously; an orchestrator just stitches the three answers together. Specialized, but static — no task assignment, no reflection, no memory.</p></div>
+        <div class="card"><div class="k">Full system</div><h3>PHA (this paper's design)</h3><p class="muted" style="font-size:.85rem">Orchestrator infers intent → assigns a main agent + supporting agents → each response gets a self-critique reflection pass → a persistent memory carries goals and context forward across turns.</p></div>
+      </div>
+      <p class="muted" style="font-size:.84rem;margin-top:14px">This 3-way design directly tests the paper's own stated principles for why a naive multi-agent setup isn't enough: Comprehensive Needs, Adaptive Support, Low User Burden, and Simplicity — the Parallel baseline satisfies Comprehensive Needs and Simplicity but not Adaptive Support or Low User Burden; the Single-agent baseline satisfies none of the first three.</p>
+      <div class="callout">An important precision on realism: the 150 conversations rated here were <em>generated</em> by an LLM (Gemini 2.0 Flash) role-playing 50 real WEAR-ME participant personas — not live humans typing in real time. That's a different, weaker standard of realism than the HC Agent's own Task 1 above (31 real people, live, 1.5-hour sessions) or the DE Agent's diagnostic-reasoning benchmark (2,000 real self-reported cases) — worth keeping distinct when reading the numbers below.</div>
+    </section>
+
+    <!-- EXPERTS VS END-USERS -->
+    <section>
+      <div class="eyebrow">Who's rating matters</div>
+      <h2>End-users and experts agreed on the winner — and disagreed on everything else</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>20 end-users, 150 scripts</h3><p class="muted" style="font-size:.86rem">The full system (PHA) was preferred 48.7% of the time vs. 24.8% (parallel) and 26.5% (single-agent) — roughly double either baseline (p&lt;0.001). Its biggest edge was in Personal-Data-Analysis and Data-Results-Interpretation, exactly where the DS and DE agents' outputs need to be synthesized rather than just concatenated.</p></div>
+        <div class="card"><h3>5 health/coaching experts, same 150 scripts</h3><p class="muted" style="font-size:.86rem">The gap was far starker: PHA rated 84.8% overall quality vs. 70.8% (parallel) and 65.2% (single-agent), and picked as best in 80.0% of cases vs. 15.6% and 4.4% (~270 expert-hours, 750 ratings + 250 rankings).</p></div>
+      </div>
+      <p class="callout">The sharpest disagreement was between the two <em>baselines</em>, not the winner: end-users rated the single-agent and parallel-agent baselines about the same, but experts ranked the single-agent system worst almost three times as often as end-users did — a professional-competence gap that was largely invisible to lay raters but obvious to people trained to spot it.</p>
+    </section>
+
+    <!-- LIMITATIONS -->
+    <section>
+      <div class="eyebrow">What the paper is candid about</div>
+      <h2>Reading the numbers with their own caveats attached</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>The DS Agent still misses distributions</h3><p class="muted" style="font-size:.86rem">Its analysis plans frequently overlooked data-distribution considerations — a gap the authors attribute to the difficulty of inferring distributions from limited personal data, not something the architecture fixed.</p></div>
+        <div class="card"><h3>Code generation is slow, not just imperfect</h3><p class="muted" style="font-size:.86rem">Even at a 79.0% eventual pass rate, generation-execution-correction cycles took 20–50 seconds per query, often to resolve multi-table join errors — a latency cost the paper reports plainly rather than smoothing over.</p></div>
+        <div class="card"><h3>System-level realism is one step removed</h3><p class="muted" style="font-size:.86rem">As noted above, the 150-conversation PHA evaluation used LLM-simulated personas rather than live users — real for the sub-agent-level benchmarks, simulated at the point where the pieces are assembled and compared as a whole.</p></div>
+        <div class="card"><h3>Everything is validated against one cohort</h3><p class="muted" style="font-size:.86rem">The real-world grounding data (WEAR-ME, N=1,165) is a single wearable-and-blood-biochemistry study; the 50 personas used across multiple tasks are drawn from just 10 common health profiles within it.</p></div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      "The Anatomy of a Personal Health Agent" · Heydari, Gu, Srinivas, Yu et al. (Google Research · Google DeepMind)</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  const nodes = {
+    ds: {
+      name: 'Data Science Agent',
+      role: 'Turns an open-ended question about personal data ("Am I sleeping well?") into a statistically sound analysis plan, then into working code — a two-stage pipeline that separates "what to do" from "how to do it."',
+      caps: ['DS1 · Analysis plan generation', 'DS2 · Code generation'],
+      tasks: [
+        { title: 'Task 1 — Analysis Plan Generation (DS1)',
+          method: 'A 26-item conditional rubric across 6 dimensions (Timeframe, Data Transforms, Data Sufficiency, Summary Statistics, Statistical Tests, Overall Alignment), built with 4 data-science experts. 141 query→plan pairs (100 queries × several LLMs) were rated by 10 expert data scientists (47 hours, 6,157 rubric-item annotations). A Gemini 2.0 Flash autorater was then validated against those same experts before being used at scale.',
+          result: '75.6±1.4% vs. base Gemini 53.7±1.8% (p<0.001). Biggest single gain: Data Availability Check, 5.3%→66.5%. No significant gain on Statistical Tests — the base model was already strong there (81.3%).' },
+        { title: 'Task 2 — Code Generation (DS2)',
+          method: "7 data scientists converted the 25 top-rated plans into coding problems (function header + docstring) and hand-wrote 173 unit tests (75 human-hours) — pass rate is measured against tests real experts wrote, not against the model's own reasoning about correctness.",
+          result: '75.5±3.3% vs. 58.4±3.7% pass@1 (χ²=26.3, p<0.001); 79.0% after up to 5 self-correction retries.' }
+      ]
+    },
+    de: {
+      name: 'Domain Expert Agent',
+      role: "Reasons like a clinician would: decomposes a query, investigates using real tools (Web Search, NCBI, DataCommons, a Python sandbox), examines what it finds, and repeats — producing an auditable evidence trail instead of a single opaque answer.",
+      caps: ['DE1 · Factual accuracy', 'DE2 · Diagnostic reasoning', 'DE3 · Personalization', 'DE4 · Multi-modal reasoning'],
+      tasks: [
+        { title: 'Task 1 — Factuality (DE1)',
+          method: 'Over 2,000 board-exam-style multiple-choice questions across 4 real domains: Endocrinology (570, from ABIM prep material), Cardiology (399, ABIM-based), Fitness-coaching certification (542), Sleep medicine (634) — spanning easy to expert difficulty.',
+          result: '83.6% vs. base Gemini 81.8% (p=0.002, McNemar’s Test, Odds Ratio 1.667) — a real but modest gain, since the base model already handles factual recall reasonably well.' },
+        { title: 'Task 2 — Diagnostic Conversations (DE2)',
+          method: 'A retrospective observational study of N=2,000 real consumers (ages 18–65, IRB-approved) self-reporting symptoms across 39 categories and their eventual diagnoses — compared against a re-implemented state-of-the-art DDx agent, not just the base model.',
+          result: 'Top-1 accuracy 46.1% vs. 41.4% (Δ=4.7%); top-5 75.6% (Δ=3.8%); top-10 84.5% (Δ=3.1%), p<0.001.' },
+        { title: 'Task 3 — Contextualization & Personalization (DE3)',
+          method: '50 health questions augmented with demographic details (age, sex, race/ethnicity) and chronic-condition context (diabetes, cardiovascular disease, kidney/thyroid/liver impairment). 17 end-users, blind to condition, used boolean rubric questions plus side-by-side comparisons (13 human-hours).',
+          result: "Won 71.9% of Personalization-and-Contextualization comparisons (p<0.001), 76.9% of Credibility-of-Citations (p<0.001), and 60.4% of Defining-Medical-Terms (p=0.057, not quite significant)." },
+        { title: 'Task 4 — Multi-modal Reasoning (DE4)',
+          method: '30 real WEAR-ME participants (10 health profiles × 3), using 3 real data modalities per person: onboarding survey text, structured wearable tables, and actual lab-result documents converted to PDF. 5 expert clinicians rated the proactive health summaries produced with no specific user query.',
+          result: '65.0% rated "Very Useful" or "Useful" vs. 30.0% for the baseline (p<0.001); also rated meaningfully safer by the same clinicians.' }
+      ]
+    },
+    hc: {
+      name: 'Health Coach Agent',
+      role: "A modular design — a Personalized Coaching Module grounded in motivational interviewing, plus a Recommendation Module and a Conclusion Module — built specifically because a single prompt kept either recommending too early or never stopping to ask questions.",
+      caps: ['HC1 · Goal identification', 'HC2 · Active listening', 'HC3 · Context clarification', 'HC4 · User empowerment', 'HC5 · SMART recommendations', 'HC6 · Feedback incorporation'],
+      tasks: [
+        { title: 'Task 1 — End-User Experience (N=31, live conversations)',
+          method: '31 real participants had live, 1.5-hour sessions (48 human-hours) with both the HC Agent and a same-backbone baseline prompted simply as "a helpful personal coach," blinded and counterbalanced (Latin Square design).',
+          result: 'Won 5 of 6 themed comparisons (61.3–71.0% win rate); 83.9% vs. 74.2% natural (non-forced) conversation endings. Lost specifically on Progress-Measurement (48.7% vs. 61.3%, p=0.010) — see the "closing the loop" section below.' },
+        { title: 'Task 2 — Expert Validation (N=3)',
+          method: 'Three of the same 11 health/fitness/coaching experts who defined HC1–HC6 re-rated the Task-1 transcripts, blind to condition, using a custom AI Coaching Metrics (AICM) rubric covering tone, style, and strategy.',
+          result: 'Outperformed the baseline by Δ11.0–12.8 percentage points on almost every theme (p<0.001) — but confirmed the same Progress-Measurement gap independently (46.7% vs. 50.3%, p<0.001).' }
+      ]
+    },
+    pha: {
+      name: 'Orchestrator (full PHA system)',
+      role: "Runs a 4-step loop on every turn: understand the user's need → assign a main agent plus any supporting agents → have the main agent self-critique its draft response before the user sees it → update a persistent memory of goals, barriers, and prior insights.",
+      caps: ['P1 · Comprehensive needs', 'P2 · Adaptive support', 'P3 · Low user burden', 'P4 · Simplicity'],
+      tasks: [
+        { title: 'Task 1 — End-User Comparison (N=20 raters, 150 scripts)',
+          method: '50 real WEAR-ME personas (physician-cowritten backgrounds) were each played out as 3 independent conversations — PHA vs. a single monolithic agent vs. a parallel "everyone answers independently" baseline — generated by an LLM role-playing the persona. 20 end-users then blind-rated all 3 versions per persona.',
+          result: 'PHA preferred 48.7% of the time vs. 24.8% (parallel) and 26.5% (single-agent), p<0.001. Largest edge: Personal-Data-Analysis and Data-Results-Interpretation — exactly the DS↔DE integration point.' },
+        { title: 'Task 2 — Expert Comparison (N=5, same 150 scripts)',
+          method: '5 experts in coaching, fitness, nutrition, and digital health reviewed all 150 scripts blind to condition (~270 expert-hours, 750 individual ratings + 250 comparative rankings).',
+          result: 'PHA rated 84.8% overall quality vs. 70.8% (parallel) and 65.2% (single-agent), p<0.001; picked as best in 80.0% of cases vs. 15.6% and 4.4%.' }
+      ]
+    }
+  };
+
+  let curNode = 'ds';
+  function renderNodeRow(){
+    document.getElementById('nodeRow').innerHTML = Object.keys(nodes).map(k =>
+      `<button class="${k===curNode?'active':''}" onclick="pickNode('${k}')">${nodes[k].name}</button>`).join('');
+  }
+  function pickNode(k){ curNode = k; renderNodeRow(); renderNode(); }
+  function renderNode(){
+    const n = nodes[curNode];
+    document.getElementById('roleBlurb').textContent = n.role;
+    document.getElementById('capChips').innerHTML = n.caps.map(c => `<span class="cap-chip">${c}</span>`).join('');
+    document.getElementById('taskCards').innerHTML = n.tasks.map(t =>
+      `<div class="taskcard"><h4>${t.title}</h4><p class="method">${t.method}</p><div class="result">${t.result}</div></div>`).join('');
+  }
+  renderNodeRow(); renderNode();
+
+  // ---- Quiz ----
+  const quiz = [
+    { q: "How did the three sub-agent boundaries (DS, DE, HC) get chosen?", opts: [
+        "They were derived from analyzing real search/forum queries and a user-centered design process, which converged on 4 critical user journeys",
+        "They were copied directly from an existing multi-agent framework",
+        "They were chosen to match three existing wearable-device APIs",
+        "A single LLM was asked to propose a team structure"
+      ], correct: 0, explain: "The four CUJs (general knowledge, personal data, wellness advice, symptoms) came first, from real user-need research — the architecture was built to answer them, not the other way around." },
+    { q: "How was the Data Science Agent's plan-quality autorater validated before being trusted at scale?", opts: [
+        "It was never validated — the authors trusted it because it was built on Gemini",
+        "It was checked for agreement (ICC=0.838) against the same 10 expert data scientists who rated the training data",
+        "It was validated only on synthetic, LLM-generated ground truth",
+        "It was validated by comparing it to the DE Agent's own outputs"
+      ], correct: 1, explain: "Human-expert agreement was checked first (80.2%, Bennett's S=0.622), then the autorater was checked against those same experts on a held-out test set (ICC(3,1)=0.838) before being used to scale up the comparison." },
+    { q: "What happened after the Health Coach Agent was found to underperform on \"progress measurement\" in Task 1?", opts: [
+        "The finding was noted but no design change followed",
+        "The benchmark was judged unreliable and discarded",
+        "The Health Coach module was rebalanced to weight progress-tracking more, before being wired into the full multi-agent system",
+        "The baseline agent was redesigned instead of the Health Coach Agent"
+      ], correct: 2, explain: "This is an explicit example of an evaluation result feeding back into the architecture — both end-users and coaching experts independently found the same gap, and the module was adjusted in response." },
+    { q: "In the system-level (PHA) comparison, what did experts and end-users disagree about most sharply?", opts: [
+        "Whether PHA was the best system overall — they disagreed on the winner",
+        "How to rank the two weaker baselines against each other — experts ranked the single-agent system far worse than end-users did",
+        "Whether the Data Science Agent's code was correct",
+        "The realism of the WEAR-ME dataset"
+      ], correct: 1, explain: "Both groups agreed PHA was best. But end-users rated the single-agent and parallel-agent baselines about equally, while experts ranked the single-agent system worst almost 3× as often — a professional-competence gap invisible to lay raters." },
+  ];
+  document.getElementById('quizWrap').innerHTML = quiz.map((item, qi) => `
+    <div class="quiz">
+      <div class="q">${qi+1}. ${item.q}</div>
+      <div class="opts">
+        ${item.opts.map((o, oi) => `<button class="opt" onclick="answerQuiz(${qi}, ${oi}, this)">${o}</button>`).join('')}
+      </div>
+      <div class="explain" id="explain-${qi}">${item.explain}</div>
+    </div>
+  `).join('');
+  function answerQuiz(qi, oi, btn){
+    const item = quiz[qi];
+    const opts = btn.parentElement.querySelectorAll('.opt');
+    opts.forEach((o, i) => {
+      o.classList.remove('correct','wrong');
+      if (i === item.correct) o.classList.add('correct');
+      else if (i === oi) o.classList.add('wrong');
+    });
+    document.getElementById(`explain-${qi}`).classList.add('show');
+  }
+</script>
