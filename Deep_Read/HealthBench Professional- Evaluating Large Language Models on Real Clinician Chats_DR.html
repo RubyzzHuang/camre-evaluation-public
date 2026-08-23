@@ -208,11 +208,11 @@
   }
 
   const slices = {
-    gft: { label: 'Good-Faith Typical', pct: '48.8%', n: 256,
+    gft: { label: 'Good-Faith Typical', pct: '48.8%', n: 256, missingNote: "Base GPT-5.4's exact score on this slice isn't stated as a number in the text — only that it's statistically indistinguishable from ChatGPT for Clinicians after Holm correction. Shown only in the paper's Figure 5 chart.",
       desc: "Likert 3–7 examples from routine daily use — the broadest, most representative slice, providing coverage of ordinary clinician workflows rather than edge cases.",
       cfc: 69.0, base: null, phys: 55.7,
       verdict: "ChatGPT for Clinicians beats physicians (69.0 vs 55.7, p=1.0×10⁻⁷) — but after Holm correction, it's statistically indistinguishable from several other top models (GPT-5, GPT-5.4, GPT-5.2, GPT-5.4-with-browsing, Claude Opus 4.7). On ordinary cases, the field is bunched near the top." },
-    gfd: { label: 'Good-Faith Difficult', pct: '14.9%', n: 78,
+    gfd: { label: 'Good-Faith Difficult', pct: '14.9%', n: 78, missingNote: "None of the three scores for this slice are stated as numbers in the paper's text — only shown in the Figure 5 chart, and only described in words as a statistical tie. This deep-read reports that finding rather than reading numbers off a chart image.",
       desc: "Likert 1–2 examples that emerged organically from routine use — genuinely hard cases physicians happened to hit while doing their normal work, not manufactured to be hard.",
       cfc: null, base: null, phys: null,
       verdict: "The one slice with no clear winner: ChatGPT for Clinicians is statistically tied with physicians (p=0.60) and with the rest of the field (all p≥0.23). Naturally-occurring hard cases remain a stubborn plateau — this is where the benchmark still has real headroom." },
@@ -232,7 +232,7 @@
   function pickSlice(k){ curSlice = k; renderSliceToggle(); renderSlice(); }
 
   function hhBar(label, val, max){
-    if (val === null) return `<div class="hh-row"><div class="lbl">${label}</div><div class="hh-bar"><i style="width:0%"></i></div><div class="val">—</div></div>`;
+    if (val === null) return '';
     const pct = (val/max*100).toFixed(0);
     return `<div class="hh-row"><div class="lbl">${label}</div><div class="hh-bar"><i style="width:${pct}%"></i></div><div class="val">${val.toFixed(1)}</div></div>`;
   }
@@ -241,10 +241,11 @@
     const s = slices[curSlice];
     document.getElementById('sliceDesc').textContent = s.desc;
     const max = 70;
-    document.getElementById('hhBars').innerHTML =
-      hhBar('ChatGPT for Clinicians', s.cfc, max) +
+    const bars = hhBar('ChatGPT for Clinicians', s.cfc, max) +
       hhBar('Base GPT-5.4', s.base, max) +
       hhBar('Physicians', s.phys, max);
+    const note = s.missingNote ? `<p class="muted" style="font-size:.78rem;font-style:italic;margin:${bars?'10px':'0'} 0 0">${s.missingNote}</p>` : '';
+    document.getElementById('hhBars').innerHTML = bars + note;
     document.getElementById('sliceVerdict').textContent = s.verdict;
   }
   renderSliceToggle(); renderSlice();
