@@ -1,0 +1,298 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 66ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+  .formula { font-family: var(--mono); font-size: .84rem; background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; color: var(--ink); }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); max-width: 17ch; }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* flagship: slice explorer */
+  .slicebox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
+  .slice-toggle { display: flex; gap: 8px; padding: 20px 20px 0; flex-wrap: wrap; }
+  .slice-toggle button { cursor: pointer; font-family: var(--font); font-size: .82rem; font-weight: 650; padding: 10px 15px; border-radius: 100px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); transition: .15s; text-align: left; }
+  .slice-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .slicebody { padding: 18px 20px 20px; }
+  .slice-desc { font-size: .88rem; color: var(--muted); margin: 4px 0 16px; }
+  .compbar { display: flex; height: 26px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 4px; }
+  .compbar div { display: flex; align-items: center; justify-content: center; font-size: .66rem; font-weight: 700; color: #fff; }
+  .hh-row { display: grid; grid-template-columns: 130px 1fr 60px; align-items: center; gap: 10px; margin: 10px 0; }
+  .hh-row .lbl { font-size: .82rem; font-weight: 650; text-align: right; }
+  .hh-row .val { font-size: .82rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .hh-bar { height: 22px; border-radius: 6px; background: var(--line); overflow: hidden; }
+  .hh-bar > i { display: block; height: 100%; border-radius: 6px; background: var(--accent-bright); }
+  .verdict-line { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: var(--paper); font-size: .84rem; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>HealthBench Professional<br>The sequel built from real clinician chats, not crowdsourced tasks</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> "HealthBench Professional: Evaluating Large Language Models on Real Clinician Chats" · Soskin Hicks, Trofimov, Lim, Arora, Singhal et al. (OpenAI)</p>
+      <p class="lead" style="margin-top:20px">Same rubric-scoring engine as the original HealthBench, but a completely different sourcing philosophy: every example is a real conversation a physician had with ChatGPT for Clinicians while doing actual clinical work — not a scripted vignette — then aggressively filtered down to the cases current frontier models still get wrong.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">525</div><div class="l">final benchmark tasks, from 15,079 candidates</div></div>
+        <div class="stat"><div class="n">190</div><div class="l">physician contributors, 50 countries, 26 specialties</div></div>
+        <div class="stat"><div class="n">3.5×</div><div class="l">enrichment of difficult examples via stratified sampling</div></div>
+        <div class="stat"><div class="n">59.0</div><div class="l">top system's score vs. 43.7 for physicians (p&lt;10⁻⁹)</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">Dimensions this paper covers:</span>
+        <span class="chip on">Clinical appropriateness</span>
+        <span class="chip on">Real-world sourcing methodology</span>
+        <span class="chip">Safety (adversarial coverage)</span>
+      </div>
+    </section>
+
+    <!-- WHAT'S NEW -->
+    <section>
+      <div class="eyebrow">What's actually different from HealthBench</div>
+      <h2>Real usage logs, not authored scenarios — plus a harder filter</h2>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><div class="k">Source</div><h3>Live product conversations</h3><p class="muted" style="font-size:.86rem">Every example is a conversation a physician actually had with ChatGPT for Clinicians during its development — good-faith daily use, or deliberate red-teaming — rather than a physician sitting down to author a synthetic scenario.</p></div>
+        <div class="card"><div class="k">Construction</div><h3>3-stage authorship, not 1</h3><p class="muted" style="font-size:.86rem">Stage 1: a physician writes the rubric and a 1–7 Likert rating of the model's response. Stage 2: an independent physician checks rubric quality and realism. Stage 3: final adjudication resolves ambiguity before release.</p></div>
+        <div class="card"><div class="k">Selection</div><h3>Deliberately hunts for failures</h3><p class="muted" style="font-size:.86rem">Stratified sampling by Likert difficulty enriches "difficult" (1–2) examples by roughly 3.5× overall — 8× within good-faith examples alone — to keep the benchmark from saturating against current frontier models.</p></div>
+      </div>
+      <p class="callout">A trustworthiness safeguard tied to that last point: for every example flagged as "difficult" for OpenAI's own frontier models, <strong>two additional physicians had to independently confirm the model actually failed</strong> — the point being that a low score should reflect a real model limitation, not evaluation noise or an unclear rubric.</p>
+    </section>
+
+    <!-- SCORING -->
+    <section>
+      <div class="eyebrow">Scoring — same engine, two upgrades</div>
+      <h2>The rubric formula is unchanged; the grader and the length handling aren't</h2>
+      <p class="sub">Each example still carries physician-written rubric criteria worth between −10 and +10 points; a response earns a criterion's full value if met, zero otherwise, and the example score is the ratio of earned points to the maximum possible:</p>
+      <div class="formula" style="margin-top:12px">score = ( Σ points of met criteria ) / ( Σ points of positive criteria ), clipped to [0, 1]</div>
+      <div class="grid g2" style="margin-top:18px">
+        <div class="card"><h3>A stronger default grader</h3><p class="muted" style="font-size:.86rem">The rubric grader is GPT-5.4 at low reasoning — "a broadly more capable model than the GPT-4.1 grader used in HealthBench." The paper leans on the original HealthBench's meta-evaluation (model–physician agreement ≈ physician–physician agreement) rather than re-running that validation here.</p></div>
+        <div class="card"><h3>An empirically-fit length penalty</h3><p class="muted" style="font-size:.86rem">Longer answers mechanically satisfy more rubric criteria. The authors ran multiple models across verbosity settings, fit a linear slope of score against response length (in the 0–4,000 character range, to stay in the locally-linear regime), and got <strong>≈1.47 points per 500 characters</strong> above a 2,000-character baseline — subtracted from every score before reporting.</p></div>
+      </div>
+      <p class="callout">The adjustment visibly works: raising verbosity from low to medium added ~3.9 points to the unadjusted score across models, but was <strong>nearly flat</strong> after length-adjustment — confirming the raw gain was mostly length, not quality. Reasoning effort, by contrast, kept improving scores even after adjustment (+3.3 points on average, up to +5.6–7.3 for GPT-5.4) — genuine test-time-compute quality gains, not just longer output.</p>
+    </section>
+
+    <!-- PHYSICIAN BASELINE -->
+    <section>
+      <div class="eyebrow">The human comparison point</div>
+      <h2>An intentionally strong physician baseline</h2>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><div class="k">Who</div><p class="muted" style="font-size:.86rem">A specialty- or subspecialty-matched physician wrote each response — someone whose training lines up with the case.</p></div>
+        <div class="card"><div class="k">Conditions</div><p class="muted" style="font-size:.86rem">Unbounded time and internet access (guidelines, literature, drug databases) — but no AI assistance. Framed explicitly as an upper bound on achievable human quality, not an average clinician under real time pressure.</p></div>
+        <div class="card"><div class="k">Bias control</div><p class="muted" style="font-size:.86rem">Physicians never wrote the reference response for an example they had originally authored, to prevent self-evaluation bias.</p></div>
+      </div>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — where does the AI edge actually show up?</div>
+      <h2>Explore the three data slices behind the headline number</h2>
+      <p class="sub">The 525-example benchmark isn't one uniform pool — it's three slices with very different origins and very different results. Pick a slice to see its real composition and how GPT-5.4 in ChatGPT for Clinicians actually compares to the physician baseline and to base GPT-5.4 on <em>that</em> slice specifically.</p>
+
+      <div class="slicebox">
+        <div class="slice-toggle" id="sliceToggle"></div>
+        <div class="slicebody">
+          <div class="slice-desc" id="sliceDesc"></div>
+          <div id="hhBars"></div>
+          <div class="verdict-line" id="sliceVerdict"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HARNESS -->
+    <section>
+      <div class="eyebrow">The model isn't the whole system</div>
+      <h2>Most of the gain comes from the product harness — but not everywhere</h2>
+      <p class="sub">Three conditions share the same base model (GPT-5.4): the bare model, the model with only a browsing tool bolted on, and the full ChatGPT for Clinicians harness (browsing plus evidence retrieval across millions of peer-reviewed studies, plus other product scaffolding).</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>Writing &amp; documentation: the harness matters most</h3><p class="muted" style="font-size:.86rem">64.1 (full harness) vs. 34.6 (base GPT-5.4, p=3.4×10⁻¹⁰) vs. 19.7 (browsing only, p=3.5×10⁻¹⁴). The product scaffolding — not just web access — is doing most of the work here.</p></div>
+        <div class="card"><h3>Care consult: harness advantage disappears</h3><p class="muted" style="font-size:.86rem">51.0 (full harness) vs. 42.7 (physicians, p=0.025) — a real edge over humans, but statistically indistinguishable from base GPT-5.4 (p=0.72) or browsing-only (p=0.32). For this use case, the underlying model's reasoning is doing the work, not the harness.</p></div>
+      </div>
+    </section>
+
+    <!-- READING THE SCORE HONESTLY -->
+    <section>
+      <div class="eyebrow">What the paper is upfront about</div>
+      <h2>The absolute score is not a real-world performance rate</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>The benchmark is deliberately unrepresentative</h3><p class="muted" style="font-size:.86rem">Because difficult examples were enriched ~3.5×, the authors state plainly: "a moderate aggregate score (e.g., 45%) can coexist with high real-world performance in typical usage." Most real clinician interactions fall in the easier range the benchmark deliberately downweights.</p></div>
+        <div class="card"><h3>A partial self-referential confound</h3><p class="muted" style="font-size:.86rem">GPT-5.4 was the model used for the majority of red-teaming and difficulty labeling in the first place — which the authors acknowledge "partially confounds comparisons across models," even while noting OpenAI models still perform well despite this selection pressure.</p></div>
+      </div>
+      <p class="callout">Scope is also explicitly bounded to three chat use cases (care consult, writing/documentation, medical research) — EHR-integrated workflows and institution-specific constraints are out of scope, and the authors recommend institutions run their own pre- and post-deployment evaluations rather than relying on this benchmark alone.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      "HealthBench Professional: Evaluating Large Language Models on Real Clinician Chats" · Soskin Hicks, Trofimov, Lim, Arora, Singhal et al. (OpenAI)</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  const slices = {
+    gft: { label: 'Good-Faith Typical', pct: '48.8%', n: 256,
+      desc: "Likert 3–7 examples from routine daily use — the broadest, most representative slice, providing coverage of ordinary clinician workflows rather than edge cases.",
+      cfc: 69.0, base: null, phys: 55.7,
+      verdict: "ChatGPT for Clinicians beats physicians (69.0 vs 55.7, p=1.0×10⁻⁷) — but after Holm correction, it's statistically indistinguishable from several other top models (GPT-5, GPT-5.4, GPT-5.2, GPT-5.4-with-browsing, Claude Opus 4.7). On ordinary cases, the field is bunched near the top." },
+    gfd: { label: 'Good-Faith Difficult', pct: '14.9%', n: 78,
+      desc: "Likert 1–2 examples that emerged organically from routine use — genuinely hard cases physicians happened to hit while doing their normal work, not manufactured to be hard.",
+      cfc: null, base: null, phys: null,
+      verdict: "The one slice with no clear winner: ChatGPT for Clinicians is statistically tied with physicians (p=0.60) and with the rest of the field (all p≥0.23). Naturally-occurring hard cases remain a stubborn plateau — this is where the benchmark still has real headroom." },
+    rtd: { label: 'Red-Teaming Difficult', pct: '36.4%', n: 191,
+      desc: "Likert 1–2 examples from deliberate adversarial stress-testing by physicians actively trying to break the system.",
+      cfc: 55.8, base: 26.2, phys: 30.0,
+      verdict: "The single largest gap in the whole benchmark: 55.8 vs. 30.0 for physicians (p=5.7×10⁻⁷) and vs. 26.2 for base GPT-5.4 (p=2.2×10⁻¹²) — beating every other model tested. The AI's biggest edge shows up exactly where the questions were engineered to be hardest, not where cases are naturally hardest." }
+  };
+  let curSlice = 'gft';
+
+  function renderSliceToggle(){
+    document.getElementById('sliceToggle').innerHTML = Object.keys(slices).map(k => {
+      const s = slices[k];
+      return `<button class="${k===curSlice?'active':''}" onclick="pickSlice('${k}')">${s.label}<br><span style="font-family:var(--mono);font-size:.68rem;opacity:.75">${s.pct} · n=${s.n}</span></button>`;
+    }).join('');
+  }
+  function pickSlice(k){ curSlice = k; renderSliceToggle(); renderSlice(); }
+
+  function hhBar(label, val, max){
+    if (val === null) return `<div class="hh-row"><div class="lbl">${label}</div><div class="hh-bar"><i style="width:0%"></i></div><div class="val">—</div></div>`;
+    const pct = (val/max*100).toFixed(0);
+    return `<div class="hh-row"><div class="lbl">${label}</div><div class="hh-bar"><i style="width:${pct}%"></i></div><div class="val">${val.toFixed(1)}</div></div>`;
+  }
+
+  function renderSlice(){
+    const s = slices[curSlice];
+    document.getElementById('sliceDesc').textContent = s.desc;
+    const max = 70;
+    document.getElementById('hhBars').innerHTML =
+      hhBar('ChatGPT for Clinicians', s.cfc, max) +
+      hhBar('Base GPT-5.4', s.base, max) +
+      hhBar('Physicians', s.phys, max);
+    document.getElementById('sliceVerdict').textContent = s.verdict;
+  }
+  renderSliceToggle(); renderSlice();
+
+  // ---- Quiz ----
+  const quiz = [
+    { q: "How are HealthBench Professional's examples sourced, compared to most other clinical LLM benchmarks?", opts: [
+        "From real conversations physicians had with ChatGPT for Clinicians during actual clinical work",
+        "From multiple-choice board exam question banks",
+        "From synthetic patient vignettes written for the benchmark",
+        "From publicly available online medical forums"
+      ], correct: 0, explain: "Every example starts as a real good-faith or red-teaming conversation with ChatGPT for Clinicians — not an authored scenario or an exam question." },
+    { q: "What is the purpose of requiring two additional physicians to confirm a \"difficult\" example?", opts: [
+        "To speed up the review process",
+        "To make sure a low score reflects a genuine model failure, not evaluation noise or an unclear rubric",
+        "To rewrite the conversation into a clearer format",
+        "To assign the example to a medical specialty"
+      ], correct: 1, explain: "This is the paper's core trustworthiness safeguard — separating true model limitations from artifacts of the evaluation itself." },
+    { q: "What did the length adjustment reveal when verbosity was raised from low to medium?", opts: [
+        "Scores dropped significantly after adjustment",
+        "The unadjusted score gain (~3.9 points) was mostly explained by length — the adjusted-score gain was nearly flat",
+        "Length had no effect on score even before adjustment",
+        "Only reasoning effort, not verbosity, affected scores"
+      ], correct: 1, explain: "This demonstrates the length penalty is actually doing its job: most of the raw verbosity-driven score gain disappears after adjustment, while genuine reasoning-effort gains persist." },
+    { q: "On which data slice did ChatGPT for Clinicians NOT show a clear advantage over physicians?", opts: [
+        "Red-Teaming Difficult (adversarial cases)",
+        "Good-Faith Typical (routine cases)",
+        "Good-Faith Difficult (naturally-occurring hard cases)",
+        "It won on every slice"
+      ], correct: 2, explain: "On organically-hard good-faith cases, ChatGPT for Clinicians was statistically tied with physicians and the rest of the field (p=0.60) — the sharpest AI advantage was specifically on deliberately adversarial red-teaming cases, not naturally hard ones." },
+  ];
+  document.getElementById('quizWrap').innerHTML = quiz.map((item, qi) => `
+    <div class="quiz">
+      <div class="q">${qi+1}. ${item.q}</div>
+      <div class="opts">
+        ${item.opts.map((o, oi) => `<button class="opt" onclick="answerQuiz(${qi}, ${oi}, this)">${o}</button>`).join('')}
+      </div>
+      <div class="explain" id="explain-${qi}">${item.explain}</div>
+    </div>
+  `).join('');
+  function answerQuiz(qi, oi, btn){
+    const item = quiz[qi];
+    const opts = btn.parentElement.querySelectorAll('.opt');
+    opts.forEach((o, i) => {
+      o.classList.remove('correct','wrong');
+      if (i === item.correct) o.classList.add('correct');
+      else if (i === oi) o.classList.add('wrong');
+    });
+    document.getElementById(`explain-${qi}`).classList.add('show');
+  }
+</script>
