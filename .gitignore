@@ -1,12 +1,12 @@
-.DS_Store
-**/.DS_Store
+# Whitelist mode: everything in this folder is ignored by default.
+# Only the paths explicitly un-ignored below are part of the public repo.
+# This covers README.md, internal CAMRE strategy docs, and any future
+# internal file added here regardless of name.
+*
 
-# README stays local-only (internal framework doc, not for the public repo)
-README.md
-
-# Internal CAMRE strategy docs — never belong in the public repo
-CAMRE cross-line dependency map.html
-CAMRE evaluation — decision framework (pre-meeting worksheet).md
-CAMRE evaluation — resourcing & cross-line dependencies (working draft).md
-Cross-Paper Synthesis — Methods & CAMRE Implications.md
-LLM-judge + clinician validation — methods across the corpus.md
+!.gitignore
+!index.html
+!Papers/
+!Papers/**
+!Deep_Read/
+!Deep_Read/**
