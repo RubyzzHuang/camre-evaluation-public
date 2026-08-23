@@ -10,3 +10,7 @@
 !Papers/**
 !Deep_Read/
 !Deep_Read/**
+
+# Too large for the public repo (89MB, over GitHub's recommended 50MB) —
+# kept locally only; index.html links to the Deep Read page instead.
+Papers/The Anatomy of a Personal Health Agent_paper.pdf
