@@ -148,6 +148,35 @@
       </div>
     </section>
 
+    <!-- HOW CAPABILITIES GET DERIVED -->
+    <section>
+      <div class="eyebrow">Behind the capability chips</div>
+      <h2>Four components, four different ways of deciding what to measure</h2>
+      <p class="sub">The capability lists explored above (DS1–DS2, DE1–DE4, HC1–HC6, P1–P4) look like one uniform taxonomy, but they were not derived the same way. Each component's capabilities come from whichever source made sense for that component:</p>
+      <div class="grid g4" style="margin-top:16px">
+        <div class="card"><div class="k">DS Agent</div><h3 style="font-size:.92rem">Copied from the architecture itself</h3><p class="muted" style="font-size:.82rem">The agent is already a 2-stage pipeline (plan, then code) — the two capabilities are literally its two processing stages. Cleanest possible mapping.</p></div>
+        <div class="card"><div class="k">DE Agent</div><h3 style="font-size:.92rem">Filled in from a literature gap-analysis</h3><p class="muted" style="font-size:.82rem">The agent runs one continuous reasoning loop, not distinct stages. Its 4 capabilities instead answer "what do prior studies of LLM medical knowledge <em>not</em> already cover?" — a top-down, gap-driven list.</p></div>
+        <div class="card"><div class="k">HC Agent</div><h3 style="font-size:.92rem">Elicited from real coaching experts</h3><p class="muted" style="font-size:.82rem">A formative interview study with 11 sleep/fitness/life coaches, independently thematically coded to convergence, produced HC1–HC6 bottom-up — no literature review or architecture stage involved.</p></div>
+        <div class="card"><div class="k">Orchestrator</div><h3 style="font-size:.92rem">Derived from theory + known failure modes</h3><p class="muted" style="font-size:.82rem">P1–P4 aren't measured capabilities at all but design principles, drawn from modular-cognition theory and documented failure patterns of existing multi-agent strategies (voting, debate) — used to explain, in advance, why each baseline should fall short.</p></div>
+      </div>
+
+      <div class="sscroll" style="overflow-x:auto;border-radius:var(--radius);border:1px solid var(--line);margin-top:18px">
+        <table style="width:100%;border-collapse:collapse;min-width:600px;background:var(--card)">
+          <thead><tr style="font-family:var(--mono);font-size:.66rem;text-transform:uppercase;color:var(--muted)">
+            <td style="padding:10px 14px">Component</td><td style="padding:10px 14px">Capabilities</td><td style="padding:10px 14px">Benchmark tasks</td><td style="padding:10px 14px">Ground truth source(s)</td>
+          </tr></thead>
+          <tbody style="font-size:.84rem">
+            <tr style="border-top:1px solid var(--line)"><td style="padding:10px 14px;font-weight:650">DS Agent</td><td style="padding:10px 14px">2</td><td style="padding:10px 14px">2 (1:1 with capabilities)</td><td style="padding:10px 14px">Expert-validated autorater; expert-written unit tests</td></tr>
+            <tr style="border-top:1px solid var(--line)"><td style="padding:10px 14px;font-weight:650">DE Agent</td><td style="padding:10px 14px">4</td><td style="padding:10px 14px">4 fully independent tasks</td><td style="padding:10px 14px">Board-exam answer keys · real diagnostic outcomes (N=2,000) · blind end-user rating · expert clinician rating</td></tr>
+            <tr style="border-top:1px solid var(--line)"><td style="padding:10px 14px;font-weight:650">HC Agent</td><td style="padding:10px 14px">6</td><td style="padding:10px 14px">2 combined tasks (rubric + ranking covers all 6)</td><td style="padding:10px 14px">Live end-users (N=31); coaching experts (N=3)</td></tr>
+            <tr style="border-top:1px solid var(--line)"><td style="padding:10px 14px;font-weight:650">Orchestrator</td><td style="padding:10px 14px">4 principles</td><td style="padding:10px 14px">2 combined tasks</td><td style="padding:10px 14px">End-users (N=20); health experts (N=5)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="callout">The Domain Expert Agent ends up the most elaborately evaluated component, and that isn't an accident of effort — it's a consequence of its four capabilities sharing <strong>no common measurable proxy</strong>. Factuality (DE1) has an objective answer key, so it can be scored automatically at scale. Diagnostic accuracy (DE2) can only be checked against what a symptom actually turned out to be, so it needed a real retrospective outcomes study. Personalization (DE3) is a judgment call only an end-user can make. Multi-modal synthesis (DE4) is a judgment call that requires clinical training to make well. No single rubric or rater pool could cover all four — so, unlike the Data Science Agent's clean 1:1 pipeline or the Health Coach Agent's two holistic tasks, the Domain Expert Agent is the one component where "evaluate the capability" and "build an entirely new study" turn out to be the same exercise, four separate times. This also tracks with where the stakes are highest: DE is the component that outputs medical knowledge and diagnostic judgments directly.</p>
+    </section>
+
     <!-- JUDGING THE JUDGE -->
     <section>
       <div class="eyebrow">A recurring discipline</div>
