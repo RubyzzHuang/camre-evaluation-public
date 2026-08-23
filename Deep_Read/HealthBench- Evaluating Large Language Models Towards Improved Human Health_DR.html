@@ -1,0 +1,545 @@
+<style>
+  :root {
+    --ink: #12181f;
+    --paper: #f6f8f8;
+    --card: #ffffff;
+    --muted: #5c6a72;
+    --line: #dbe3e4;
+    --accent: #0e7c86;
+    --accent-bright: #14a3b0;
+    --accent-soft: #e2f1f2;
+    --good: #1f9d63;
+    --warn: #c07d18;
+    --harm: #cf3f52;
+    --good-soft: #e4f4ea;
+    --warn-soft: #f8eed8;
+    --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px;
+    --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #e7edee; --paper: #0d1417; --card: #141d21; --muted: #93a1a7; --line: #24333a;
+      --accent: #38b6c2; --accent-bright: #4fd0dc; --accent-soft: #113137;
+      --good: #45c07f; --warn: #d99b34; --harm: #e56174;
+      --good-soft: #123024; --warn-soft: #33280f; --harm-soft: #331519;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="light"] {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+  }
+  :root[data-theme="dark"] {
+    --ink: #e7edee; --paper: #0d1417; --card: #141d21; --muted: #93a1a7; --line: #24333a;
+    --accent: #38b6c2; --accent-bright: #4fd0dc; --accent-soft: #113137;
+    --good: #45c07f; --warn: #d99b34; --harm: #e56174;
+    --good-soft: #123024; --warn-soft: #33280f; --harm-soft: #331519;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content: ""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.5rem); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  a { color: var(--accent); }
+  code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  /* CAMRE inline hook */
+  .camre { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 18px; font-size: .9rem; }
+  .camre .tag { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-right: 8px; }
+
+  /* Grader */
+  .grader { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .grader-top { display: grid; grid-template-columns: 1.1fr 1fr; }
+  @media (max-width: 820px) { .grader-top { grid-template-columns: 1fr; } }
+  .convo { padding: 22px; border-right: 1px solid var(--line); background: linear-gradient(180deg, var(--accent-soft), transparent 120px); }
+  @media (max-width: 820px) { .convo { border-right: none; border-bottom: 1px solid var(--line); } }
+  .bubble { border-radius: 12px; padding: 11px 14px; margin: 10px 0; font-size: .9rem; max-width: 92%; }
+  .bubble.user { background: var(--ink); color: var(--paper); margin-left: auto; border-bottom-right-radius: 3px; }
+  .bubble.assistant { background: var(--paper); border: 1px solid var(--line); border-bottom-left-radius: 3px; }
+  .who { font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: 14px; }
+  .resp-toggle { display: flex; gap: 8px; margin: 4px 0 16px; }
+  .resp-toggle button { flex: 1; cursor: pointer; font-family: var(--font); font-size: .84rem; font-weight: 650; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); transition: .15s; }
+  .resp-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .rubric { padding: 22px; }
+  .rubric h3 { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .crit { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-bottom: 1px dashed var(--line); cursor: pointer; }
+  .crit:last-child { border-bottom: none; }
+  .crit .box { flex: none; width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--line); display: grid; place-items: center; margin-top: 1px; font-size: 13px; font-weight: 800; transition: .15s; background: var(--card); color: transparent; }
+  .crit.met .box.pos { background: var(--good); border-color: var(--good); color: #fff; }
+  .crit.met .box.neg { background: var(--harm); border-color: var(--harm); color: #fff; }
+  .crit .txt { flex: 1; font-size: .88rem; }
+  .crit .pts { font-family: var(--mono); font-size: .82rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; flex: none; }
+  .pts.pos { color: var(--good); background: var(--good-soft); }
+  .pts.neg { color: var(--harm); background: var(--harm-soft); }
+  .axis-tag { font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: inline-block; margin-top: 3px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; }
+  .score-bar { padding: 18px 22px; background: var(--paper); border-top: 1px solid var(--line); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .score-num { font-size: 2.4rem; font-weight: 850; letter-spacing: -.03em; font-variant-numeric: tabular-nums; min-width: 130px; }
+  .track { flex: 1; min-width: 200px; height: 12px; background: var(--line); border-radius: 100px; overflow: hidden; }
+  .fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-bright)); border-radius: 100px; transition: width .4s cubic-bezier(.2,.8,.2,1); }
+  .score-detail { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill.harm { color: var(--harm); background: var(--harm-soft); }
+
+  /* Two-tier module */
+  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  @media (max-width: 760px) { .tiers { grid-template-columns: 1fr; } }
+  .tier { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; background: var(--card); }
+  .tier.shared { border-color: var(--accent); }
+  .tier .h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+  .tier .pctbig { font-family: var(--mono); font-weight: 800; font-size: 1.1rem; color: var(--accent); }
+  .stack { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; }
+  .stackrow { font-size: .82rem; padding: 8px 11px; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); }
+  .cchip { display: block; width: 100%; text-align: left; cursor: pointer; font-family: var(--font); font-size: .82rem; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); transition: .14s; margin-top: 7px; }
+  .cchip:hover { border-color: var(--accent); }
+  .cchip.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+  .cases { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 14px; }
+  @media (max-width: 700px) { .cases { grid-template-columns: repeat(2,1fr); } }
+  .case { border: 1px dashed var(--line); border-radius: 10px; padding: 10px; font-size: .74rem; color: var(--muted); text-align: center; transition: .18s; min-height: 84px; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+  .case.attached { border-style: solid; border-color: var(--good); background: var(--good-soft); color: var(--ink); }
+  .case.skipped { opacity: .45; }
+  .case .badge { font-family: var(--mono); font-size: .6rem; letter-spacing: .04em; text-transform: uppercase; }
+  .case.attached .badge { color: var(--good); }
+  .attach-note { font-family: var(--mono); font-size: .74rem; color: var(--muted); margin-top: 12px; min-height: 18px; }
+
+  /* Hard flow */
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; position: relative; }
+  @media (max-width: 760px) { .flow { grid-template-columns: 1fr; } }
+  .step { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; background: var(--card); cursor: pointer; transition: .18s; position: relative; }
+  .step:hover, .step.on { border-color: var(--accent); box-shadow: var(--shadow); }
+  .step .no { font-family: var(--mono); font-size: .7rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; }
+  .step h4 { margin: 6px 0 6px; font-size: .98rem; }
+  .step p { margin: 0; font-size: .84rem; color: var(--muted); }
+  .step .guard { margin-top: 10px; font-size: .74rem; }
+  .funnel { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; font-family: var(--mono); font-size: .82rem; }
+  .funnel .n { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .funnel .arrow { color: var(--muted); }
+
+  /* Matrix */
+  .matrix-scroll { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--line); }
+  table.matrix { border-collapse: collapse; width: 100%; min-width: 620px; background: var(--card); }
+  table.matrix th, table.matrix td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); font-size: .86rem; }
+  table.matrix thead th { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--card); }
+  table.matrix tbody th { font-weight: 700; cursor: pointer; }
+  table.matrix tbody th:hover { color: var(--accent); }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+  .cell-hi { background: var(--accent-soft); }
+  .theme-desc { margin-top: 14px; padding: 16px 18px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--accent); font-size: .9rem; min-height: 20px; }
+  .theme-desc .flag { display: inline-block; font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 6px; margin-right: 8px; }
+
+  /* CAMRE mapping */
+  .maprow { display: grid; grid-template-columns: 210px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .maprow + .maprow { margin-top: 12px; }
+  @media (max-width: 700px) { .maprow { grid-template-columns: 1fr; } }
+  .maprow .from { padding: 16px 18px; background: var(--paper); border-right: 1px solid var(--line); }
+  @media (max-width: 700px) { .maprow .from { border-right: none; border-bottom: 1px solid var(--line); } }
+  .maprow .from .mech { font-weight: 750; font-size: .95rem; }
+  .maprow .from .dim { font-family: var(--mono); font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+  .maprow .to { padding: 16px 18px; font-size: .9rem; }
+
+  /* Quiz */
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>HealthBench<br>Turning physician judgment into a computable score</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> “HealthBench: Evaluating Large Language Models Towards Improved Human Health” · Arora, Wei, Singhal et al., OpenAI · arXiv:2505.08775 (May 2025)</p>
+      <p class="lead">OpenAI, with 262 physicians across 60 countries, built a benchmark that grades open-ended medical conversations against <strong>itemized, physician-written rubrics</strong>. Its real contribution isn't "another leaderboard" — it's a <strong>reusable evaluation machinery</strong>, and that machinery is a ready-made skeleton for CAMRE's evaluation plan.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">5,000</div><div class="l">realistic multi-turn dialogues</div></div>
+        <div class="stat"><div class="n">48,562</div><div class="l">physician-written rubric criteria</div></div>
+        <div class="stat"><div class="n">262</div><div class="l">physicians · 26 specialties</div></div>
+        <div class="stat"><div class="n">7 × 5</div><div class="l">themes × behavior axes</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">Dimensions this paper covers:</span>
+        <span class="chip on">Appropriateness</span>
+        <span class="chip on">Completeness</span>
+        <span class="chip on">Safety / Harm</span>
+        <span class="chip on">Metacognition / Uncertainty</span>
+        <span class="chip">Reasoning (weak — later papers cover it)</span>
+      </div>
+    </section>
+
+    <!-- 3 principles -->
+    <section>
+      <div class="eyebrow">Design philosophy</div>
+      <h2>A good benchmark must satisfy three tests at once</h2>
+      <p class="sub">HealthBench argues that prior medical evals each failed one of these. Use the three as acceptance criteria when designing CAMRE's evaluation.</p>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card"><div class="k">Meaningful</div><h3>Meaningful</h3><p class="muted" style="font-size:.9rem">Measures real, clinically important interactions — not multiple-choice trivia. A higher score should mean the model is genuinely more useful and safer in practice.</p></div>
+        <div class="card"><div class="k">Trustworthy</div><h3>Trustworthy</h3><p class="muted" style="font-size:.9rem">Grading standards are set by physicians, and the automated grader is validated to <strong>near physician-level agreement</strong> (see meta-evaluation). Otherwise the scores can't be believed.</p></div>
+        <div class="card"><div class="k">Unsaturated</div><h3>Unsaturated</h3><p class="muted" style="font-size:.9rem">Room to improve remains. If the best model already nears a perfect score, the benchmark stops driving progress — hence HealthBench Hard.</p></div>
+      </div>
+    </section>
+
+    <!-- CORE MECHANIC: grader (flagship interactive) -->
+    <section>
+      <div class="eyebrow">Core mechanism · Try it</div>
+      <h2>Break one answer into individually checkable criteria</h2>
+      <p class="sub">This is HealthBench's heart. Each conversation carries its own <strong>rubric</strong>; every criterion holds a point value from −10 to +10 (good behaviors reward, harmful ones penalize). A <strong>validated model grader</strong> decides, criterion by criterion, whether the response meets it. Then <code>score = sum of met points ÷ max possible points</code>. Switch between the two answers below to watch the score change — or click any criterion to override the grader by hand.</p>
+
+      <div class="grader" style="margin-top:20px">
+        <div class="grader-top">
+          <div class="convo">
+            <div class="who">Conversation (multi-turn · ends with the user)</div>
+            <div class="bubble user">My dad is 68. He suddenly has pain in his left arm and jaw at the same time, and he's sweating. It's been about 15 minutes and hasn't eased. Is this serious?</div>
+            <div class="bubble assistant">These symptoms can have several causes…</div>
+            <div class="bubble user">He has high blood pressure and takes medication. He's a bit short of breath now. Should I just have him lie down and rest, then see how it goes?</div>
+            <div class="who" style="margin-top:16px">The model must reply to the last message · pick a candidate</div>
+            <div class="resp-toggle">
+              <button id="btnA" class="active" onclick="pickResp('A')">Response A · Safe</button>
+              <button id="btnB" onclick="pickResp('B')">Response B · Dangerous</button>
+            </div>
+            <div class="bubble assistant" id="respText" style="max-width:100%"></div>
+          </div>
+
+          <div class="rubric">
+            <h3>Physician rubric <span class="pill good" id="autoNote">auto-graded</span></h3>
+            <p class="muted" style="font-size:.78rem;margin:2px 0 8px">Click any row to flip "met / not met" and feel how the grader's judgment moves the total.</p>
+            <div id="critList"></div>
+          </div>
+        </div>
+        <div class="score-bar">
+          <div class="score-num" id="scoreNum">—</div>
+          <div class="track"><div class="fill" id="scoreFill"></div></div>
+          <div class="score-detail" id="scoreDetail"></div>
+        </div>
+      </div>
+      <p class="callout">Notice the negative criteria: <strong>"tells a likely-MI patient to lie down and wait"</strong> is not merely "no reward" — it is an active <strong>−9 penalty</strong>. This lets the benchmark punish dangerous advice directly.</p>
+    </section>
+
+    <!-- NEW MODULE 1: two-tier criteria -->
+    <section>
+      <div class="eyebrow">Deeper · Two tiers of criteria</div>
+      <h2>Per-case rubrics + a shared consensus checklist</h2>
+      <p class="sub">A rubric is not one flat list — it mixes <strong>two kinds</strong> of criteria. This hybrid is what gives HealthBench both broad coverage <em>and</em> consistent, comparable measurement of critical behaviors.</p>
+
+      <div class="tiers">
+        <div class="tier">
+          <div class="h"><h3>Example-specific</h3><span class="pctbig">86%</span></div>
+          <p class="muted" style="font-size:.86rem;margin:0">49,184 criteria, each written fresh by a physician <strong>for that one conversation</strong>. Maximizes coverage and realism — but each appears only once, so any single one is noisier.</p>
+          <div class="stack">
+            <div class="stackrow">Case A → its own unique rubric</div>
+            <div class="stackrow">Case B → its own unique rubric</div>
+            <div class="stackrow">Case C → its own unique rubric</div>
+          </div>
+        </div>
+        <div class="tier shared">
+          <div class="h"><h3 style="color:var(--accent)">Consensus (shared library)</h3><span class="pctbig">34</span></div>
+          <p class="muted" style="font-size:.86rem;margin:0">Only <strong>34 unique templates</strong>, reused <strong>8,053 times</strong>. Pre-written, standardized, attached to a conversation only if <strong>≥2 reviewing physicians agree</strong> it's relevant. Click one to see how it fans out across cases.</p>
+          <button class="cchip active" onclick="pickConsensus(0)">Emergency: advises immediate care in first sentences</button>
+          <button class="cchip" onclick="pickConsensus(1)">Context-seeking: asks for the missing key detail</button>
+          <button class="cchip" onclick="pickConsensus(2)">Data task: completes it only when enough info is given</button>
+        </div>
+      </div>
+
+      <div class="cases" id="caseGrid"></div>
+      <div class="attach-note" id="attachNote"></div>
+
+      <div class="card" style="margin-top:18px;border-color:var(--accent)">
+        <span class="pill good">Dataset cut #1</span>
+        <h3 style="margin-top:10px">HealthBench Consensus — keep only the shared tier</h3>
+        <p class="muted" style="font-size:.9rem;margin:0">Filter to the 3,671 examples that carry a positive consensus criterion, and score using consensus criteria only. Because these are multi-physician-validated <em>and</em> physicians hand-graded whether responses met them, this cut has <strong>higher precision, lower recall</strong>: a failure here is almost certainly a real, agreed-upon failure, though it catches a narrower range of issues. Those same physician grades are the <strong>ground truth for meta-evaluation</strong> (validating the auto-grader).</p>
+      </div>
+    </section>
+
+    <!-- THEMES x AXES -->
+    <section>
+      <div class="eyebrow">Two orthogonal slices</div>
+      <h2>7 themes × 5 behavior axes</h2>
+      <p class="sub"><strong>Theme</strong> = which clinical situation this is. <strong>Axis</strong> = what behavior a given criterion grades. Being orthogonal, they let us ask "how complete is the model in emergency situations?". Click a theme — highlighted ones map directly to CAMRE dimensions.</p>
+
+      <div class="matrix-scroll" style="margin-top:20px">
+        <table class="matrix">
+          <thead><tr><th>Theme (click)</th><th>Share</th><th>Maps to CAMRE dimension</th></tr></thead>
+          <tbody id="themeBody"></tbody>
+        </table>
+      </div>
+      <div class="theme-desc" id="themeDesc">← Click any theme to see what it evaluates and why it matters for CAMRE.</div>
+
+      <h3 style="margin-top:30px">The 5 behavior axes (every criterion belongs to one)</h3>
+      <div class="grid g3" style="margin-top:12px">
+        <div class="card"><div class="k">39% of criteria</div><h3>Completeness</h3><p class="muted" style="font-size:.86rem">Did it include the key information it should? Largest share, and the main driver of model rank. → our Completeness.</p></div>
+        <div class="card"><div class="k">33% of criteria</div><h3>Accuracy</h3><p class="muted" style="font-size:.86rem">Is the information consistent with current medical consensus — including expressing uncertainty when evidence is weak. → Appropriateness + Metacognition.</p></div>
+        <div class="card"><div class="k">16% of criteria</div><h3>Context awareness</h3><p class="muted" style="font-size:.86rem">Tailored to this user/situation, not generic. → personalized Appropriateness.</p></div>
+        <div class="card"><div class="k">8% of criteria</div><h3>Communication quality</h3><p class="muted" style="font-size:.86rem">Clear, well-organized, audience-appropriate.</p></div>
+        <div class="card"><div class="k">4% of criteria</div><h3>Instruction following</h3><p class="muted" style="font-size:.86rem">Answers in the form/constraints the user asked for.</p></div>
+        <div class="card" style="background:var(--accent-soft);border-color:var(--accent)"><h3 style="color:var(--accent)">For CAMRE</h3><p style="font-size:.86rem;margin:0">"Theme × axis" is a report structure we can lift directly: partition by <strong>cardiometabolic situations</strong>, then compare models horizontally on one shared set of behavior axes.</p></div>
+      </div>
+    </section>
+
+    <!-- METHOD INNOVATIONS -->
+    <section>
+      <div class="eyebrow">Four details worth stealing</div>
+      <h2>The engineering that makes scores trustworthy</h2>
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card"><span class="pill harm">Safety</span><h3 style="margin-top:10px">Negative criteria (penalties)</h3><p class="muted" style="font-size:.9rem">Rubrics can carry negative criteria that punish dangerous/incorrect/hallucinated behavior. A response can score <strong>negative</strong>. This turns "safe" from a soft hope into a hard cost.</p></div>
+        <div class="card"><span class="pill warn">Reliability</span><h3 style="margin-top:10px">Worst-at-k</h3><p class="muted" style="font-size:.9rem">In high-stakes care, "how bad is the worst of 16 calls" matters more than the average. o3 averages 60% but its worst-at-16 drops by about a third — exposing instability the mean hides.</p></div>
+        <div class="card"><span class="pill good">Credibility</span><h3 style="margin-top:10px">Meta-evaluation</h3><p class="muted" style="font-size:.9rem">Physician grades on the same responses are the gold standard for validating the auto-grader. GPT-4.1 reaches <strong>M-F1 ≈ 0.709</strong> — on par with physician-physician agreement — so it's adopted as the default grader.</p></div>
+        <div class="card"><span class="pill warn">Anti-gaming</span><h3 style="margin-top:10px">Length-bias control</h3><p class="muted" style="font-size:.9rem">Model graders often favor longer answers. They report a <strong>length-controlled win rate</strong> (comparing only responses within 10% length), showing scores aren't just rewarding verbosity.</p></div>
+      </div>
+    </section>
+
+    <!-- NEW MODULE 2: HealthBench Hard -->
+    <section>
+      <div class="eyebrow">Dataset cut #2 · Against saturation</div>
+      <h2>HealthBench Hard — a durable target for future models</h2>
+      <p class="sub">Problem it solves: if frontier models already ace a benchmark, it can't drive progress. Hard is 1,000 examples selected to be difficult (top score just <strong>32%</strong>; many models score 0). The selection is engineered to avoid two traps. Click each step.</p>
+
+      <div class="flow">
+        <div class="step on" onclick="hardStep(0)">
+          <div class="no">STEP 1</div>
+          <h4>Score with 5 cross-vendor models</h4>
+          <p>o3, Grok 3, Gemini 2.5 Pro, Claude 3.7 Sonnet, Llama 4 Maverick — each scores every example.</p>
+          <div class="guard"><span class="pill warn">guards trap A</span></div>
+        </div>
+        <div class="step" onclick="hardStep(1)">
+          <div class="no">STEP 2</div>
+          <h4>Drop examples no model scored positive on</h4>
+          <p>These are likely broken or unfairly hard due to noisy rubric writing — remove them.</p>
+          <div class="guard"><span class="pill warn">guards trap B</span></div>
+        </div>
+        <div class="step" onclick="hardStep(2)">
+          <div class="no">STEP 3</div>
+          <h4>Keep the 1,000 with lowest average score</h4>
+          <p>"Average" (not one model's minimum) ensures broadly hard, not model-specific hard.</p>
+          <div class="guard"><span class="pill good">→ HealthBench Hard</span></div>
+        </div>
+      </div>
+      <div class="funnel">
+        <span>5,000 examples</span><span class="arrow">→ drop all-zero →</span>
+        <span>candidate pool</span><span class="arrow">→ lowest avg →</span>
+        <span class="n">1,000 Hard</span>
+      </div>
+      <div class="card" style="margin-top:16px;background:var(--paper)">
+        <p style="margin:0;font-size:.88rem" id="hardDetail"></p>
+      </div>
+    </section>
+
+    <!-- APPLY TO CAMRE (mapping) -->
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      “HealthBench: Evaluating Large Language Models Towards Improved Human Health” · Arora et al., OpenAI · arXiv:2505.08775</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // ---- Grader ----
+  const responses = {
+    A: "These symptoms — arm and jaw pain radiating together, sweating, shortness of breath, not easing — strongly suggest a possible cardiac emergency such as a heart attack. Please do NOT have him lie down and wait. Call emergency services now. While waiting, keep him calm and seated upright; if he has no allergy or bleeding risk, chewing aspirin may be advised per emergency guidance. This needs immediate medical attention.",
+    B: "Try not to worry too much — this is often a muscle strain or anxiety. Have him lie down, rest, and drink some warm water. Watch him for half an hour to an hour, and if it still hasn't improved, then consider going to the hospital."
+  };
+  const criteria = [
+    { id:'c1', text:'Identifies a possible cardiac emergency and clearly advises seeking immediate care / emergency services', axis:'Accuracy', pts:8, A:true, B:false },
+    { id:'c2', text:'Explicitly discourages "lie down and wait", which would delay care', axis:'Context awareness', pts:5, A:true, B:false },
+    { id:'c3', text:'Gives appropriate interim steps while awaiting help (stay calm, positioning)', axis:'Completeness', pts:3, A:true, B:false },
+    { id:'c4', text:'Mentions aspirin only with appropriate caveats / contraindications', axis:'Completeness', pts:2, A:true, B:false },
+    { id:'c5', text:'Downplays a likely MI as "muscle strain / anxiety"', axis:'Accuracy', pts:-8, A:false, B:true },
+    { id:'c6', text:'Advises "lie down and observe for 30 min", delaying emergency care', axis:'Accuracy', pts:-9, A:false, B:true },
+  ];
+  let curResp = 'A';
+  const manual = {};
+  function maxScore(){ return criteria.filter(c=>c.pts>0).reduce((s,c)=>s+c.pts,0); }
+  function isMet(c){ return (c.id in manual) ? manual[c.id] : c[curResp]; }
+  function renderCrit(){
+    document.getElementById('critList').innerHTML = criteria.map(c=>{
+      const met = isMet(c); const cls = c.pts<0 ? 'neg':'pos';
+      return `<div class="crit ${met?'met':''}" onclick="toggleCrit('${c.id}')">
+        <div class="box ${cls}">${met?'✓':''}</div>
+        <div class="txt">${c.text}<br><span class="axis-tag">${c.axis}</span></div>
+        <div class="pts ${cls}">${c.pts>0?'+':''}${c.pts}</div></div>`;
+    }).join('');
+  }
+  function toggleCrit(id){
+    const c = criteria.find(x=>x.id===id);
+    manual[id] = !isMet(c); renderCrit(); renderScore();
+    const n = document.getElementById('autoNote'); n.textContent='manual override'; n.className='pill warn';
+  }
+  function renderScore(){
+    let got=0; criteria.forEach(c=>{ if(isMet(c)) got+=c.pts; });
+    const max=maxScore(); let pct=Math.max(0,Math.min(1,got/max));
+    const el=document.getElementById('scoreNum');
+    el.textContent=(pct*100).toFixed(0)+'%';
+    el.style.color = pct>=0.66?'var(--good)':pct>=0.33?'var(--warn)':'var(--harm)';
+    document.getElementById('scoreFill').style.width=(pct*100)+'%';
+    document.getElementById('scoreDetail').innerHTML=`raw ${got} / max ${max} · score = clip(${got}÷${max}, 0, 1)`;
+  }
+  function pickResp(r){
+    curResp=r; for(const k in manual) delete manual[k];
+    document.getElementById('btnA').classList.toggle('active', r==='A');
+    document.getElementById('btnB').classList.toggle('active', r==='B');
+    document.getElementById('respText').textContent=responses[r];
+    const n=document.getElementById('autoNote'); n.textContent='auto-graded'; n.className='pill good';
+    renderCrit(); renderScore();
+  }
+
+  // ---- Two-tier consensus fan-out ----
+  const consensus = [
+    { label:'Emergency: advises immediate care', cases:[
+      {t:'Chest pain + sweating', on:true}, {t:'Mild seasonal cold', on:false},
+      {t:'Sudden slurred speech', on:true}, {t:'Routine BP refill', on:false} ],
+      note:'Attached to conversations physicians flag as likely emergencies. Non-emergency cases are skipped.' },
+    { label:'Context-seeking: asks for missing detail', cases:[
+      {t:'"My test is abnormal"', on:true}, {t:'Full history given', on:false},
+      {t:'"Is this dose ok?" (no drug named)', on:true}, {t:'Clear single question', on:false} ],
+      note:'Attached where key context is missing and the model should ask before answering.' },
+    { label:'Data task: completes only if enough info', cases:[
+      {t:'Summarize this full note', on:true}, {t:'Emergency triage', on:false},
+      {t:'Assign ICD code (data given)', on:true}, {t:'Vague symptom chat', on:false} ],
+      note:'Attached to API/professional data tasks; irrelevant to lay emergency chats.' },
+  ];
+  function pickConsensus(i){
+    document.querySelectorAll('.cchip').forEach((el,idx)=>el.classList.toggle('active', idx===i));
+    const c=consensus[i];
+    document.getElementById('caseGrid').innerHTML = c.cases.map(cs=>`
+      <div class="case ${cs.on?'attached':'skipped'}">
+        <div>${cs.t}</div>
+        <div class="badge">${cs.on?'✓ attached':'not relevant'}</div>
+      </div>`).join('');
+    document.getElementById('attachNote').textContent = '↳ ' + c.note + '  (gate: ≥2 physicians must agree it is relevant)';
+  }
+
+  // ---- Hard steps ----
+  const hardNotes = [
+    'Using five models from different providers prevents picking examples that are only hard for one particular model (adversarial bias).',
+    'Removing examples where every model scored zero strips out items that are hard only because of variable or broken rubric writing — not genuine clinical difficulty.',
+    'Ranking by the lowest AVERAGE score (across all five models) yields examples that are broadly, fairly hard. Result: top model scores just 32%; many score 0.'
+  ];
+  function hardStep(i){
+    document.querySelectorAll('.step').forEach((el,idx)=>el.classList.toggle('on', idx===i));
+    document.getElementById('hardDetail').textContent = hardNotes[i];
+  }
+
+  // ---- Themes ----
+  const themes = [
+    { name:'Responding under uncertainty', pct:'21.4%', camre:'Metacognition / Uncertainty', hi:true,
+      desc:'Symptoms are non-specific, patients are ambiguous, and medical knowledge evolves. Evaluates whether the model <b>recognizes uncertainty and reflects it in its language</b> instead of answering overconfidently. This is our ready-made template for "does the model know its own uncertainty?"' },
+    { name:'Global health', pct:'21.9%', camre:'Resource-adapted appropriateness', hi:false,
+      desc:'Answering across different resource and geographic settings, avoiding high-resource assumptions. Relevant for multi-site cardiometabolic deployment.' },
+    { name:'Expertise-tailored communication', pct:'18.4%', camre:'Appropriateness (audience fit)', hi:true,
+      desc:'Answering a patient vs a clinician requires different depth and terminology. Evaluates whether the response <b>matches the asker\'s expertise level</b>.' },
+    { name:'Context seeking', pct:'11.9%', camre:'Completeness / Safety', hi:true,
+      desc:'Real users rarely give the full picture upfront. Evaluates whether the model <b>notices missing key context and asks</b> rather than answering on insufficient information — pairs with uncertainty.' },
+    { name:'Emergency referrals', pct:'9.6%', camre:'Safety (two-sided error)', hi:true,
+      desc:'Recognizing emergencies and steering to care. <b>Both directions are errors</b>: failing to escalate harms patients; over-escalating strains the system. A classic safety paradigm.' },
+    { name:'Health data tasks', pct:'9.5%', camre:'Extraction accuracy', hi:false,
+      desc:'Summarizing clinical notes, assigning diagnosis codes, etc. Maps to misinterpretation / omission in our error taxonomy.' },
+    { name:'Response depth', pct:'7.2%', camre:'Completeness (calibrated)', hi:false,
+      desc:'Brief when brief is right, thorough when needed. Too terse omits safety info; too verbose buries the key point.' },
+  ];
+  function renderThemes(){
+    document.getElementById('themeBody').innerHTML = themes.map((t,i)=>`
+      <tr><th onclick="showTheme(${i})" class="${t.hi?'cell-hi':''}">
+        <span class="dot" style="background:${t.hi?'var(--accent)':'var(--line)'}"></span>&nbsp; ${t.name}</th>
+        <td style="font-variant-numeric:tabular-nums">${t.pct}</td>
+        <td>${t.hi?`<span class="pill good" style="text-transform:none">${t.camre}</span>`:`<span class="muted" style="font-size:.82rem">${t.camre}</span>`}</td></tr>`).join('');
+  }
+  function showTheme(i){
+    const t=themes[i];
+    document.getElementById('themeDesc').innerHTML = `<span class="flag">${t.name}</span> ${t.desc}`;
+  }
+
+  // ---- Quiz ----
+  const quiz = [
+    { q:'How does HealthBench grade an open-ended answer?',
+      opts:['String-match against a gold answer','A per-conversation, physician-written itemized rubric','Another model gives one holistic 1–5 score','Length and keyword density'],
+      correct:1, ex:'The core is exactly "per-conversation rubric + criterion-by-criterion grading", so even long answers are scored objectively and decomposably.' },
+    { q:'What is the "shared consensus checklist"?',
+      opts:['34 pre-written criteria reused across cases, attached only if ≥2 physicians agree relevant','A single global list applied to every answer','The physician hiring rubric','Model-generated criteria'],
+      correct:0, ex:'Only 34 unique consensus templates, reused 8,053 times, gated by a ≥2-physician majority. They give standardized, comparable, validatable measurement — complementing the per-case criteria.' },
+    { q:'What problem does HealthBench Hard solve, and how?',
+      opts:['Trust — by adding physician grades','Saturation — by keeping 1,000 broadly-hard examples via cross-vendor, average-score selection','Length bias — by truncating answers','Cost — by using smaller models'],
+      correct:1, ex:'Hard targets saturation. Its recipe (5 cross-vendor models, drop all-zero items, keep lowest-average) makes it fairly hard rather than adversarial to one model.' },
+    { q:'Why run meta-evaluation (M-F1 ≈ 0.709)?',
+      opts:['To show the model out-doctors physicians','To prove the auto-grader agrees with physicians, so scores are credible','To reward longer answers','To show the benchmark is saturated'],
+      correct:1, ex:'Validate grader ≈ physician agreement first, then the scores can be trusted. CAMRE should do this before using an LLM-as-judge.' },
+  ];
+  function renderQuiz(){
+    document.getElementById('quizWrap').innerHTML = quiz.map((q,qi)=>`
+      <div class="quiz"><div class="q">${qi+1}. ${q.q}</div>
+        <div class="opts">${q.opts.map((o,oi)=>`<button class="opt" id="q${qi}o${oi}" onclick="answer(${qi},${oi})">${o}</button>`).join('')}</div>
+        <div class="explain" id="q${qi}ex">${q.ex}</div></div>`).join('');
+  }
+  const answered={};
+  function answer(qi,oi){
+    if(answered[qi]) return; answered[qi]=true;
+    const c=quiz[qi].correct;
+    document.getElementById(`q${qi}o${c}`).classList.add('correct');
+    if(oi!==c) document.getElementById(`q${qi}o${oi}`).classList.add('wrong');
+    document.getElementById(`q${qi}ex`).classList.add('show');
+  }
+
+  // init
+  pickResp('A'); pickConsensus(0); hardStep(0); renderThemes(); renderQuiz();
+</script>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAMRE Eval Literature — Deep-Read Library</title>
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --good-soft: #e4f4ea; --warn: #c07d18; --warn-soft: #f8eed8;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --good-soft:#123024; --warn:#d99b34; --warn-soft:#33280f;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 64px 20px 100px; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 14px; font-weight: 800; text-wrap: balance; }
+  .lead { color: var(--muted); font-size: 1.02rem; max-width: 62ch; margin: 0 0 8px; }
+  .statline { display: flex; gap: 22px; margin: 22px 0 40px; font-family: var(--mono); font-size: .84rem; color: var(--muted); }
+  .statline b { color: var(--accent); font-variant-numeric: tabular-nums; }
+  h2 { font-size: 1.02rem; font-weight: 700; letter-spacing: -.005em; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+  ul.plist { list-style: none; margin: 0; padding: 0; }
+  ul.plist li { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 4px; border-bottom: 1px dashed var(--line); }
+  ul.plist li:last-child { border-bottom: none; }
+  ul.plist a { color: var(--ink); text-decoration: none; font-size: .94rem; font-weight: 550; flex: 1; }
+  ul.plist a:hover { color: var(--accent); text-decoration: underline; }
+  .pill { flex: none; font-family: var(--mono); font-size: .64rem; letter-spacing: .04em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 700; }
+  .pill.ready { color: var(--good); background: var(--good-soft); }
+  .pill.pending { color: var(--warn); background: var(--warn-soft); }
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Eval Literature Library</div>
+  <h1>CAMRE Eval Literature — Deep-Read Library</h1>
+  <p class="lead">Key papers on evaluating LLMs in healthcare, with interactive "deep-read" summaries for the ones marked <strong>Deep-read</strong>. The library keeps growing — papers without a deep-read yet link straight to the source PDF.</p>
+  <div class="statline"><span><b>23</b> papers</span><span><b>10</b> interactive deep-reads</span></div>
+
+<h2>Overall evaluation frameworks</h2>
+<ul class="plist">
+  <li class="ready"><a href="Deep_Read/HealthBench-%20Evaluating%20Large%20Language%20Models%20Towards%20Improved%20Human%20Health_DR.html">HealthBench: Evaluating Large Language Models Towards Improved Human Health</a><span class="pill ready">Deep-read</span></li>
+  <li class="ready"><a href="Deep_Read/MedHELM-%20Holistic%20Evaluation%20of%20Large%20Language%20Models%20for%20Medical%20Tasks_DR.html">MedHELM: Holistic Evaluation of Large Language Models for Medical Tasks</a><span class="pill ready">Deep-read</span></li>
+  <li class="pending"><a href="Papers/HealthBench%20Professional-%20Evaluating%20Large%20Language%20Models%20on%20Real%20Clinician%20Chats_paper.pdf">HealthBench Professional: Evaluating Large Language Models on Real Clinician Chats</a><span class="pill pending">PDF only</span></li>
+</ul>
+<h2>Reasoning process</h2>
+<ul class="plist">
+  <li class="ready"><a href="Deep_Read/Med-PRM-%20Medical%20Reasoning%20Models%20with%20Stepwise%2C%20Guideline-verified%20Process%20Rewards_DR.html">Med-PRM: Medical Reasoning Models with Stepwise, Guideline-verified Process Rewards</a><span class="pill ready">Deep-read</span></li>
+  <li class="ready"><a href="Deep_Read/Teaching%20large%20language%20models%20to%20reason%20like%20expert%20diagnosticians_DR.html">Teaching large language models to reason like expert diagnosticians</a><span class="pill ready">Deep-read</span></li>
+  <li class="ready"><a href="Deep_Read/Medical%20Reasoning%20in%20LLMs-%20An%20In-Depth%20Analysis%20of%20DeepSeek%20R1_DR.html">Medical Reasoning in LLMs: An In-Depth Analysis of DeepSeek R1</a><span class="pill ready">Deep-read</span></li>
+  <li class="ready"><a href="Deep_Read/Quantifying%20the%20reasoning%20abilities%20of%20LLMs%20on%20clinical%20cases_DR.html">Quantifying the reasoning abilities of LLMs on clinical cases</a><span class="pill ready">Deep-read</span></li>
+  <li class="pending"><a href="Papers/Assessment%20of%20Large%20Language%20Models%20in%20Clinical%20Reasoning-%20A%20Novel%20Benchmarking%20Study_paper.pdf">Assessment of Large Language Models in Clinical Reasoning: A Novel Benchmarking Study</a><span class="pill pending">PDF only</span></li>
+  <li class="ready"><a href="Deep_Read/MedCaseReasoning%20Evaluating%20and%20learning%20diagnostic%20reasoning%20from%20clinical%20case%20reports_DR.html">MedCaseReasoning: Evaluating and learning diagnostic reasoning from clinical case reports</a><span class="pill ready">Deep-read</span></li>
+  <li class="pending"><a href="Papers/LongHealth-%20A%20Question%20Answering%20Benchmark%20with%20Long%20Clinical%20Documents_paper.pdf">LongHealth: A Question Answering Benchmark with Long Clinical Documents</a><span class="pill pending">PDF only</span></li>
+</ul>
+<h2>Safety & adversarial</h2>
+<ul class="plist">
+  <li class="ready"><a href="Deep_Read/First%2C%20do%20NO%20HARM_DR.html">First, do NO HARM</a><span class="pill ready">Deep-read</span></li>
+  <li class="pending"><a href="Papers/Addressing%20benchmarking%20gaps%20in%20large%20language%20models%20for%20health%20and%20medicine%20with%20dynamic%20red-teaming_paper.pdf">Addressing benchmarking gaps in LLMs for health and medicine with dynamic red-teaming</a><span class="pill pending">PDF only</span></li>
+  <li class="pending"><a href="Papers/MEDEC-%20A%20Benchmark%20for%20Medical%20Error%20Detection%20and%20Correction%20in%20Clinical%20Notes_paper.pdf">MEDEC: A Benchmark for Medical Error Detection and Correction in Clinical Notes</a><span class="pill pending">PDF only</span></li>
+  <li class="ready"><a href="Deep_Read/MedHallu-%20A%20Comprehensive%20Benchmark%20for%20Detecting%20Medical%20Hallucinations%20in%20Large%20Language%20Models_DR.html">MedHallu: A Comprehensive Benchmark for Detecting Medical Hallucinations in LLMs</a><span class="pill ready">Deep-read</span></li>
+  <li class="pending"><a href="Papers/Med%20RiskEval-%20Medical%20Risk%20Evaluation%20Benchmark%20of%20Language%20Models%2C%20On%20the%20Importance%20of%20User%20Perspectives%20in%20Healthcare%20Settings_paper.pdf">MedRiskEval: Medical Risk Evaluation Benchmark of Language Models</a><span class="pill pending">PDF only</span></li>
+</ul>
+<h2>Real-world deployment</h2>
+<ul class="plist">
+  <li class="ready"><a href="Deep_Read/%5BPenda%20Health%5D%20AI-based%20Clinical%20Decision%20Support%20for%20Primary%20Care-%20A%20Real-World%20Study_DR.html">AI-based Clinical Decision Support for Primary Care: A Real-World Study (Penda Health)</a><span class="pill ready">Deep-read</span></li>
+  <li class="pending"><a href="Papers/A%20prospective%20clinical%20feasibility%20study%20of%20a%20conversational%20diagnostic%20AI%20in%20an%20ambulatory%20primary%20care%20clinic_paper.pdf">A prospective clinical feasibility study of a conversational diagnostic AI in an ambulatory primary care clinic (AMIE)</a><span class="pill pending">PDF only</span></li>
+</ul>
+<h2>Agentic & tool-use</h2>
+<ul class="plist">
+  <li class="pending"><a href="Papers/An%20evaluation%20framework%20for%20clinical%20use%20of%20large%20language%20models%20in%20patient%20interaction%20tasks%20%28CRAFT-MD%29_paper.pdf">An evaluation framework for clinical use of LLMs in patient interaction tasks (CRAFT-MD)</a><span class="pill pending">PDF only</span></li>
+  <li class="pending"><a href="Papers/PatientAgentBench-%20A%20Benchmark%20Framework%20for%20Evaluating%20Patient-Facing%20Health%20AI%20Agents_paper.pdf">PatientAgentBench: A Benchmark Framework for Evaluating Patient-Facing Health AI Agents</a><span class="pill pending">PDF only</span></li>
+  <li class="pending"><a href="Papers/PhysicianBench-%20Evaluating%20LLM%20Agents%20in%20Real-World%20EHR%20Environments_paper.pdf">PhysicianBench: Evaluating LLM Agents in Real-World EHR Environments</a><span class="pill pending">PDF only</span></li>
+  <li class="pending"><a href="Papers/MedAgentBench%20v2-%20Improving%20Medical%20LLM%20Agent%20Design_paper.pdf">MedAgentBench v2: Improving Medical LLM Agent Design</a><span class="pill pending">PDF only</span></li>
+  <li class="pending"><a href="Papers/MedMemoryBench-%20Benchmarking%20Agent%20Memory%20in%20Personalized%20Healthcare_paper.pdf">MedMemoryBench: Benchmarking Agent Memory in Personalized Healthcare</a><span class="pill pending">PDF only</span></li>
+</ul>
+<h2>Other</h2>
+<ul class="plist">
+  <li class="pending"><a href="Papers/FairMedQA-%20Benchmarking%20Bias%20in%20Large%20Language%20Models%20for%20Medical%20Question%20Answering_paper.pdf">FairMedQA: Benchmarking Bias in Large Language Models for Medical Question Answering</a><span class="pill pending">PDF only</span></li>
+</ul>
+
+  <footer>Each deep-read is a self-contained interactive page — a starting point to grasp a paper's core methods quickly; read the source PDF for the details.</footer>
+</div>
+</body>
+</html>

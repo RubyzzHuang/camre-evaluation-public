@@ -1,0 +1,343 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill.harm { color: var(--harm); background: var(--harm-soft); }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* pipeline */
+  .pipe { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-top: 18px; align-items: stretch; }
+  @media (max-width: 920px) { .pipe { grid-template-columns: repeat(2,1fr); } }
+  .pnode { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--card); text-align: center; }
+  .pnode .num { font-family: var(--mono); font-size: 1.1rem; font-weight: 800; color: var(--accent); }
+  .pnode .lbl { font-size: .78rem; font-weight: 650; margin: 4px 0 2px; }
+  .pnode .cnt { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+  .pnode.drop { border-style: dashed; }
+  .pnode.drop .cnt { color: var(--harm); }
+  .pnode.final { border-color: var(--good); background: var(--good-soft); }
+
+  /* flagship recall demo */
+  .rrbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .rr-toggle { display: flex; gap: 8px; padding: 18px 20px 0; flex-wrap: wrap; }
+  .rr-toggle button { cursor: pointer; font-family: var(--font); font-size: .84rem; font-weight: 650; padding: 9px 15px; border-radius: 100px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); transition: .15s; }
+  .rr-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .rr-body { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0; margin-top: 14px; }
+  @media (max-width: 820px) { .rr-body { grid-template-columns: 1fr; } }
+  .rr-trace { padding: 18px 20px; border-right: 1px solid var(--line); font-size: .88rem; }
+  @media (max-width: 820px) { .rr-trace { border-right: none; border-bottom: 1px solid var(--line); } }
+  .rr-gt { padding: 18px 20px; background: var(--paper); }
+  .rlbl { font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .reason { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; font-size: .83rem; }
+  .reason.hit { border-color: var(--good); background: var(--good-soft); }
+  .reason.miss { border-color: var(--harm); background: var(--harm-soft); opacity: .8; }
+  .reason .rtag { font-family: var(--mono); font-size: .62rem; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 3px; }
+  .reason.hit .rtag { color: var(--good); } .reason.miss .rtag { color: var(--harm); }
+  .rr-foot { padding: 18px 20px; background: var(--paper); border-top: 1px solid var(--line); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .rr-big { font-size: 2.2rem; font-weight: 850; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .rr-diag { font-size: .86rem; }
+
+  /* formula */
+  .formula { font-family: var(--mono); font-size: .84rem; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-top: 10px; display: inline-block; }
+
+  /* results table */
+  .rtscroll { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--line); margin-top: 18px; }
+  table.results { border-collapse: collapse; width: 100%; min-width: 560px; background: var(--card); }
+  table.results th, table.results td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); font-size: .83rem; }
+  table.results thead th { font-family: var(--mono); font-size: .64rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  table.results td.num { font-variant-numeric: tabular-nums; font-family: var(--mono); }
+  table.results tr.sft td { background: var(--good-soft); }
+  table.results tr.sft td:first-child { font-weight: 650; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>MedCaseReasoning<br>Right diagnosis, wrong reasons?</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> “MedCaseReasoning: Evaluating and learning diagnostic reasoning from clinical case reports” · Kevin Wu, Eric Wu, Rahul Thapa et al. (Stanford · USC · UCSF) · arXiv:2505.11733</p>
+      <p class="lead" style="margin-top:20px">A prior study found frontier models can land on the <strong>correct diagnosis for the wrong reasons in up to a third of cases</strong>. MedCaseReasoning is built to catch exactly that: 14,489 diagnostic cases, each paired with the <strong>clinician's own enumerated reasoning</strong> extracted from a real case report — so accuracy and reasoning quality are scored separately. It's also released as a training set: fine-tuning on it measurably improves both.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">14,489</div><div class="l">cases · 800+ journals · 30+ specialties</div></div>
+        <div class="stat"><div class="n">48%</div><div class="l">DeepSeek-R1 10-shot accuracy</div></div>
+        <div class="stat"><div class="n">64%</div><div class="l">…but only this much of the clinician's reasons recalled</div></div>
+        <div class="stat"><div class="n">+29% / +41%</div><div class="l">relative gain (accuracy / reasoning recall) after fine-tuning</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">Dimensions this paper covers:</span>
+        <span class="chip on">Reasoning-process accuracy</span>
+        <span class="chip on">Completeness</span>
+        <span class="chip">Training resource, not just eval</span>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section>
+      <div class="eyebrow">Why it exists</div>
+      <h2>Accuracy alone hides a reasoning problem</h2>
+      <p class="sub">Exam-style benchmarks like MedQA and MMLU only score the final answer. Medical diagnosis, unlike math or code, needs the <em>process</em> to be right too — a model can hit the right label while skipping or fabricating the clinical logic that should justify it.</p>
+      <div class="grid g3" style="margin-top:20px">
+        <div class="card"><div class="k">The gap</div><h3>Right answer, wrong reasons</h3><p class="muted" style="font-size:.9rem">Prior work found even GPT-4 reaches the correct diagnosis for incorrect reasons in up to <strong>a third</strong> of scenarios — invisible to accuracy-only benchmarks.</p></div>
+        <div class="card"><div class="k">The source</div><h3>Real case reports, not vignettes</h3><p class="muted" style="font-size:.9rem">Built from PubMed Central case reports across 800+ journals — not textbook-style questions, and far more diverse than a single-hospital series.</p></div>
+        <div class="card"><div class="k">The scale</div><h3>14K+ vs. a few hundred</h3><p class="muted" style="font-size:.9rem">Comparable efforts (e.g. NEJM CPC-based sets) run in the hundreds of cases. MedCaseReasoning is ~50× larger and fully open-access.</p></div>
+      </div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section>
+      <div class="eyebrow">How the dataset is built</div>
+      <h2>Case report → structured QA, with two quality gates</h2>
+      <p class="sub">Every case report is split into three parts by an LLM: the <strong>case presentation</strong> (patient info), the <strong>diagnostic reasoning</strong> (the case author's own enumerated reasoning steps — including ruled-out alternatives), and the <strong>final diagnosis</strong>. Two filters then weed out weak conversions.</p>
+      <div class="pipe">
+        <div class="pnode"><div class="num">99K</div><div class="lbl">PMC case reports</div><div class="cnt">starting pool</div></div>
+        <div class="pnode drop"><div class="num">28K</div><div class="lbl">Candidate selection</div><div class="cnt">appropriate cases only</div></div>
+        <div class="pnode"><div class="num">19K</div><div class="lbl">Gate 1 · rubric</div><div class="cnt">clinician criteria, scored by o4-mini</div></div>
+        <div class="pnode drop"><div class="num">19.4K</div><div class="lbl">Gate 2 · faithfulness</div><div class="cnt">checked by Gemini 2.5 Pro</div></div>
+        <div class="pnode final"><div class="num">14,489</div><div class="lbl">Final dataset</div><div class="cnt">897 test · 13,092 train</div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Gate 1 — five clinician-written criteria, scored by o4-mini</h3>
+        <p class="muted" style="font-size:.88rem;margin:6px 0 0">Thoroughness of case presentation (1–5) · dependence on integrative clinical reasoning (yes/no) · discusses 2+ plausible alternatives · transparency of the diagnostic reasoning (1–5) · states a final diagnosis (yes/no). Cases scoring 1–2 on thoroughness, or missing alternatives/a stated diagnosis, are dropped.</p>
+      </div>
+      <p class="callout"><strong>Human check on the pipeline output:</strong> 4 board-certified physicians reviewed 100 finished cases (~10–20 min each). <strong>98%</strong> free of hallucination in the case prompt/reasoning · <strong>92%</strong> final diagnoses faithful &amp; inferable from the case · <strong>93%</strong> of reasoning steps faithful and clinically relevant.</p>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — the paper's own example</div>
+      <h2>How "Reasoning Recall" is actually scored</h2>
+      <p class="sub">A real case from the paper (Table 2): a liver-transplant patient develops psychiatric symptoms. Toggle the <strong>base</strong> vs. <strong>fine-tuned</strong> LLaMA-3.1-8B reasoning trace and watch which of the clinician's three reasons get covered.</p>
+
+      <div class="rrbox" style="margin-top:20px">
+        <div class="rr-toggle">
+          <button id="tr_base" class="active" onclick="pickRR('base')">Base model (pre-SFT)</button>
+          <button id="tr_sft" onclick="pickRR('sft')">Fine-tuned on MedCaseReasoning</button>
+        </div>
+        <div class="rr-body">
+          <div class="rr-trace">
+            <div class="rlbl">Model's reasoning trace</div>
+            <div id="rrTraceText"></div>
+          </div>
+          <div class="rr-gt">
+            <div class="rlbl">Clinician's reasons (ground truth, from the case report)</div>
+            <div id="rrGT"></div>
+          </div>
+        </div>
+        <div class="rr-foot">
+          <div class="rr-big" id="rrBig">—</div>
+          <div class="rr-diag" id="rrDiag"></div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.8rem;margin-top:10px">Case, traces and reasons transcribed from the paper's Table 2 example (post-liver-transplant psychosis vs. schizophrenia).</p>
+    </section>
+
+    <!-- METHOD DETAIL -->
+    <section>
+      <div class="eyebrow">The exact metric</div>
+      <h2>Definition 1: Reasoning Recall</h2>
+      <p class="sub">For case <em>i</em>, let <code>Rᵢ</code> = the clinician's ground-truth reasons (an LLM-extracted enumerated list from the case report) and <code>Tᵢ</code> = the reasons found in the model's own trace.</p>
+      <div class="formula">cᵢ = |Rᵢ ∩ Tᵢ| ÷ |Rᵢ| &nbsp;&nbsp;→&nbsp;&nbsp; Reasoning Recall = mean(cᵢ) over N cases</div>
+      <div class="grid g2" style="margin-top:18px">
+        <div class="card"><h3>How the overlap is judged</h3><p class="muted" style="font-size:.88rem">Fully automated: <strong>o4-mini as an LLM-judge</strong> returns a JSON decision for each ground-truth reason — found in the trace, or not. Validated against a board-certified physician's annotations.</p></div>
+        <div class="card"><h3>Two practical caveats</h3><p class="muted" style="font-size:.88rem">Recall is scored on the <strong>best-of-10 trace</strong> (a randomly selected correct response, or an incorrect one if none were correct). It's <strong>not computable for OpenAI o3</strong> and similar frontier models — their full internal reasoning isn't exposed via API, only accuracy is.</p></div>
+      </div>
+      <p class="callout">Note this measures <strong>recall, not precision</strong> — whether the model's trace covers the clinician's points, not whether the model added anything extraneous. And crucially, the ground-truth reasons here include <strong>ruled-out alternatives</strong> (e.g. "Wilson-disease recurrence — ruled out because…"), not just the supporting evidence for the final answer — so it's checking whether the model walked the same differential-elimination path, not just cited the right facts.</p>
+    </section>
+
+    <!-- FINE-TUNING -->
+    <section>
+      <div class="eyebrow">It's also a training set</div>
+      <h2>Fine-tuning on these traces measurably helps</h2>
+      <p class="sub">The extracted reasoning is a list of quoted points, not a fluent trace — so an LLM "stitches" the list into a coherent narrative before it's used for supervised fine-tuning (SFT), without adding new information.</p>
+      <div class="card">
+        <h3>A bias-control trick worth noting</h3>
+        <p class="muted" style="font-size:.9rem;margin:0">Stitching with a stronger model risks injecting that model's own style/priors into the training data. The fix: <strong>the model being fine-tuned is the same model that does its own stitching</strong> — no cross-model contamination of reasoning style.</p>
+      </div>
+
+      <div class="rtscroll" style="margin-top:16px">
+        <table class="results">
+          <thead><tr><th>Model</th><th>Reasoning Recall</th><th>10-shot Accuracy</th></tr></thead>
+          <tbody>
+            <tr><td>DeepSeek R1 (no fine-tune)</td><td class="num">64.2%</td><td class="num">48.0%</td></tr>
+            <tr><td>LLaMA-3.1-8B-Instruct (base)</td><td class="num">45.1%</td><td class="num">33.2%</td></tr>
+            <tr class="sft"><td>LLaMA-3.1-8B-Instruct (SFT)</td><td class="num">48.5% <span class="pill good">+8%</span></td><td class="num">47.9% <span class="pill good">+44%</span></td></tr>
+            <tr><td>Qwen-2.5-7B (base)</td><td class="num">32.4%</td><td class="num">28.7%</td></tr>
+            <tr class="sft"><td>Qwen-2.5-7B (SFT)</td><td class="num">48.6% <span class="pill good">+50%</span></td><td class="num">42.5% <span class="pill good">+48%</span></td></tr>
+            <tr><td>MedReason-8B (base)</td><td class="num">40.7%</td><td class="num">38.2%</td></tr>
+            <tr class="sft"><td>MedReason-8B (SFT)</td><td class="num">52.2% <span class="pill good">+28%</span></td><td class="num">50.1% <span class="pill good">+31%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="font-size:.8rem;margin-top:8px">Relative gains shown; percentages are % of the base value. Even OpenAI o3, the strongest model tested (no fine-tuning applied, reasoning recall not measurable), tops out at 64.5% 10-shot accuracy — diagnostic reasoning remains hard across the board.</p>
+    </section>
+
+    <!-- EXTERNAL VALIDATION -->
+    <section>
+      <div class="eyebrow">Does it generalize?</div>
+      <h2>Cross-checked against the closed NEJM CPC set</h2>
+      <p class="sub">As external validation, the same models were also run on 302 NEJM Clinicopathologic Conference cases (gated, not open-access, not used in training). Model rankings and accuracy levels on MedCaseReasoning's open test set correlated strongly with performance on this independent, closed benchmark — evidence that MedCaseReasoning is a valid open proxy for harder-to-access gold-standard case collections.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      “MedCaseReasoning: Evaluating and learning diagnostic reasoning from clinical case reports” · Wu et al., Stanford · arXiv:2505.11733</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // ---- Flagship: Reasoning Recall (real Table 2 example) ----
+  const gtReasons = [
+    { label:'Reason 1', text:'Wilson-disease recurrence — ruled out: "no abnormalities, including pathological copper accumulation … no evidence of abnormal copper metabolism … psychosis due to recurrence of Wilson disease was ruled out."' },
+    { label:'Reason 2', text:'Tacrolimus-induced psychosis — ruled out: "trough tacrolimus concentration had not increased before onset of psychosis, and psychosis persisted after the trough value decreased."' },
+    { label:'Reason 3', text:'Substance-related or other medical causes — ruled out: "No evidence of other medical conditions or a substance use disorder that could cause psychotic symptoms was found."' },
+  ];
+  const traces = {
+    base: {
+      text: 'The patient has a history of Wilson disease, a genetic disorder that leads to copper accumulation in the body. However, the brain MRI shows no evidence of pathological copper deposition, and laboratory tests show normal copper metabolism – suggesting the current condition is not related to Wilson disease. The symptoms … are consistent with a psychotic disorder. The history of Wilson disease and orthotopic liver transplantation may have led to post-liver-transplant psychosis … Given the patient\'s symptoms and history, post-liver-transplant psychosis is the most likely diagnosis.',
+      covers: [0], answer: 'Post-liver-transplant psychosis', correct: false,
+    },
+    sft: {
+      text: 'We first considered acute graft rejection due to non-adherence with tacrolimus and mycophenolate, but this was ruled out because tacrolimus trough levels were low. Next, tacrolimus neurotoxicity was excluded for the same reason. We also considered copper overload from Wilson disease, but MRI showed no pathological copper deposition. Delirium was excluded; finally, we evaluated substance-induced psychosis but found "no other medical condition or substance use disorder." With alternatives excluded, schizophrenia was suspected.',
+      covers: [0,1,2], answer: 'Schizophrenia', correct: true,
+    },
+  };
+  const GT_ANSWER = 'Schizophrenia';
+  function renderRR(){
+    const key = document.getElementById('tr_base').classList.contains('active') ? 'base' : 'sft';
+    const tr = traces[key];
+    document.getElementById('rrTraceText').innerHTML = `<p style="margin:0">${tr.text}</p>`;
+    document.getElementById('rrGT').innerHTML = gtReasons.map((r,i)=>{
+      const hit = tr.covers.includes(i);
+      return `<div class="reason ${hit?'hit':'miss'}"><span class="rtag">${hit?'✓ covered':'✗ missed'} · ${r.label}</span>${r.text}</div>`;
+    }).join('');
+    const recall = tr.covers.length / gtReasons.length;
+    const big = document.getElementById('rrBig');
+    big.textContent = Math.round(recall*100) + '%';
+    big.style.color = recall>=0.66?'var(--good)':recall>=0.33?'var(--warn)':'var(--harm)';
+    document.getElementById('rrDiag').innerHTML = `Reasoning Recall = ${tr.covers.length}/${gtReasons.length} reasons covered<br>Predicted diagnosis: <strong style="color:${tr.correct?'var(--good)':'var(--harm)'}">${tr.answer}</strong> ${tr.correct?'✓':'✗'} <span class="muted">(ground truth: ${GT_ANSWER})</span>`;
+  }
+  function pickRR(k){
+    document.getElementById('tr_base').classList.toggle('active', k==='base');
+    document.getElementById('tr_sft').classList.toggle('active', k==='sft');
+    renderRR();
+  }
+
+  // ---- Quiz ----
+  const quiz = [
+    { q:'What does MedCaseReasoning add beyond accuracy-only benchmarks like MedQA?',
+      opts:['A harder set of multiple-choice questions','Clinician-authored reasoning statements per case, so reasoning quality is scored separately from final-answer accuracy','A larger vocabulary of medical terms','Nothing — it also only scores the final answer'],
+      correct:1, ex:'Ground truth includes the case author\'s own enumerated diagnostic reasoning (including ruled-out alternatives), not just the final diagnosis — enabling the "Reasoning Recall" metric.' },
+    { q:'How is Reasoning Recall computed?',
+      opts:['A single overall similarity score between two paragraphs','|Rᵢ ∩ Tᵢ| ÷ |Rᵢ| — the fraction of the clinician\'s enumerated reasons found in the model\'s trace, judged automatically by an LLM (o4-mini)','Manually by physicians for every case','By counting words in the reasoning trace'],
+      correct:1, ex:'It\'s a recall-style overlap: for each ground-truth reason, an LLM judge decides if it appears in the model\'s trace; the case score is the fraction found, averaged across cases.' },
+    { q:'Why is a model fine-tuned on its OWN stitched reasoning traces, rather than a stronger model\'s?',
+      opts:['It\'s cheaper','To avoid injecting a stronger model\'s style/priors into the training data — a bias-control measure','Stronger models can\'t generate text','It has no particular reason'],
+      correct:1, ex:'Self-stitching keeps the fine-tuning signal free of another model\'s reasoning style, isolating the effect of training on the extracted content itself.' },
+    { q:'What did fine-tuning on MedCaseReasoning traces do to open-source models?',
+      opts:['No measurable effect','Improved diagnostic accuracy and reasoning recall, e.g. Qwen-2.5-7B reasoning recall rose ~50% relatively','Made accuracy worse','Only improved response speed'],
+      correct:1, ex:'Across three open-source models, SFT produced double-digit relative gains in both diagnostic accuracy and reasoning recall — the dataset works as a training resource, not just an eval set.' },
+  ];
+  function renderQuiz(){
+    document.getElementById('quizWrap').innerHTML = quiz.map((q,qi)=>`
+      <div class="quiz"><div class="q">${qi+1}. ${q.q}</div>
+        <div class="opts">${q.opts.map((o,oi)=>`<button class="opt" id="q${qi}o${oi}" onclick="answer(${qi},${oi})">${o}</button>`).join('')}</div>
+        <div class="explain" id="q${qi}ex">${q.ex}</div></div>`).join('');
+  }
+  const answered={};
+  function answer(qi,oi){
+    if(answered[qi]) return; answered[qi]=true;
+    const c=quiz[qi].correct;
+    document.getElementById(`q${qi}o${c}`).classList.add('correct');
+    if(oi!==c) document.getElementById(`q${qi}o${oi}`).classList.add('wrong');
+    document.getElementById(`q${qi}ex`).classList.add('show');
+  }
+
+  // init
+  renderRR(); renderQuiz();
+</script>

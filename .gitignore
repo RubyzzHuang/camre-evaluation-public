@@ -1,0 +1,12 @@
+.DS_Store
+**/.DS_Store
+
+# README stays local-only (internal framework doc, not for the public repo)
+README.md
+
+# Internal CAMRE strategy docs — never belong in the public repo
+CAMRE cross-line dependency map.html
+CAMRE evaluation — decision framework (pre-meeting worksheet).md
+CAMRE evaluation — resourcing & cross-line dependencies (working draft).md
+Cross-Paper Synthesis — Methods & CAMRE Implications.md
+LLM-judge + clinician validation — methods across the corpus.md
