@@ -1,0 +1,293 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 66ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); max-width: 17ch; }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+
+  /* flagship: task leaderboard */
+  .taskbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
+  .task-toggle { display: flex; gap: 8px; padding: 20px 20px 0; flex-wrap: wrap; }
+  .task-toggle button { cursor: pointer; font-family: var(--font); font-size: .82rem; font-weight: 650; padding: 10px 15px; border-radius: 100px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); text-align: left; }
+  .task-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .taskbody { padding: 18px 20px 20px; }
+  .task-desc { font-size: .86rem; color: var(--muted); margin: 4px 0 16px; }
+  .lb-row { display: grid; grid-template-columns: 170px 1fr 50px; align-items: center; gap: 10px; margin: 8px 0; }
+  .lb-row .lbl { font-size: .8rem; font-weight: 600; text-align: right; }
+  .lb-row .val { font-size: .8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .lb-bar { height: 18px; border-radius: 5px; background: var(--line); overflow: hidden; }
+  .lb-bar > i { display: block; height: 100%; border-radius: 5px; }
+  .lb-row.leader .lbl, .lb-row.leader .val { color: var(--accent); }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>LongHealth<br>Knowing what's in a chart is not the same as knowing what's missing</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> "LongHealth: A Question Answering Benchmark with Long Clinical Documents" · Adams, Busch, Han, Excoffier, Kather, Truhn, Bressem et al.</p>
+      <p class="lead" style="margin-top:20px">Ten models are ranked three different ways in this benchmark — extract from one patient's chart, extract with other patients' charts mixed in as noise, and answer when the actual patient's chart isn't there at all. The leaderboard barely resembles itself across these three tests, and the third one exposes a near-total blind spot: the best score, across every model tested, is 29%.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">20</div><div class="l">fictional patient cases, ~5,000–6,750 words each</div></div>
+        <div class="stat"><div class="n">400</div><div class="l">multiple-choice questions</div></div>
+        <div class="stat"><div class="n">77%</div><div class="l">best model's accuracy extracting from one patient's own chart</div></div>
+        <div class="stat"><div class="n">29%</div><div class="l">best model's accuracy recognizing the chart isn't there</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">Dimensions this paper covers:</span>
+        <span class="chip on">Reasoning-process accuracy</span>
+        <span class="chip on">Safety (missing-information detection)</span>
+        <span class="chip">Metacognition</span>
+      </div>
+    </section>
+
+    <!-- TWO AXES -->
+    <section>
+      <div class="eyebrow">Two separate axes — easy to conflate</div>
+      <h2>What's being asked, vs. what's in front of the model</h2>
+      <p class="sub">LongHealth crosses two independent things: the <em>kind</em> of question, and the <em>context condition</em> the model has to answer it under. Worth keeping apart, since the flagship below only varies the second one.</p>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><div class="k">Content — Extraction</div><p class="muted" style="font-size:.85rem">Single-hop retrieval: the answer is stated once, somewhere in the documents. Find it.</p></div>
+        <div class="card"><div class="k">Content — Negation</div><p class="muted" style="font-size:.85rem">"What treatment was <em>not</em> given?" — requires piecing together everything that <em>was</em> mentioned, across possibly several documents, to correctly conclude an absence.</p></div>
+        <div class="card"><div class="k">Content — Sorting</div><p class="muted" style="font-size:.85rem">Put events (e.g. diagnostic tests) in the order they actually happened, even though the source documents may present them out of chronological order.</p></div>
+      </div>
+      <p class="sub" style="margin-top:20px">Separately, each question is also asked under one of three <strong>evaluation tasks</strong> — this is the axis the flagship explores:</p>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><div class="k">Task 1</div><h3 style="font-size:.92rem">Single patient, shuffled</h3><p class="muted" style="font-size:.84rem">Just the target patient's own documents, reordered five times to control for position effects.</p></div>
+        <div class="card"><div class="k">Task 2</div><h3 style="font-size:.92rem">Target patient + distractors</h3><p class="muted" style="font-size:.84rem">The target patient's documents mixed in with other patients' unrelated documents — same question, noisier context.</p></div>
+        <div class="card"><div class="k">Task 3</div><h3 style="font-size:.92rem">Target patient absent entirely</h3><p class="muted" style="font-size:.84rem">Only other patients' documents are shown — the model is asked about someone whose chart was never provided, with an explicit "cannot be answered" option added.</p></div>
+      </div>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — watch the leaderboard reshuffle</div>
+      <h2>The best model at finding answers is not the best model at admitting it can't</h2>
+      <p class="sub">Same 10 models, same questions — only the evaluation task changes. Pick a task to see how the ranking shifts.</p>
+
+      <div class="taskbox">
+        <div class="task-toggle" id="taskToggle"></div>
+        <div class="taskbody">
+          <div class="task-desc" id="taskDesc"></div>
+          <div id="lbRows"></div>
+        </div>
+      </div>
+      <p class="callout">Mixtral-8x7B leads Task 1 (77%) and Task 2 (71%) by a wide margin — then collapses to 17% on Task 3, behind five other models. The model that actually wins Task 3, Mistral-7B-Instruct, tops out at just 29%. One model (longchat-13b-16k) answers <strong>zero</strong> of its Task 3 questions correctly. General retrieval capability and recognizing the limits of one's own knowledge are evidently not the same skill, and don't scale together.</p>
+    </section>
+
+    <!-- LENGTH -->
+    <section>
+      <div class="eyebrow">A second, quieter finding</div>
+      <h2>More context isn't free, even within a model's stated limit</h2>
+      <p class="sub">Task 1 was re-run at input lengths from 4,000 to 32,000 tokens (via padding with more distractor text) to isolate the effect of length alone, holding the actual question and answer constant.</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>Most models degrade with length</h3><p class="muted" style="font-size:.86rem">GPT-3.5-Turbo dropped from 72% (4k tokens) to 68% (16k). Vicuna-7B and Zephyr-7B dropped 13 points each. This happened well within each model's advertised context window — the limit being reached wasn't a hard token cutoff, it was retrieval reliability degrading gradually as the haystack grew.</p></div>
+        <div class="card"><h3>A few long-context-native models held steady</h3><p class="muted" style="font-size:.86rem">Yi-34B and Mixtral-8x7B showed only minor fluctuation out to 32k tokens — architecture and pretraining for long context mattered more than context-window size on the spec sheet.</p></div>
+      </div>
+    </section>
+
+    <!-- WHAT ISN'T TESTED -->
+    <section>
+      <div class="eyebrow">Reading the "sorting" task precisely</div>
+      <h2>Chronological ordering is not the same as staleness-awareness</h2>
+      <p class="sub">Worth being precise about what the Sorting category actually measures, since it's the closest thing in this paper to broader "longitudinal reasoning."</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>What Sorting does test</h3><p class="muted" style="font-size:.86rem">Given several dated events scattered non-sequentially across documents, can the model reconstruct the correct chronological order? This is a multi-hop extraction-and-ordering task.</p></div>
+        <div class="card"><h3>What it does not test</h3><p class="muted" style="font-size:.86rem">Whether a model, when synthesizing a <em>current</em> clinical judgment, correctly discounts an old value as potentially stale rather than treating it as still valid — especially when no more recent value exists at all. That's a distinct downstream-reasoning question this benchmark doesn't probe; it stops at whether facts can be extracted and ordered, not whether their age is correctly weighted into a final synthesized answer.</p></div>
+      </div>
+    </section>
+
+    <!-- LIMITATIONS -->
+    <section>
+      <div class="eyebrow">What the paper is upfront about</div>
+      <h2>Reading the numbers with their own caveats</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>Prompting wasn't optimized</h3><p class="muted" style="font-size:.86rem">The authors explicitly flag that Task 3 in particular "may have yielded better results with alternative prompting techniques" — the same fixed prompt was used everywhere for fair comparison, at the cost of possibly understating what's achievable.</p></div>
+        <div class="card"><h3>GPT-4 was priced out</h3><p class="muted" style="font-size:.86rem">Early tests showed GPT-4 outperforming the field, but evaluating it at 16,000-token context across all questions was estimated at $2,200 for Task 1 alone — excluded on cost grounds, not because it wasn't tried.</p></div>
+        <div class="card"><h3>Multiple-choice, not open-ended</h3><p class="muted" style="font-size:.86rem">Real clinical queries rarely come with a fixed answer set. MCQ format enables automated scoring but doesn't capture the full difficulty of an open-ended clinical question.</p></div>
+        <div class="card"><h3>Fictional cases, no sub-16k models</h3><p class="muted" style="font-size:.86rem">All 20 cases are synthetic (built from realistic but fictional discharge summaries), and models with context windows under 16,000 tokens were excluded entirely — their performance under retrieval-augmented or sliding-window strategies remains untested here.</p></div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      "LongHealth: A Question Answering Benchmark with Long Clinical Documents" · Adams, Busch, Han, Excoffier, Kather, Truhn, Bressem et al.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  const tasks = {
+    t1: { label: 'Task 1', sub: 'Single patient, shuffled',
+      desc: "Just the target patient's own documents, reshuffled 5 times. Tests raw extraction from a clean, relevant context.",
+      rows: [
+        ['Mixtral-8x7B-Instruct', 77], ['gpt-3.5-turbo-1106', 68], ['Mistral-7B-Instruct-v0.2', 65],
+        ['Yi-34B-200k', 64], ['zephyr-7b-beta-16k', 50], ['vicuna-13b-v1.5-16k', 49],
+        ['Yi-6B-200K', 44], ['longchat-13b-16k', 38], ['vicuna-7b-v1.5-16k', 34], ['longchat-7b-v1.5-32k', 32]
+      ] },
+    t2: { label: 'Task 2', sub: 'Target patient + distractors',
+      desc: "The target patient's documents mixed with other patients' unrelated documents. Same question, noisier context.",
+      rows: [
+        ['Mixtral-8x7B-Instruct', 71], ['gpt-3.5-turbo-1106', 60], ['Mistral-7B-Instruct-v0.2', 55],
+        ['Yi-34B-200k', 51], ['vicuna-13b-v1.5-16k', 37], ['longchat-13b-16k', 27],
+        ['longchat-7b-v1.5-32k', 27], ['vicuna-7b-v1.5-16k', 27], ['zephyr-7b-beta-16k', 25], ['Yi-6B-200K', 23]
+      ] },
+    t3: { label: 'Task 3', sub: 'Target patient absent entirely',
+      desc: "Only other patients' documents are shown; the target patient's chart was never provided. A \"cannot be answered\" option is added to every question.",
+      rows: [
+        ['Mistral-7B-Instruct-v0.2', 29], ['gpt-3.5-turbo-1106', 27], ['Yi-34B-200k', 23],
+        ['Yi-6B-200K', 18], ['Mixtral-8x7B-Instruct', 17], ['vicuna-13b-v1.5-16k', 16],
+        ['zephyr-7b-beta-16k', 6], ['vicuna-7b-v1.5-16k', 4], ['longchat-7b-v1.5-32k', 3], ['longchat-13b-16k', 0]
+      ] }
+  };
+  let curTask = 't1';
+
+  function renderTaskToggle(){
+    document.getElementById('taskToggle').innerHTML = Object.keys(tasks).map(k => {
+      const t = tasks[k];
+      return `<button class="${k===curTask?'active':''}" onclick="pickTask('${k}')">${t.label}<br><span style="font-family:var(--mono);font-size:.68rem;opacity:.75">${t.sub}</span></button>`;
+    }).join('');
+  }
+  function pickTask(k){ curTask = k; renderTaskToggle(); renderTask(); }
+
+  function renderTask(){
+    const t = tasks[curTask];
+    document.getElementById('taskDesc').textContent = t.desc;
+    const max = 80;
+    const leaderVal = t.rows[0][1];
+    document.getElementById('lbRows').innerHTML = t.rows.map(([name, val], i) => {
+      const pct = (val/max*100).toFixed(0);
+      const color = val === leaderVal ? 'var(--accent-bright)' : (val < 20 ? 'var(--harm)' : 'var(--accent)');
+      return `<div class="lb-row ${i===0?'leader':''}"><div class="lbl">${name}</div><div class="lb-bar"><i style="width:${pct}%;background:${color}"></i></div><div class="val">${val}%</div></div>`;
+    }).join('');
+  }
+  renderTaskToggle(); renderTask();
+
+  // ---- Quiz ----
+  const quiz = [
+    { q: "What is the key difference between Task 2 and Task 3?", opts: [
+        "Task 2 uses harder questions; Task 3 uses easier ones",
+        "Task 2 mixes in other patients' documents alongside the target patient's own; Task 3 excludes the target patient's documents entirely",
+        "Task 2 is multiple-choice; Task 3 is open-ended",
+        "There is no real difference"
+      ], correct: 1, explain: "Task 2 tests extraction under noisy-but-present information; Task 3 tests whether the model recognizes the needed information simply isn't there at all." },
+    { q: "What happened to Mixtral-8x7B-Instruct's ranking between Task 1 and Task 3?", opts: [
+        "It stayed the top performer throughout",
+        "It went from the clear leader (77%) to 17%, behind five other models",
+        "It was excluded from Task 3",
+        "Its score improved on Task 3"
+      ], correct: 1, explain: "Strong single-patient and multi-patient retrieval did not transfer to correctly recognizing missing information — a different, and apparently much harder, skill." },
+    { q: "What does the \"Sorting\" question category actually test?", opts: [
+        "Whether the model correctly discounts old data as potentially outdated when reasoning about current status",
+        "Whether the model can reconstruct the correct chronological order of scattered events across documents",
+        "Whether the model can detect when a patient's chart is missing entirely",
+        "Whether the model prefers shorter responses"
+      ], correct: 1, explain: "Sorting is a multi-hop extraction-and-ordering task. It does not test whether a model correctly weighs an old value's staleness into a final clinical judgment — a related but distinct capability this benchmark doesn't probe." },
+    { q: "Why was GPT-4 excluded from the evaluation?", opts: [
+        "It refused to answer clinical questions",
+        "Its context window was too short",
+        "Cost — evaluating it at 16,000-token context was estimated at $2,200 for Task 1 alone",
+        "It was not yet publicly available"
+      ], correct: 2, explain: "Preliminary tests showed GPT-4 outperforming the field, but the authors excluded it purely on cost grounds given the large context lengths and repeated API calls required." },
+  ];
+  document.getElementById('quizWrap').innerHTML = quiz.map((item, qi) => `
+    <div class="quiz">
+      <div class="q">${qi+1}. ${item.q}</div>
+      <div class="opts">
+        ${item.opts.map((o, oi) => `<button class="opt" onclick="answerQuiz(${qi}, ${oi}, this)">${o}</button>`).join('')}
+      </div>
+      <div class="explain" id="explain-${qi}">${item.explain}</div>
+    </div>
+  `).join('');
+  function answerQuiz(qi, oi, btn){
+    const item = quiz[qi];
+    const opts = btn.parentElement.querySelectorAll('.opt');
+    opts.forEach((o, i) => {
+      o.classList.remove('correct','wrong');
+      if (i === item.correct) o.classList.add('correct');
+      else if (i === oi) o.classList.add('wrong');
+    });
+    document.getElementById(`explain-${qi}`).classList.add('show');
+  }
+</script>
