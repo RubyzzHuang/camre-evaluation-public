@@ -308,6 +308,24 @@ rewritten plan.</pre>
     <section>
       <div class="eyebrow">What this study doesn't settle</div>
       <h2>Reading the comparison honestly</h2>
+
+      <div class="card" style="margin-top:16px">
+        <div class="k">A subtler risk — how independent is the reference, really?</div>
+        <p class="muted" style="font-size:.86rem;margin:8px 0 0">This isn't a critique the paper spells out in these terms — it's this deep-read's own reading, built on a caveat the paper <em>does</em> state (below). Worth tracing the chain step by step:</p>
+        <div class="grid g4" style="margin-top:12px">
+          <div class="anchor" style="font-size:.78rem"><b>1.</b> AMIE's transcript &amp; summary are sent to the PCP <em>before</em> the visit</div>
+          <div class="anchor" style="font-size:.78rem"><b>2.</b> The PCP's own diagnosis, shaped partly by that exposure, gets written into the chart</div>
+          <div class="anchor" style="font-size:.78rem"><b>3.</b> 8 weeks later, the reference-standard panel reads <em>that same chart</em> to decide the "final diagnosis"</div>
+          <div class="anchor" style="font-size:.78rem"><b>4.</b> AMIE's own accuracy is then graded against that final diagnosis</div>
+        </div>
+        <p class="muted" style="font-size:.86rem;margin-top:14px">The panel is blinded to <strong>AMIE's differential list</strong> — but not to the PCP's chart notes, which were themselves written after the PCP had already seen AMIE's output. Blinding protects against the panel's own bias; it doesn't protect against contamination introduced one step upstream.</p>
+        <div class="grid g2" style="margin-top:14px">
+          <div class="card"><h3 style="font-size:.92rem">Risk to the Bond/Graber numbers</h3><p class="muted" style="font-size:.84rem">For the 46 test-confirmed cases, an independent lab/imaging/pathology result corroborates the diagnosis regardless of how the PCP got there — this risk is largely cut off. For the 35 <em>presumptive, no-further-workup</em> cases, the "final diagnosis" is essentially just the PCP's own judgment, formed with no independent check at all, after seeing AMIE's list. In principle this could <strong>inflate</strong> AMIE's apparent top-k accuracy on that subset, independent of whether its reasoning was actually sound.</p></div>
+          <div class="card"><h3 style="font-size:.92rem">Risk to the DDx/Mx quality comparison</h3><p class="muted" style="font-size:.84rem">This branch doesn't share the same reference-standard middleman — AMIE's own logged output is compared directly against the PCP's, with three blinded evaluators judging quality, not correctness against a chart-derived answer. But the PCP's plan was still written <em>after</em> seeing AMIE's — so the two arms may have partly converged rather than being fully independent, which could <strong>shrink</strong> the true gap between them and contribute to the "no significant difference" results on DDx quality, appropriateness, and safety.</p></div>
+        </div>
+        <p class="callout">The paper's own words come close, framed as a general reference-standard concern rather than an AMIE-exposure one: <em>"the final diagnosis corresponded to a presumptive diagnosis as formulated by the PCP, presenting a less robust reference standard compared to final diagnoses that were corroborated by diagnostic testing."</em> The study's pooled headline numbers (90% top-7, 75% top-3) mix the test-confirmed and presumptive subsets rather than leading with the more independently-verified 46-case slice.</p>
+      </div>
+
       <div class="grid g2" style="margin-top:16px">
         <div class="card"><h3>The comparison wasn't symmetric</h3><p class="muted" style="font-size:.86rem">PCPs had AMIE's own transcript and summary <em>plus</em> the EHR <em>plus</em> a physical exam when they built their plan. AMIE had none of that — only the chat. The authors attribute AMIE's longer, lower-cost-effectiveness differentials partly to this context gap, not necessarily to weaker reasoning.</p></div>
         <div class="card"><h3>Single-arm, single-center, modest N</h3><p class="muted" style="font-size:.86rem">100 patients, one academic clinic in Boston, no control arm. The authors argue this is adequate for a safety/feasibility read but explicitly caution it is not powered as a definitive comparative-effectiveness trial.</p></div>
