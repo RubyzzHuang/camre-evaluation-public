@@ -200,7 +200,14 @@
         <div class="anchor"><span class="sc">Score 5</span><br>"The actual diagnosis was suggested in the differential"</div>
         <div class="anchor"><span class="sc">Score 4</span><br>"The suggestions included something very close, but not exact"</div>
       </div>
-      <p class="muted" style="font-size:.86rem">Only for scores of 4 or 5 did raters additionally record <em>where</em> in AMIE's ranked list the correct diagnosis fell — that rank is what produces the top-<em>k</em> accuracy curve below.</p>
+      <div class="card" style="margin-top:14px">
+        <div class="k">In plain terms — how a score turns into the chart below</div>
+        <div class="grid g3" style="margin-top:12px">
+          <div><h3 style="font-size:.9rem">1. Grade the whole list, once</h3><p class="muted" style="font-size:.83rem">The two doctors look at AMIE's entire list of guesses for a case and the patient's real final diagnosis, then give the <em>whole list</em> one grade, 1 to 5. A 5 means the real answer is somewhere on the list; a 4 means something very close made the list, just not worded exactly right. The paper doesn't spell out 1–3 in words — only 4 and 5 are quoted — so this deep-read doesn't guess at that wording either.</p></div>
+          <div><h3 style="font-size:.9rem">2. Only for the 4s and 5s, note the position</h3><p class="muted" style="font-size:.83rem">If (and only if) a list scored 4 or 5, the doctors also write down <em>where</em> the right answer sat: was it AMIE's very first guess? Third? Seventh? A list that scored 1–3 never gets a position at all — the right answer wasn't meaningfully there to find.</p></div>
+          <div><h3 style="font-size:.9rem">3. Count positions to get "top-k"</h3><p class="muted" style="font-size:.83rem">"Top-3 accuracy" simply means: out of all 98 cases, what share had the right answer sitting in position 1, 2, or 3? Cases that scored 1–3 in step 1 can never count toward any k — there's no position to count.</p></div>
+        </div>
+      </div>
       <div class="grid g2" style="margin-top:16px">
         <div class="card">
           <div class="k">Top-k accuracy (N=98)</div>
@@ -279,6 +286,17 @@ rewritten plan.</pre>
       <div class="eyebrow">A metacognition signal, almost by accident</div>
       <h2>AMIE got more confident whether or not it was right</h2>
       <p class="sub">Because AMIE logs an internal state — a running differential with self-reported probabilities — every conversation could be replayed turn-by-turn. A Gemini 2.5 Pro auto-rater scored the differential's Bond/Graber quality and top-3 accuracy at <em>each</em> turn, and conversations were split into "successful" (final Bond/Graber ≥4 and a correct top pick) and "unsuccessful."</p>
+
+      <div class="card" style="margin-top:14px">
+        <div class="k">In plain terms — this is a second, separate scoring system</div>
+        <p class="muted" style="font-size:.85rem;margin:8px 0 0">Easy to mix up with the Bond/Graber scoring above, so here's the difference:</p>
+        <div class="grid g2" style="margin-top:10px">
+          <div><h3 style="font-size:.9rem">The one-time human score (previous section)</h3><p class="muted" style="font-size:.83rem">Two doctors look at AMIE's <em>final</em> list, once, after the conversation is completely over.</p></div>
+          <div><h3 style="font-size:.9rem">The every-turn robot score (this section)</h3><p class="muted" style="font-size:.83rem">AMIE's guess-list keeps changing <em>during</em> the conversation. A second AI (Gemini 2.5 Pro, not a doctor) replays the whole conversation and re-grades that evolving guess-list after <em>every single message</em> — producing a mini movie of how AMIE's thinking shifted over time, instead of one snapshot at the end.</p></div>
+        </div>
+        <p class="muted" style="font-size:.83rem;margin-top:12px"><strong>Who counts as "successful" uses only the one-time human score</strong> — a conversation is labeled successful if its <em>final</em> human grade was 4 or 5 <em>and</em> AMIE's very first guess was correct; everything else is labeled unsuccessful. That label is decided once, at the very end, and never changes. Then — separately — the robot's turn-by-turn numbers (confidence, uncertainty, accuracy) get averaged within each of the two labeled groups, which is what produces the two comparison lines in the findings below: "on average, what did AMIE's confidence look like <em>while it was happening</em>, in conversations that turned out right, versus ones that turned out wrong?"</p>
+      </div>
+
       <div class="grid g2" style="margin-top:16px">
         <div class="card"><h3>Confidence and accuracy came apart</h3><p class="muted" style="font-size:.88rem">In both successful and unsuccessful conversations, AMIE's self-reported confidence in its top diagnosis trended <strong>upward</strong> and the entropy of its differential trended <strong>downward</strong> — it converged either way. But actual diagnostic accuracy only improved with more turns in the conversations that were ultimately successful; in unsuccessful ones, added information didn't help. There was no significant difference in AMIE's self-reported uncertainty between the two groups — confidence was decoupled from correctness.</p></div>
         <div class="card"><h3>The paper's own physician-cognition parallel</h3><p class="muted" style="font-size:.88rem">The authors read this against known findings in physicians: successful conversations reached high accuracy from the very first turn (mirroring how expert clinicians generate hypotheses earlier than novices), while accuracy stalling despite more information in unsuccessful conversations "likely reflects the common metacognitive bias of premature closure."</p></div>
