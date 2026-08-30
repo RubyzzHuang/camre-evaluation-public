@@ -67,6 +67,11 @@
   .tlbar span { flex: 1; border-right: 1px solid var(--line); }
   .tlbar span:last-child { border-right: none; }
   .tlcap { font-family: var(--mono); font-size: .66rem; color: var(--muted); text-align: right; margin-top: 2px; }
+  .evline { display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 9px 0; border-bottom: 1px dashed var(--line); align-items: baseline; }
+  .evline:last-child { border-bottom: none; }
+  @media (max-width: 620px) { .evline { grid-template-columns: 1fr; gap: 2px; } }
+  .evdate { font-family: var(--mono); font-size: .76rem; color: var(--accent); font-weight: 700; }
+  .evtext { font-size: .87rem; color: var(--muted); }
 
   /* flagship grid */
   .distbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
@@ -145,6 +150,29 @@
         <div class="card"><div class="k">TIMER-Bench</div><h3>An evaluation set with temporal position controlled</h3><p class="muted" style="font-size:.86rem">402 instruction–response pairs over real longitudinal records, each carrying explicit <strong>time evidence</strong> (the dated events its answer rests on). Because every question is tagged with where in the timeline it points, the benchmark can be re-sampled into different temporal distributions on demand.</p></div>
         <div class="card"><div class="k">TIMER-Instruct</div><h3>A tuning method that balances temporal coverage</h3><p class="muted" style="font-size:.86rem">Instruction tuning on 5,000 model-generated pairs whose temporal positions are deliberately distributed rather than left to chance. Same records, same volume — only the distribution over the timeline changes.</p></div>
       </div>
+    </section>
+
+    <!-- WHAT A QUESTION LOOKS LIKE -->
+    <section>
+      <div class="eyebrow">What a TIMER-Bench question actually looks like</div>
+      <h2>The paper's own showcase example</h2>
+      <p class="sub">Worth seeing before the failure cases below, because it shows the benchmark at its most demanding — a question whose answer only exists if five separate periods are assembled into one causal narrative.</p>
+
+      <div class="card" style="margin-top:16px">
+        <div class="k">Instruction</div>
+        <p style="font-size:.95rem;margin:6px 0 0"><em>"Explain how the patient's response to lung cancer treatment changed after discovering the EGFR mutation, and why they ultimately returned to the initial therapy."</em></p>
+      </div>
+
+      <div class="tlstrip" style="margin-top:16px">
+        <div class="evline"><span class="evdate">01/2020</span><span class="evtext">Initial lung cancer diagnosis; chemotherapy started, good response</span></div>
+        <div class="evline"><span class="evdate">05/2020</span><span class="evtext">Genetic testing reveals EGFR mutation → switched to targeted therapy</span></div>
+        <div class="evline"><span class="evdate">08/2020–06/2021</span><span class="evtext">Notes show exceptional response, tumor shrinkage</span></div>
+        <div class="evline"><span class="evdate">09/2021</span><span class="evtext">Resistance develops, new growth</span></div>
+        <div class="evline"><span class="evdate">01/2022–12/2022</span><span class="evtext">Original chemotherapy restarted, excellent control</span></div>
+      </div>
+
+      <p class="callout">Answering the "why did they end up back where they started" half requires connecting the 09/2021 resistance to the 01/2022 switch-back, and understanding that the return isn't a reversal of a mistake but a response to a changed situation. No single visit contains that; it exists only across the span.</p>
+      <p class="muted" style="font-size:.84rem">Questions were filtered to keep only those carrying <strong>multiple time-stamped pieces of evidence</strong>. Worth noting what that filter does and doesn't guarantee: it enforces that an answer draws on more than one point in time, but two timestamps alone don't make a question this demanding — a question asking for a height at age 9 and again at age 11 also passes it. The paper's clinician check reflects this: complexity was rated 80/100 on average but with wide spread across the three raters (77 / 63 / 99), against much tighter agreement on clinical relevance (97 / 89 / 99).</p>
     </section>
 
     <!-- THE PROBLEM -->
@@ -273,6 +301,32 @@
         </div>
         <p class="muted" style="font-size:.84rem;margin-top:12px"><strong>Two caveats the paper states itself.</strong> First, the clinicians "were not provided with the patient-protected information to do a complete factual accuracy evaluation" — so that 98 means the responses read as contextually reasonable, not that they were verified against the underlying record. Second, the complexity scores vary sharply between raters: <strong>77 / 63 / 99</strong> across the three annotators. The 80 average conceals real disagreement about how hard these questions actually are.</p>
       </div>
+    </section>
+
+    <!-- WHAT LONGITUDINAL MEANS -->
+    <section>
+      <div class="eyebrow">A distinction worth drawing explicitly</div>
+      <h2>"Longitudinal" means two different things across benchmarks</h2>
+      <p class="sub">TIMER and CliniCARE-Bench both work over multi-year records, and both would describe themselves as testing longitudinal reasoning — but they are controlling for different things, and it changes what a good score means. <em>The comparison below is this deep-read's own reading; neither paper frames itself against the other.</em></p>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <div class="k">TIMER · coverage</div>
+          <h3>Is the whole timeline being asked about?</h3>
+          <p class="muted" style="font-size:.85rem;margin-top:6px"><strong>Controls:</strong> where in the timeline questions point — via the normalized-position metric and deliberate re-sampling into recency / edge / uniform distributions.</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Depth comes from:</strong> whatever the LLM generator happens to produce, then filtered structurally (≥2 timestamped evidence items) and spot-checked.</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Catches:</strong> a benchmark that only ever asks about the last few months; a tuned model blind to the middle of a record.</p>
+        </div>
+        <div class="card">
+          <div class="k">CliniCARE-Bench · depth</div>
+          <h3>Is the reasoning procedure specified well enough to score?</h3>
+          <p class="muted" style="font-size:.85rem;margin-top:6px"><strong>Controls:</strong> what a defensible answer requires — clinician-written adjudication criteria, required evidence lists, process rubrics, explicit precedence between verdict branches.</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Depth comes from:</strong> the specification itself. Its renal-trajectory scenario mandates per-admission baselines, an unbiased measure, and separating a reversible episode from a trend.</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Catches:</strong> a right answer reached by a shortcut; two annotators scoring the same case differently.</p>
+        </div>
+      </div>
+
+      <p class="callout">These are complementary, not competing. A structural filter guarantees an answer touches more than one point in time; it cannot guarantee the question needed real synthesis to answer. A clinician-authored specification guarantees depth for the scenarios it covers; it says nothing about whether those scenarios sample the timeline evenly. No paper in this corpus does both — a benchmark with CliniCARE's specification discipline and TIMER's distribution control does not yet appear to exist.</p>
     </section>
 
     <!-- LIMITATIONS -->
