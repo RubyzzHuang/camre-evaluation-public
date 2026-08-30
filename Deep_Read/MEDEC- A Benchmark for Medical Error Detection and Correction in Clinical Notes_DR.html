@@ -1,0 +1,410 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 66ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); max-width: 18ch; }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+  .plain { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; font-size: .88rem; margin: 0 0 14px; }
+  .plain b { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700; }
+
+  /* subtask chain */
+  .chain { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  @media (max-width: 760px) { .chain { grid-template-columns: 1fr; } }
+  .chainstep { border: 1px solid var(--line); border-radius: 12px; padding: 15px; background: var(--card); }
+  .chainstep .cs { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+
+  /* flagship */
+  .casebox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
+  .case-toggle { display: flex; gap: 8px; padding: 20px 20px 0; flex-wrap: wrap; }
+  .case-toggle button { cursor: pointer; font-family: var(--font); font-size: .8rem; font-weight: 650; padding: 10px 14px; border-radius: 100px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); text-align: left; }
+  .case-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .casebody { padding: 18px 20px 20px; }
+  .notetext { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: .88rem; line-height: 1.65; }
+  .notetext .errspan { background: var(--harm-soft); border-bottom: 2px solid var(--harm); font-weight: 650; padding: 0 2px; }
+  .revealbtn { margin-top: 14px; cursor: pointer; font-family: var(--font); font-size: .84rem; font-weight: 650; padding: 10px 18px; border-radius: 100px; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .answers { display: none; margin-top: 16px; }
+  .answers.show { display: block; }
+  .ansrow { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--line); align-items: start; }
+  @media (max-width: 620px) { .ansrow { grid-template-columns: 1fr; gap: 3px; } }
+  .ansrow:last-child { border-bottom: none; }
+  .ansrow .who { font-family: var(--mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
+  .ansrow .what { font-size: .86rem; }
+  .who.ref { color: var(--accent); }
+  .who.ok { color: var(--good); }
+  .who.bad { color: var(--harm); }
+  .verdictnote { margin-top: 14px; background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; font-size: .86rem; }
+
+  /* rank flip */
+  .flipwrap { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-top: 18px; }
+  @media (max-width: 700px) { .flipwrap { grid-template-columns: 1fr; } }
+  .ranklist { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--card); }
+  .ranklist .rt { font-family: var(--mono); font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+  .rankitem { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; font-size: .84rem; border-bottom: 1px dashed var(--line); }
+  .rankitem:last-child { border-bottom: none; }
+  .rankitem b { font-variant-numeric: tabular-nums; }
+  .rankitem.hi { color: var(--accent); font-weight: 700; }
+  .rankitem.lo { color: var(--harm); font-weight: 700; }
+  .flipar { text-align: center; font-size: 1.4rem; color: var(--muted); }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>MEDEC<br>Can a model check a note it didn't write?</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> "MEDEC: A Benchmark for Medical Error Detection and Correction in Clinical Notes" · Ben Abacha, Yim, Fu, Sun, Yetisgen, Xia, Lin (Microsoft Health &amp; Life Sciences AI · University of Washington) · ACL Findings 2025</p>
+      <p class="lead" style="margin-top:20px">Almost every medical benchmark asks a model to <em>produce</em> an answer. This one asks it to <em>validate</em> text someone else wrote — find the single clinical error planted in a note, say which sentence it's in, and fix it. Two medical doctors did the same task on the same notes, which turns the leaderboard into something more interesting than a ranking.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">3,848</div><div class="l">clinical texts, 5 error types</div></div>
+        <div class="stat"><div class="n">488</div><div class="l">real notes from 3 hospital systems, unseen by any LLM</div></div>
+        <div class="stat"><div class="n">69.0%</div><div class="l">agreement between the two doctors on whether an error exists at all</div></div>
+        <div class="stat"><div class="n">79.6%</div><div class="l">best doctor's detection accuracy vs. 70.2% for the best model</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">Dimensions this paper covers:</span>
+        <span class="chip on">Safety / error detection</span>
+        <span class="chip on">Clinical appropriateness</span>
+        <span class="chip on">Reasoning-process accuracy</span>
+        <span class="chip">Internal-consistency checking</span>
+      </div>
+    </section>
+
+    <!-- THE TASK -->
+    <section>
+      <div class="eyebrow">The task</div>
+      <h2>Three subtasks, deliberately separated</h2>
+      <p class="plain"><b>In plain terms</b>Read a clinical note. Is anything in it medically wrong? If so, which sentence — and what should it say instead? Three questions, scored separately, because a model can get any one right while failing the others.</p>
+      <div class="chain">
+        <div class="chainstep"><div class="cs">Subtask A · Detect</div><h3 style="font-size:.95rem">Is there an error?</h3><p class="muted" style="font-size:.85rem">A binary flag: 0 if the note is clean, 1 if it contains an error. Scored by accuracy — and note that <strong>48.7% of test notes are clean</strong>, so a model that flags everything scores badly.</p></div>
+        <div class="chainstep"><div class="cs">Subtask B · Locate</div><h3 style="font-size:.95rem">Which sentence?</h3><p class="muted" style="font-size:.85rem">Return the sentence ID containing the error, or −1 for a clean note. Every note is presented one sentence per line, each prefixed with its ID.</p></div>
+        <div class="chainstep"><div class="cs">Subtask C · Correct</div><h3 style="font-size:.95rem">What should it say?</h3><p class="muted" style="font-size:.85rem">Generate the corrected sentence. Scored with ROUGE-1, BERTScore, BLEURT (averaged into an Aggregate Score) plus <strong>MIST</strong>, a metric built on UMLS medical-concept embeddings rather than word overlap.</p></div>
+      </div>
+      <p class="muted" style="font-size:.86rem;margin-top:14px">Each note contains <strong>at most one</strong> error, drawn from five types selected by analyzing the most frequent question types in official medical board exams: <strong>Diagnosis</strong> (174 test cases), <strong>Management</strong> (168), <strong>Treatment</strong> (58), <strong>Pharmacotherapy</strong> (57), and <strong>Causal Organism</strong> (18).</p>
+    </section>
+
+    <!-- HOW ERRORS WERE MADE -->
+    <section>
+      <div class="eyebrow">How the errors got there</div>
+      <h2>Two injection methods, on purpose</h2>
+      <p class="sub">Errors are planted, not naturally occurring — which is the only way to know the ground truth. The paper uses two very different planting methods so the benchmark isn't shaped by a single approach's quirks.</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <div class="k">Method MS · from board exams</div>
+          <h3>Swap the right answer for a plausible wrong one</h3>
+          <p class="muted" style="font-size:.86rem;margin-top:6px">Starting from MedQA board-exam vignettes, four medically-trained annotators first verified the original question–answer pairs and discarded any that were ambiguous or missing context. They then wrote the answer <em>into</em> the narrative — the correct answer to make a clean note, a plausible wrong answer to make an erroneous one — in two variants, with the error placed mid-text or at the end.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">2,189 training / 574 validation / 597 test texts. Publicly available.</p>
+        </div>
+        <div class="card">
+          <div class="k">Method UW · from real notes</div>
+          <h3>Replace a real concept with a near neighbour</h3>
+          <p class="muted" style="font-size:.86rem;margin-top:6px">488 real diagnosis-support notes (2009–2021) from Harborview, UW Medical Center, and Seattle Cancer Care Alliance. Four medical students picked a medical entity — candidates surfaced as UMLS concepts — and swapped it for a similar-but-distinct concept, suggested either by the annotator or by a SNOMED/LLM-based method.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">244 of the 488 had errors injected. De-identified after injection, independently reviewed by two annotators, with a third adjudicating discrepancies. Requires a data use agreement.</p>
+        </div>
+      </div>
+      <p class="callout"><strong>One design constraint in the UW method is worth pulling out:</strong> each injected error span was required to <em>contradict at least two other parts of the same note</em>, and annotators had to write a justification for every error introduced. That makes the UW subset a test of <strong>internal consistency checking</strong> specifically — the error isn't detectable from outside medical knowledge alone; it's detectable because the note now disagrees with itself.</p>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — three real cases from the benchmark</div>
+      <h2>Spot the error, then see what the doctors and the models said</h2>
+      <p class="sub">All three are actual MEDEC-MS test cases, with the actual reference correction, both doctors' annotations, and the models' outputs as printed in the paper. The planted error is highlighted so the case reads quickly; the interesting part is the disagreement underneath.</p>
+
+      <div class="casebox">
+        <div class="case-toggle" id="caseToggle"></div>
+        <div class="casebody">
+          <div class="notetext" id="noteText"></div>
+          <button class="revealbtn" onclick="revealCase()">Show what everyone answered ↓</button>
+          <div class="answers" id="answers"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RANK FLIP -->
+    <section>
+      <div class="eyebrow">The finding that complicates the leaderboard</div>
+      <h2>Being best at finding errors does not mean being best at fixing them</h2>
+      <p class="sub">Detection and correction rank almost inversely across the evaluated models. This is the paper's sharpest result, and it means "which model should we use" has no single answer.</p>
+
+      <div class="flipwrap">
+        <div class="ranklist">
+          <div class="rt">Error detection · flag accuracy</div>
+          <div class="rankitem hi"><span>1 · Claude 3.5 Sonnet</span><b>70.16%</b></div>
+          <div class="rankitem"><span>2 · o1-mini</span><b>69.08%</b></div>
+          <div class="rankitem"><span>3 · o1-preview</span><b>67.46%</b></div>
+          <div class="rankitem"><span>4 · GPT-4o</span><b>65.84%</b></div>
+          <div class="rankitem lo"><span>… DeepSeek-R1</span><b>51.68%</b></div>
+        </div>
+        <div class="flipar">⇄</div>
+        <div class="ranklist">
+          <div class="rt">Error correction · aggregate score</div>
+          <div class="rankitem hi"><span>1 · o1-preview</span><b>0.698</b></div>
+          <div class="rankitem hi"><span>2 · DeepSeek-R1</span><b>0.675</b></div>
+          <div class="rankitem"><span>3 · GPT-4</span><b>0.639</b></div>
+          <div class="rankitem"><span>4 · o1-mini</span><b>0.619</b></div>
+          <div class="rankitem lo"><span>last · Claude 3.5 Sonnet</span><b>0.280</b></div>
+        </div>
+      </div>
+
+      <p class="callout">Claude 3.5 Sonnet is <strong>first</strong> at detecting errors and <strong>last</strong> at correcting them. DeepSeek-R1 is near the bottom at detection (51.68%) yet <strong>second</strong> at correction. The paper's own explanation for Claude is partly stylistic — it writes long corrections with explanatory prose, which lexical metrics punish. Notably, on <strong>MIST</strong> (the UMLS-concept metric, which compares medical concepts rather than words) Claude scores highest of all models at <strong>0.9325</strong> — so part of that "last place" is the metric, not the medicine.</p>
+    </section>
+
+    <!-- DOCTORS -->
+    <section>
+      <div class="eyebrow">The human baseline, and what it revealed</div>
+      <h2>Doctors won — but agreed with each other only 69% of the time</h2>
+      <p class="sub">Two medical doctors did the same three subtasks on 569 of the 925 test notes, with 242 double-annotated to measure agreement.</p>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <div class="k">Humans still ahead on detection</div>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Doctor #1: <strong>79.61%</strong> flag accuracy · 65.88% sentence.<br>Doctor #2: <strong>71.61%</strong> flag · 66.77% sentence.<br>Best model (Claude): 70.16% flag · 65.62% sentence.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">On correction, Doctor #2 also leads everything at <strong>0.7118</strong> aggregate — but Doctor #1 scores only 0.4527, below several models. The two doctors differ from each other more than the top models differ from each other.</p>
+        </div>
+        <div class="card">
+          <div class="k">The agreement number is the real finding</div>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Inter-annotator agreement between the two doctors: <strong>69.01%</strong> on whether an error exists, <strong>57.85%</strong> on which sentence contains it.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Two qualified physicians, given the same note, disagree about whether it contains a medical error roughly a third of the time. That sets a hard ceiling on what any "accuracy against a single reference" number can mean here — and it makes the task's difficulty a property of the clinical judgment involved, not just of the models.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRECISION + CONTAMINATION -->
+    <section>
+      <div class="eyebrow">Two more results worth carrying</div>
+      <h2>Over-flagging, and a public/private performance gap</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <div class="k">Recall is high, accuracy is not — so precision is the problem</div>
+          <h3>Models invent errors in clean notes</h3>
+          <p class="muted" style="font-size:.86rem;margin-top:6px">o1-preview's <em>recall</em> on notes that genuinely contain an error is very high across every type: Diagnosis 96.6%, Management 93.5%, Treatment 93.1%, Pharmacotherapy 96.5%, Causal Organism 100%. Yet its overall accuracy (67.46%) sits below the doctors'.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">The paper reads this directly: the model "hallucinated error presence in many cases" — it finds nearly every real error, but also flags errors in notes that are fine. Given that <strong>48.7% of test notes are clean</strong>, that failure mode is expensive.</p>
+        </div>
+        <div class="card">
+          <div class="k">MS (public) vs UW (private) split</div>
+          <h3>A gap that looks like familiarity</h3>
+          <p class="muted" style="font-size:.86rem;margin-top:6px">o1-preview on the MS subset (built from publicly available board-exam material): <strong>72.9%</strong> flag / <strong>68.8%</strong> sentence. On the UW subset (real private notes, never seen by any LLM): <strong>57.6%</strong> / <strong>47.9%</strong>.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Roughly a 15- and 21-point drop moving from public-derived to private text. The doctors show no comparable pattern — Doctor #2 actually scores <em>higher</em> on UW (77.2% vs 68.9%). A benchmark drawn only from public sources would have reported the optimistic number.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- METRIC LIMITS -->
+    <section>
+      <div class="eyebrow">Where the scoring struggles</div>
+      <h2>The synonym problem, shown by the paper's own example</h2>
+      <p class="sub">Case ms-test-234: a boy with recurrent bacterial infections and two maternal uncles who died similarly; the note wrongly says common variable immunodeficiency.</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><div class="k">Reference correction</div><p style="font-size:.9rem;margin-top:6px">"Patient is diagnosed with <strong>Bruton agammaglobulinemia</strong>…"</p></div>
+        <div class="card"><div class="k">What GPT-4, GPT-4o, o1-preview, o1-mini, Claude and Doctor #2 all said</div><p style="font-size:.9rem;margin-top:6px">"Patient is diagnosed with <strong>X-linked agammaglobulinemia</strong>…"</p></div>
+      </div>
+      <p class="callout">These are the same disease. Every lexical metric penalizes the mismatch anyway — which is precisely why the authors include <strong>MIST</strong>, which compares UMLS concept embeddings rather than surface strings, and why the aggregate ranking and the MIST ranking disagree. The general lesson: when the reference is one clinician's phrasing, a metric that scores words will mistake vocabulary for error.</p>
+    </section>
+
+    <!-- LIMITATIONS -->
+    <section>
+      <div class="eyebrow">Reading it with its scope attached</div>
+      <h2>What the benchmark does and doesn't establish</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>Errors are injected, not naturally occurring</h3><p class="muted" style="font-size:.86rem">Exactly one planted error per note, of five predefined types. Real documentation errors are messier, can co-occur, and include categories outside this taxonomy — the authors list dataset size and error-type coverage as explicit limitations.</p></div>
+        <div class="card"><h3>The MS reference reflects the exam's answer key</h3><p class="muted" style="font-size:.86rem">The authors note plainly that MS items "reflect the original content and answer choices as provided in those sources" and that "medical professionals may hold differing opinions" — the 69% inter-doctor agreement is the same fact seen from the other side.</p></div>
+        <div class="card"><h3>Prompting was deliberately basic</h3><p class="muted" style="font-size:.86rem">Two prompts only — zero-shot and one-shot. The authors report that in-context learning and chain-of-thought helped older models but not newer ones, and explicitly leave retrieval-augmented and instruction-based prompting to future work.</p></div>
+        <div class="card"><h3>Open-domain models only</h3><p class="muted" style="font-size:.86rem">Specialized medical models weren't evaluated — Med-PaLM in particular was not publicly available. So the paper doesn't tell us whether domain fine-tuning helps or hurts on validation tasks specifically.</p></div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      "MEDEC: A Benchmark for Medical Error Detection and Correction in Clinical Notes" · Ben Abacha et al. · ACL Findings 2025</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  const cases = {
+    c1: {
+      label: 'Diagnosis',
+      sub: 'ms-test-141',
+      note: 'A 23-year-old man presents with sudden loss of consciousness while pitching in a baseball game. There is no history of injury. Consciousness is regained after cardiopulmonary resuscitation. Past medical history is negative for any neurological and cardiovascular problems. <span class="errspan">Patient is diagnosed with aortic stenosis</span> after physical examination reveals a prominent A wave on the jugular venous pulse and a double apical impulse. There are no audible murmurs. An S4 is present.',
+      answers: [
+        { who: 'Reference', cls: 'ref', what: 'Patient is diagnosed with <strong>hypertrophic cardiomyopathy</strong> after physical examination reveals a prominent A wave on the jugular venous pulse and a double apical impulse.' },
+        { who: 'Doctor #1', cls: 'ok', what: 'Hypertrophic cardiomyopathy — with the physical findings restated (double apical impulse, prominent "a wave" and S4).' },
+        { who: 'Doctor #2', cls: 'ok', what: 'Hypertrophic cardiomyopathy — matching the reference wording closely.' },
+        { who: 'GPT-4 / GPT-4o / o1-preview / o1-mini', cls: 'ok', what: 'All four: hypertrophic cardiomyopathy, phrased essentially identically to the reference.' },
+        { who: 'Claude 3.5 Sonnet', cls: 'bad', what: 'Flagged a <em>different</em> sentence and "corrected" it by adding a systolic ejection murmur at the right upper sternal border — i.e. it changed the findings to fit the wrong diagnosis rather than changing the diagnosis to fit the findings.' }
+      ],
+      verdict: 'The give-away is that there are <em>no audible murmurs</em> — aortic stenosis essentially always produces one. Everyone except Claude reversed the diagnosis; Claude instead edited the exam findings to make the stated diagnosis work, which is a coherent but wrong repair.'
+    },
+    c2: {
+      label: 'Diagnosis · synonym trap',
+      sub: 'ms-test-234',
+      note: 'A 4-year-old boy presents with a history of recurrent bacterial infections, including several episodes of pneumococcal sepsis. His 2 maternal uncles died after having had similar complaints. <span class="errspan">Patient is diagnosed with common variable immunodeficiency</span> after lab investigations reveal an undetectable level of all serum immunoglobulins.',
+      answers: [
+        { who: 'Reference', cls: 'ref', what: 'Patient is diagnosed with <strong>Bruton agammaglobulinemia</strong> after lab investigations reveal an undetectable level of all serum immunoglobulins.' },
+        { who: 'Doctor #1', cls: 'bad', what: '"The differential diagnosis includes autosomal recessive agammaglobulinemia, but further evaluation is necessary." — hedged rather than corrected, and points away from the X-linked pattern the family history indicates.' },
+        { who: 'Doctor #2', cls: 'ok', what: 'X-linked agammaglobulinemia — the same disease under its other name.' },
+        { who: 'GPT-4 / GPT-4o / o1-preview / o1-mini', cls: 'ok', what: 'All four: X-linked agammaglobulinemia.' },
+        { who: 'Claude 3.5 Sonnet', cls: 'ok', what: 'X-linked agammaglobulinemia, plus an explanation citing the male patient, the maternal-uncle inheritance pattern, and the lab findings.' }
+      ],
+      verdict: 'Everyone except Doctor #1 got this medically right — and almost everyone is scored as partially wrong, because "X-linked agammaglobulinemia" and "Bruton agammaglobulinemia" are the same condition but share no words. This single case is the clearest argument in the paper for concept-based metrics over lexical ones.'
+    },
+    c3: {
+      label: 'Management · the hard one',
+      sub: 'ms-test-261',
+      note: 'A 50-year-old woman visits her primary care practitioner with the complaints of generalized weakness, lightheadedness, and fatigability for the past month. She also claims to have epigastric pain, heartburn, and a sensation of a lump in her throat. Her family history is irrelevant, but her medical history is significant for a Pap smear that reported atypical squamous cells of undetermined significance (ASCUS), which was followed up with a cervical biopsy negative for malignancy. She occasionally takes over-the-counter medicines to cope with the heartburn, and recently her hemoglobin was found to be 11 g/dL, for which she received iron and vitamin B12 supplementation. <span class="errspan">Fecal occult blood test is completed.</span> Physical examination is unremarkable, except for pale skin, and a pulse of 120/min.',
+      answers: [
+        { who: 'Reference', cls: 'ref', what: 'The patient is <strong>referred for an endoscopy</strong>.' },
+        { who: 'Doctor #1', cls: 'bad', what: '"She has not had followup after her cervical biopsy and HPV testing is indicated." — flagged a different issue entirely.' },
+        { who: 'Doctor #2', cls: 'bad', what: 'Annotated the text as <strong>CORRECT</strong> — did not detect an error at all.' },
+        { who: 'GPT-4 (P1)', cls: 'bad', what: 'Changed the pulse from 120/min to 100/min — edited a vital sign rather than the management step.' },
+        { who: 'GPT-4 (P2) / GPT-4o / Claude', cls: 'bad', what: 'Annotated as CORRECT — no error detected.' },
+        { who: 'GPT-4o-mini / o1-preview / o1-mini', cls: 'bad', what: 'Rewrote the supplementation sentence to drop vitamin B12 — again, a different sentence than the reference error.' }
+      ],
+      verdict: 'Nobody got this one — not the models, not either doctor. The reference holds that this presentation (anaemia, epigastric pain, tachycardia in a 50-year-old) warrants endoscopy rather than a fecal occult blood test. This is the case that best explains why inter-doctor agreement is only 69%: the "error" here is a judgment about workup adequacy, not a factual mistake anyone can point at.'
+    }
+  };
+
+  let curCase = 'c1';
+  function renderToggle(){
+    document.getElementById('caseToggle').innerHTML = Object.keys(cases).map(function(k){
+      const c = cases[k];
+      return '<button class="' + (k===curCase?'active':'') + '" onclick="pickCase(\'' + k + '\')">' + c.label +
+        '<br><span style="font-family:var(--mono);font-size:.66rem;opacity:.75">' + c.sub + '</span></button>';
+    }).join('');
+  }
+  function pickCase(k){ curCase = k; renderToggle(); renderCase(); }
+  function renderCase(){
+    const c = cases[curCase];
+    document.getElementById('noteText').innerHTML = c.note;
+    document.getElementById('answers').classList.remove('show');
+    document.getElementById('answers').innerHTML =
+      c.answers.map(function(a){
+        return '<div class="ansrow"><div class="who ' + a.cls + '">' + a.who + '</div><div class="what">' + a.what + '</div></div>';
+      }).join('') + '<div class="verdictnote">' + c.verdict + '</div>';
+  }
+  function revealCase(){ document.getElementById('answers').classList.add('show'); }
+  renderToggle(); renderCase();
+
+  const quiz = [
+    { q: "What makes MEDEC's task different from most medical LLM benchmarks?", opts: [
+        "It asks the model to answer exam questions faster",
+        "It asks the model to validate and correct text someone else wrote, rather than produce an answer",
+        "It only uses multiple-choice questions",
+        "It evaluates image understanding"
+      ], correct: 1, explain: "Validation is a distinct capability from generation — and the paper argues it's the one that matters for safely adopting LLMs in medical documentation, since that's what checking an AI-drafted note requires." },
+    { q: "In the UW subset, what constraint governed how errors were injected?", opts: [
+        "Each error had to be a spelling mistake",
+        "Each error span had to contradict at least two other parts of the same note",
+        "Each error had to appear in the final sentence",
+        "Errors were generated fully automatically with no human review"
+      ], correct: 1, explain: "That constraint makes the UW subset specifically a test of internal-consistency checking — the error is detectable because the note now disagrees with itself, not only because outside medical knowledge says so." },
+    { q: "What happened when detection and correction were ranked separately?", opts: [
+        "The rankings were nearly identical",
+        "The rankings almost inverted — Claude was 1st at detection and last at correction; DeepSeek-R1 near-last at detection but 2nd at correction",
+        "Only one model could do both tasks",
+        "Correction scores were not reported"
+      ], correct: 1, explain: "Part of Claude's low correction score is a metric artifact — it writes long explanatory corrections that lexical metrics punish, and it actually scores highest of all models (0.9325) on MIST, the UMLS-concept-based metric." },
+    { q: "What does the 69.01% inter-doctor agreement figure tell us?", opts: [
+        "The doctors were poorly trained",
+        "Two qualified physicians disagree about whether a note contains an error roughly a third of the time — a ceiling on what accuracy-against-one-reference can mean",
+        "The models were more consistent than humans, so models should be trusted",
+        "Agreement was measured on a different dataset"
+      ], correct: 1, explain: "The ms-test-261 management case shows why: the 'error' there is a judgment about whether the workup was adequate, not a factual mistake — and neither doctor nor any model matched the reference." },
+  ];
+  document.getElementById('quizWrap').innerHTML = quiz.map(function(item, qi){
+    return '<div class="quiz"><div class="q">' + (qi+1) + '. ' + item.q + '</div><div class="opts">' +
+      item.opts.map(function(o, oi){ return '<button class="opt" onclick="answerQuiz(' + qi + ',' + oi + ',this)">' + o + '</button>'; }).join('') +
+      '</div><div class="explain" id="explain-' + qi + '">' + item.explain + '</div></div>';
+  }).join('');
+  function answerQuiz(qi, oi, btn){
+    const item = quiz[qi];
+    const opts = btn.parentElement.querySelectorAll('.opt');
+    opts.forEach(function(o, i){
+      o.classList.remove('correct','wrong');
+      if (i === item.correct) o.classList.add('correct');
+      else if (i === oi) o.classList.add('wrong');
+    });
+    document.getElementById('explain-' + qi).classList.add('show');
+  }
+</script>
