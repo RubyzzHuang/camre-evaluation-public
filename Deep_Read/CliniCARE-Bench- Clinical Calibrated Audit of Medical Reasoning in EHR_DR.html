@@ -102,6 +102,8 @@
   .how-steps li strong { color: var(--ink); }
   .finding-box { background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; font-size: .86rem; }
   .finding-box .wh-label { color: var(--accent); }
+  .plain { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; font-size: .88rem; margin: 0 0 14px; }
+  .plain b { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700; }
 
   .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
   .quiz + .quiz { margin-top: 14px; }
@@ -204,6 +206,7 @@
 
       <div class="metric-deep">
         <div class="mtitle">1 · Verdict accuracy, abstention, and calibration</div>
+        <p class="plain"><b>In plain terms</b>Three separate questions, not one: did it pick the right answer · when the chart genuinely couldn't settle the question, did it say so instead of guessing · and when it said "90% sure," was it actually right about 90% of the time?</p>
         <div class="wh-label">Why</div>
         <p class="wh-why">A single accuracy number conflates three different things: does the system reach the right label, does it know when to defer instead of guessing, and when it states a confidence, does that number mean anything? A system can score well on the first while failing badly on the other two.</p>
         <div class="wh-label">How, step by step</div>
@@ -214,10 +217,18 @@
           <li><strong>Calibration (ECE)</strong> — every parseable report states a confidence in its own verdict. Bin all report-present runs into 10 equal-width confidence bins; within each bin, compare the mean stated confidence to the actual accuracy of predictions in that bin; ECE is the size-weighted average gap between the two across all 10 bins. A system whose stated 90% confidence is right 90% of the time scores near 0; one whose "90% confident" calls are right half the time scores high regardless of its raw accuracy.</li>
         </ol>
         <div class="finding-box"><span class="wh-label">What they found</span>Accuracy ranges 65.3–76.1% across the 16 systems. Every single one over-commits more than it over-abstains (21.3–55.3% vs. 7.3–16.5%) — a property of each system individually, not an artifact of the case mix. ECE spans a nearly 6× range (0.046–0.262) and doesn't track accuracy rank at all: the three worst-calibrated systems are all one vendor's family, sitting mid-field on accuracy — some simply output only a handful of distinct confidence values, which is a lack of graded uncertainty rather than a subtly-wrong calibration curve.</div>
+
+        <div class="card" style="margin-top:16px;box-shadow:none">
+          <div class="k">Worth pausing on — abstention and confidence come apart</div>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Intuitively these should move together: a system that knows when to say "I can't tell" ought to also report honest confidence numbers. Both are probing the same underlying thing — whether the system has a grip on the limits of its own knowledge. The data says otherwise.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px"><strong>Gemini-3.1-Pro has the lowest over-commitment rate of all 16 systems (21.3%)</strong> — it is the best in the field at deferring when the record genuinely can't settle the question. It also carries an <strong>ECE of 0.256, among the three worst</strong>. Best at knowing when to abstain; nearly worst at saying how sure it is.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px"><em>This deep-read's reading of why</em> (the paper reports both numbers but doesn't connect them this way): the two are different output channels for the same capability. Abstaining is a <strong>discrete choice</strong> — picking one of four labels — and can be driven by a coarse learned rule ("key test missing → defer") without any fine-grained internal sense of uncertainty. Reporting a confidence number is a <strong>continuous self-estimate</strong>, a harder and separately-trained skill. The paper's own explanation for the Gemini scores points the same way: those systems emit only a few distinct confidence values, so the failure is in the expression channel, not necessarily in the underlying awareness.</p>
+        </div>
       </div>
 
       <div class="metric-deep">
         <div class="mtitle">2 · Patient-evidence grounding</div>
+        <p class="plain"><b>In plain terms</b>Did it actually look in the right parts of the chart — and does the record it points to really say what it claims it says? Completeness on one side, honesty of the citation on the other.</p>
         <div class="wh-label">Why</div>
         <p class="wh-why">A verdict can be correct by luck, or justified by a citation that doesn't actually say what the report claims it says. Grounding checks whether the investigation is auditable — whether a human could follow the citations and independently verify the conclusion — separately from whether the conclusion itself is right.</p>
         <div class="wh-label">How, step by step</div>
@@ -232,6 +243,7 @@
 
       <div class="metric-deep">
         <div class="mtitle">3 · Policy grounding</div>
+        <p class="plain"><b>In plain terms</b>Same two questions as above, but about the rulebook instead of the chart: did it find the guideline that actually governs this case, and does the passage it quotes really support the call it made — or is it just a related-sounding quote?</p>
         <div class="wh-label">Why</div>
         <p class="wh-why">Even a perfectly-retrieved patient record means nothing without the right governing standard to interpret it against — the wrong or an invented threshold produces a wrong verdict for a reason that has nothing to do with the patient's actual data. This is scored separately from whether the standard was then applied correctly (that's Family 4).</p>
         <div class="wh-label">How, step by step</div>
@@ -246,6 +258,7 @@
 
       <div class="metric-deep">
         <div class="mtitle">4 · Process adherence and defect-free accuracy</div>
+        <p class="plain"><b>In plain terms</b>This is a compliance audit, not a logic review. It doesn't ask "was the reasoning clever" — it asks "did it do the required checks, and did it avoid the forbidden moves." Guessing right after taking a banned shortcut still fails.</p>
         <div class="wh-label">Why</div>
         <p class="wh-why">An investigation can be sound and still land on the wrong verdict through one local misstep — or it can land on the right verdict through a shortcut that happens to work this time. Verdict accuracy alone can't distinguish either case from a genuinely defensible investigation, so the observable process — the report plus the logged trajectory, never the model's private reasoning — is scored on its own terms.</p>
         <div class="wh-label">How, step by step</div>
@@ -263,6 +276,7 @@
 
       <div class="metric-deep">
         <div class="mtitle">5 · Repeated-run reliability and resource use</div>
+        <p class="plain"><b>In plain terms</b>Two unrelated things bundled together. First: run the same case ten times — same answer every time, or does it wobble? Second: what did that answer cost in tool calls, tokens, and money?</p>
         <div class="wh-label">Why</div>
         <p class="wh-why">A single attempt conflates "can this system reach the right answer" with "does it reach the right answer reliably." And a good verdict bought at ten times the cost of another isn't the same achievement as one reached efficiently.</p>
         <div class="wh-label">How, step by step</div>
