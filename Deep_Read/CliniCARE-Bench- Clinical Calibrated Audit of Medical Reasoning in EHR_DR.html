@@ -104,6 +104,16 @@
   .finding-box .wh-label { color: var(--accent); }
   .plain { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; font-size: .88rem; margin: 0 0 14px; }
   .plain b { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700; }
+  .skillbars { margin-top: 18px; display: flex; flex-direction: column; gap: 7px; }
+  .skillrow { display: grid; grid-template-columns: 200px 1fr 32px; align-items: center; gap: 12px; }
+  @media (max-width: 620px) { .skillrow { grid-template-columns: 130px 1fr 28px; } }
+  .skillrow .sname { font-size: .82rem; text-align: right; color: var(--muted); }
+  .skillrow .sbar { height: 16px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .skillrow .sbar > i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+  .skillrow .scount { font-family: var(--mono); font-size: .78rem; font-weight: 700; color: var(--muted); }
+  .skillrow.rare .sname { color: var(--gate, var(--harm)); font-weight: 650; }
+  .skillrow.rare .sbar > i { background: var(--harm); }
+  .skillrow.rare .scount { color: var(--harm); }
 
   .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
   .quiz + .quiz { margin-top: 14px; }
@@ -287,6 +297,50 @@
         </ol>
         <div class="finding-box"><span class="wh-label">What they found</span>A 10× spread in per-run cost across the vendor systems corresponds to only about a 10-point spread in accuracy. Two similarly-priced systems ($0.20 vs. $0.21/run) differ by just 0.4 points in accuracy but by 10 points in process adherence — and the one issuing <em>more</em> tool calls (42 vs. 18) has the <em>worse</em> process score, showing that more retrieval activity alone doesn't produce a sounder investigation.</div>
       </div>
+    </section>
+
+    <!-- SKILL TAXONOMY -->
+    <section>
+      <div class="eyebrow">What the 25 scenarios actually stress</div>
+      <h2>Ten reasoning skills, unevenly sampled on purpose</h2>
+      <p class="sub">Each scenario is tagged with the reasoning capabilities it exercises (most exercise two or three at once). The distribution is deliberately uneven — and the two rarest are the ones the authors single out as the hardest.</p>
+
+      <div class="skillbars">
+        <div class="skillrow"><span class="sname">Guideline concordance</span><span class="sbar"><i style="width:100%"></i></span><span class="scount">9</span></div>
+        <div class="skillrow"><span class="sname">Time-sensitive audit</span><span class="sbar"><i style="width:78%"></i></span><span class="scount">7</span></div>
+        <div class="skillrow"><span class="sname">Cross-modal validation</span><span class="sbar"><i style="width:67%"></i></span><span class="scount">6</span></div>
+        <div class="skillrow"><span class="sname">Score / threshold</span><span class="sbar"><i style="width:67%"></i></span><span class="scount">6</span></div>
+        <div class="skillrow"><span class="sname">Sequence / pathway</span><span class="sbar"><i style="width:56%"></i></span><span class="scount">5</span></div>
+        <div class="skillrow"><span class="sname">Completeness audit</span><span class="sbar"><i style="width:56%"></i></span><span class="scount">5</span></div>
+        <div class="skillrow"><span class="sname">Diagnostic / etiologic</span><span class="sbar"><i style="width:56%"></i></span><span class="scount">5</span></div>
+        <div class="skillrow"><span class="sname">Negative / absence</span><span class="sbar"><i style="width:44%"></i></span><span class="scount">4</span></div>
+        <div class="skillrow rare"><span class="sname">Longitudinal synthesis</span><span class="sbar"><i style="width:33%"></i></span><span class="scount">3</span></div>
+        <div class="skillrow rare"><span class="sname">Discrepancy / reconciliation</span><span class="sbar"><i style="width:22%"></i></span><span class="scount">2</span></div>
+      </div>
+      <p class="muted" style="font-size:.8rem;margin-top:10px">The paper's own framing: guideline concordance and time-sensitive audit are "the most widely sampled," while reconciliation and longitudinal synthesis are "rarer, higher-difficulty probes."</p>
+
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card">
+          <div class="k">Time-sensitive audit · 7 scenarios</div>
+          <h3>The hard part isn't the arithmetic — it's which timestamp counts</h3>
+          <p class="muted" style="font-size:.86rem">Examples: was empiric antibiotic therapy narrowed <em>within 48h</em> once susceptibilities returned; door-to-needle and door-to-puncture intervals against AHA stroke targets; time-to-calcium for a critical potassium (≥6.5 mEq/L); whether the DKA resolution timeline shows dextrose started when glucose dropped below 200 mg/dL; the final 72 hours of life.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:10px">What makes these hard is <strong>timestamp provenance</strong>, not interval math. The AKI scenario routes a case to <em>Lack of Data</em> when "CT timing cannot be resolved — order time versus actual scan time, or multiple CTs prevent a unique first qualifying CT." The imaging scenario states plainly that "an order alone does not settle the question where a confirming radiology report is available." And "treating an order time as a performed-procedure time" is named as a prohibited MUST-NOT shortcut. The required evidence list demands the scan time be "distinguished from the order time, confirmed via the radiology report where possible."</p>
+        </div>
+        <div class="card">
+          <div class="k">Longitudinal synthesis · 3 scenarios</div>
+          <h3>Comparing across admissions, not values across time</h3>
+          <p class="muted" style="font-size:.86rem">The clearest instance is the renal-trajectory scenario: is kidney function on a worsening trajectory across <em>all</em> of a patient's admissions? Its specification is essentially a template for how to make this measurable:</p>
+          <ul class="how-steps" style="margin-top:10px">
+            <li><strong>Precondition gate</strong> — fewer than two admissions, or sampling too sparse to build per-admission baselines, is <em>Lack of Data</em>. The task is undefined without at least two comparable time points.</li>
+            <li><strong>Normalize before comparing</strong> — construct a <em>per-admission baseline</em> first, then compare baselines across admissions. Not raw value against raw value.</li>
+            <li><strong>Pick a measure that isn't systematically biased</strong> — assess by estimated GFR, not serum creatinine alone, "since creatinine understates GFR decline as muscle mass falls."</li>
+            <li><strong>Separate trend from episode</strong> — "a discrete, reversible AKI that recovers to baseline does not count as worsening."</li>
+            <li><strong>Name the measurement artifact as its own verdict</strong> — flat creatinine in an older, frail patient can't exclude real GFR decline; with coded CKD but no cystatin-C available, that is <em>Medically Ambiguous</em>, not <em>No</em>.</li>
+            <li><strong>Give an explicit precedence rule</strong> — where both the No branch and the ambiguity branch could fit the same patient, the spec states outright which one governs.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="callout">That last item is easy to overlook and does a lot of work: when two verdict branches can plausibly describe the same case, the specification says which wins, rather than leaving it to whoever is adjudicating. It is the difference between a rubric that produces reproducible labels and one that produces arguments.</p>
     </section>
 
     <!-- JUDGE CIRCULARITY -->
