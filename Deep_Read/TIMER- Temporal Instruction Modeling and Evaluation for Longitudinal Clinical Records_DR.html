@@ -1,0 +1,421 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 66ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+  .formula { font-family: var(--mono); font-size: .84rem; background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; color: var(--ink); }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); max-width: 18ch; }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+  .plain { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; font-size: .88rem; margin: 0 0 14px; }
+  .plain b { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700; }
+
+  /* timeline strip visual */
+  .tlstrip { margin-top: 8px; }
+  .tlrow { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 12px; margin-bottom: 10px; }
+  @media (max-width: 620px) { .tlrow { grid-template-columns: 90px 1fr; } }
+  .tlrow .tll { font-size: .8rem; font-weight: 650; text-align: right; color: var(--muted); }
+  .tlbar { height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper); display: flex; overflow: hidden; }
+  .tlbar span { flex: 1; border-right: 1px solid var(--line); }
+  .tlbar span:last-child { border-right: none; }
+  .tlcap { font-family: var(--mono); font-size: .66rem; color: var(--muted); text-align: right; margin-top: 2px; }
+
+  /* flagship grid */
+  .distbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
+  .dist-toggle { display: flex; gap: 8px; padding: 20px 20px 0; flex-wrap: wrap; }
+  .dist-toggle button { cursor: pointer; font-family: var(--font); font-size: .82rem; font-weight: 650; padding: 11px 16px; border-radius: 100px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); text-align: left; }
+  .dist-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .distbody { padding: 18px 20px 20px; }
+  .dist-desc { font-size: .88rem; color: var(--muted); margin: 4px 0 16px; }
+  .benchrow { display: grid; grid-template-columns: 190px 1fr 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--line); background: var(--paper); }
+  @media (max-width: 700px) { .benchrow { grid-template-columns: 1fr; gap: 6px; } }
+  .benchrow.aligned { border-color: var(--accent); background: var(--accent-soft); }
+  .benchrow .bn { font-size: .84rem; font-weight: 650; }
+  .benchrow .bn small { display: block; font-family: var(--mono); font-size: .64rem; color: var(--muted); font-weight: 400; text-transform: uppercase; letter-spacing: .04em; }
+  .metricpair { display: flex; align-items: baseline; gap: 8px; }
+  .metricpair .mv { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .metricpair .ml { font-size: .72rem; color: var(--muted); }
+  .metricpair.best .mv { color: var(--accent); }
+  .dist-foot { padding: 16px 20px; background: var(--paper); border-top: 1px solid var(--line); font-size: .86rem; color: var(--muted); }
+
+  .failrow { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); margin-top: 12px; }
+  .failrow .fk { font-family: var(--mono); font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--harm); font-weight: 700; }
+  .failcompare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  @media (max-width: 700px) { .failcompare { grid-template-columns: 1fr; } }
+  .failcell { border-radius: 8px; padding: 10px 12px; font-size: .82rem; }
+  .failcell.bad { background: var(--harm-soft); border: 1px solid var(--harm); }
+  .failcell.good { background: var(--good-soft); border: 1px solid var(--good); }
+  .failcell b { font-family: var(--mono); font-size: .62rem; text-transform: uppercase; display: block; margin-bottom: 4px; letter-spacing: .04em; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>TIMER<br>Where in the timeline a question points is itself a variable</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> "TIMER: Temporal Instruction Modeling and Evaluation for Longitudinal Clinical Records" · Cui, Unell, Chen, Fries, Alsentzer, Koyejo, Shah (Stanford) · ICML 2025</p>
+      <p class="lead" style="margin-top:20px">Every benchmark built on longitudinal records implicitly decides <em>which part of the patient's history its questions are about</em> — and until this paper, nobody was controlling that. TIMER makes temporal position an explicit, measurable axis, shows that both human-written and model-written questions cluster badly, and then demonstrates that fixing the clustering in training data measurably improves temporal reasoning.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">55.3%</div><div class="l">of a leading clinician-written benchmark's questions fall in the last quarter of the timeline</div></div>
+        <div class="stat"><div class="n">402</div><div class="l">TIMER-Bench questions, avg span 1,294 days (~3.5 yrs)</div></div>
+        <div class="stat"><div class="n">+9.2%</div><div class="l">from temporal-aware instruction tuning on TIMER-Bench</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">named temporal failure modes, each with real examples</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">Dimensions this paper covers:</span>
+        <span class="chip on">Longitudinal reasoning</span>
+        <span class="chip on">Completeness</span>
+        <span class="chip on">Reasoning-process accuracy</span>
+        <span class="chip">Benchmark-design methodology</span>
+      </div>
+    </section>
+
+    <!-- TWO ARTIFACTS -->
+    <section>
+      <div class="eyebrow">What "TIMER" actually refers to</div>
+      <h2>One framework, two deliverables</h2>
+      <p class="sub">Easy to conflate, and they answer different questions. This deep-read is mostly about the first, since that's the evaluation contribution — but the second is what makes the paper's argument land.</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><div class="k">TIMER-Bench</div><h3>An evaluation set with temporal position controlled</h3><p class="muted" style="font-size:.86rem">402 instruction–response pairs over real longitudinal records, each carrying explicit <strong>time evidence</strong> (the dated events its answer rests on). Because every question is tagged with where in the timeline it points, the benchmark can be re-sampled into different temporal distributions on demand.</p></div>
+        <div class="card"><div class="k">TIMER-Instruct</div><h3>A tuning method that balances temporal coverage</h3><p class="muted" style="font-size:.86rem">Instruction tuning on 5,000 model-generated pairs whose temporal positions are deliberately distributed rather than left to chance. Same records, same volume — only the distribution over the timeline changes.</p></div>
+      </div>
+    </section>
+
+    <!-- THE PROBLEM -->
+    <section>
+      <div class="eyebrow">The problem being named</div>
+      <h2>Existing benchmarks quietly only ask about recent history</h2>
+      <p class="sub">Two failure shapes, in the two most widely used sources of EHR instruction data:</p>
+
+      <div class="card" style="margin-top:16px">
+        <div class="k">Limitation 1 · MIMIC-derived instruction data</div>
+        <h3>Not longitudinal at all</h3>
+        <p class="muted" style="font-size:.86rem;margin-top:6px">MIMIC-Instr pairs are generated from single ICU visits averaging <strong>7.2 days</strong>. 84.5% of its patients are single-visit. Whatever it measures, it cannot be multi-visit temporal reasoning — the data simply doesn't span it.</p>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="k">Limitation 2 · MedAlign (clinician-written)</div>
+        <h3>Long records, but the questions bunch at the end</h3>
+        <p class="muted" style="font-size:.86rem;margin-top:6px">MedAlign covers an average span of 3,895 days (~10.7 years) — genuinely longitudinal records. But the clinician-authored questions asked about them concentrate heavily at the recent end:</p>
+        <div class="tlstrip" style="margin-top:14px">
+          <div class="tlrow"><span class="tll">Last 25%</span><span class="tlbar"><span style="background:var(--accent);flex:55.3"></span><span style="flex:44.7"></span></span></div>
+          <div class="tlcap">55.3% of all 396 instructions</div>
+          <div class="tlrow" style="margin-top:10px"><span class="tll">Last 15%</span><span class="tlbar"><span style="background:var(--accent);flex:47"></span><span style="flex:53"></span></span></div>
+          <div class="tlcap">47.0%</div>
+          <div class="tlrow" style="margin-top:10px"><span class="tll">Final 5%</span><span class="tlbar"><span style="background:var(--accent);flex:29.5"></span><span style="flex:70.5"></span></span></div>
+          <div class="tlcap">29.5% — nearly a third of all questions land in the last twentieth of the record</div>
+        </div>
+        <p class="muted" style="font-size:.86rem;margin-top:14px">The paper is fair about why: reviewing a decade of history to write a question is cognitively expensive, and recent summaries genuinely do carry trajectory information. But it means a model can score well while never being asked to reason about the middle of a patient's history. Compounding it, <strong>71.3% of MedAlign questions are retrieval-based</strong> — needle-in-a-haystack lookups rather than synthesis across the timeline.</p>
+      </div>
+    </section>
+
+    <!-- THE METRIC -->
+    <section>
+      <div class="eyebrow">The enabling measurement</div>
+      <h2>Normalized temporal position</h2>
+      <p class="sub">None of the above is measurable without a way to compare timelines of wildly different absolute lengths. The paper's device is simple and is what makes the rest of the work possible: rescale every piece of time evidence to where it sits between the first and last visit in the context window.</p>
+      <div class="formula" style="margin-top:14px">P<sub>j</sub> = (T<sub>j</sub> − T<sub>min</sub>) ⁄ (T<sub>max</sub> − T<sub>min</sub>)</div>
+      <p class="muted" style="font-size:.86rem;margin-top:10px">A value of 0 means the evidence sits at the very start of the record, 1 at the very end. Clinical events arrive irregularly — clustered during acute episodes, sparse during stable periods — so raw dates can't be compared across patients. This normalization makes "where in the history does this question point" a single number that is comparable across records, which is what turns temporal coverage into something that can be plotted, audited, and deliberately controlled.</p>
+    </section>
+
+    <!-- LOST IN MIDDLE -->
+    <section>
+      <div class="eyebrow">A second bias, this one from the machine</div>
+      <h2>Left to itself, an LLM writes questions about the beginning and the end</h2>
+      <p class="sub">Since human curation of long records is expensive, the obvious move is to have an LLM generate the instruction data. The paper checks what that produces — and finds the generator has its own temporal bias, in a different shape from the human one.</p>
+      <p class="callout"><strong>"Lost in the middle."</strong> Plotting the normalized position of every piece of time evidence in model-generated instruction–response pairs shows heavy density at both ends of the timeline and a pronounced trough through the middle periods. Where clinicians over-weight the <em>recent</em> end, the LLM over-weights <em>both</em> ends — and both of them skip the middle.</p>
+      <p class="muted" style="font-size:.86rem">This matters beyond benchmark construction: if instruction-tuning data inherits this shape, the tuned model learns to attend where its training questions pointed, and the middle of a patient's history stays a blind spot in the trained model too.</p>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — does training distribution have to match evaluation distribution?</div>
+      <h2>Three tuning sets, identical except for where in the timeline their questions point</h2>
+      <p class="sub">Same patient records, same number of examples — only the temporal distribution differs. Each tuned model is then scored on three benchmarks with three different distributions. Pick a training distribution to see how it does across all three. All numbers are the paper's own (Table 4), LLM-judged.</p>
+
+      <div class="distbox">
+        <div class="dist-toggle" id="distToggle"></div>
+        <div class="distbody">
+          <div class="dist-desc" id="distDesc"></div>
+          <div id="benchRows"></div>
+        </div>
+        <div class="dist-foot" id="distFoot"></div>
+      </div>
+
+      <p class="callout">The headline is that alignment mostly helps — but the exception is the interesting part. On the <strong>edge-focused</strong> benchmark, the <em>uniformly</em>-trained model actually scores highest on correctness (65.17 vs. the aligned edge model's 64.68). Balanced temporal coverage in training turns out to be competitive even on a benchmark it isn't matched to, while the recency-trained model is the weakest whenever the benchmark asks about anything other than recent history.</p>
+    </section>
+
+    <!-- FAILURE MODES -->
+    <section>
+      <div class="eyebrow">What "bad temporal reasoning" concretely looks like</div>
+      <h2>Three named failure modes, with real before-and-after cases</h2>
+      <p class="sub">The paper's case study compares the base model against the same model after temporal instruction tuning. The value here is less the improvement than the <strong>vocabulary</strong> — three distinct, separately-observable ways temporal reasoning breaks.</p>
+
+      <div class="failrow">
+        <div class="fk">Failure 1 · Temporal boundary adherence</div>
+        <h3 style="margin-top:4px">Answering about the wrong window</h3>
+        <p class="muted" style="font-size:.85rem;margin-top:4px">Question asked for the weight trend <em>over the past year</em>.</p>
+        <div class="failcompare">
+          <div class="failcell bad"><b>Base model</b>Reported an increase "from 61.9 kg to 68 kg between 06/13/2021 and 12/18/2021" — a real trend, but drawn from more than two years before the asked-about window.</div>
+          <div class="failcell good"><b>After tuning</b>Compared 68 kg on 12/18/2021 against 64 kg on 01/21/2023 and concluded weight <em>decreased</em> over the past year.</div>
+        </div>
+        <p class="muted" style="font-size:.82rem;margin-top:8px">The base model's numbers were real and correctly quoted. It simply answered about a different period than the one asked about — and reached the opposite conclusion as a result.</p>
+      </div>
+
+      <div class="failrow">
+        <div class="fk">Failure 2 · Trend accuracy</div>
+        <h3 style="margin-top:4px">Asserting a direction the record doesn't support</h3>
+        <p class="muted" style="font-size:.85rem;margin-top:4px">Question asked whether mixed hearing loss in the right ear had improved over time.</p>
+        <div class="failcompare">
+          <div class="failcell bad"><b>Base model</b>"has shown some improvement over time"</div>
+          <div class="failcell good"><b>After tuning</b>"There is no indication of improvement"</div>
+        </div>
+        <p class="muted" style="font-size:.82rem;margin-top:8px">Nothing in the record indicated improvement. This is a trend claim manufactured from a sequence of measurements that don't actually trend.</p>
+      </div>
+
+      <div class="failrow">
+        <div class="fk">Failure 3 · Temporal precision</div>
+        <h3 style="margin-top:4px">Attaching a measurement to the wrong time point</h3>
+        <p class="muted" style="font-size:.85rem;margin-top:4px">Question asked for growth progression from age 9 to 11 with specific heights.</p>
+        <div class="failcompare">
+          <div class="failcell bad"><b>Base model</b>"At age 9, the patient's height was 135.3 cm (05/13/2011)" — that measurement was actually recorded at <strong>age 8</strong>.</div>
+          <div class="failcell good"><b>After tuning</b>"At age 9 (09/08/2011), the patient's height was 139 cm"</div>
+        </div>
+        <p class="muted" style="font-size:.82rem;margin-top:8px">The value existed in the record and was quoted accurately — it was bound to the wrong point in time. This is the failure mode hardest to catch by reading an answer alone, because every individual fact in it is true.</p>
+      </div>
+    </section>
+
+    <!-- CONSTRUCTION -->
+    <section>
+      <div class="eyebrow">How the benchmark was built</div>
+      <h2>Model-generated, clinician-checked — with an honest asterisk</h2>
+      <p class="sub">TIMER-Bench is synthetic by design: human curation of multi-year records doesn't scale, and the paper argues that's precisely why existing benchmarks are recency-biased. The generator is Gemini-1.5-Pro, prompted to produce pairs that carry dated evidence.</p>
+      <div class="card" style="margin-top:16px">
+        <div class="k">From the generation prompt (verbatim excerpts)</div>
+        <p class="muted" style="font-size:.85rem;margin-top:8px;font-style:italic">"Prioritize instructions that involve reasoning over the timeline of the patient's care (e.g., comparing test results over time, evaluating the progression or resolution of a condition, or assessing treatment impacts)."</p>
+        <p class="muted" style="font-size:.85rem;margin-top:8px;font-style:italic">"Refer to specific timestamps (dates only, in the format MM/DD/YYYY) to justify responses and highlight temporal reasoning."</p>
+        <p class="muted" style="font-size:.85rem;margin-top:8px;font-style:italic">"Avoid generating generic or irrelevant instructions that do not utilize the temporal nature of the EHR."</p>
+      </div>
+      <p class="muted" style="font-size:.86rem;margin-top:14px">Questions were then filtered to keep only those with <strong>multiple time-stamped pieces of evidence</strong> — a structural guarantee that answering requires synthesis across parts of the record rather than a single lookup. This filter is what separates TIMER-Bench from the 71.3% of MedAlign that is retrieval.</p>
+
+      <div class="card" style="margin-top:16px">
+        <div class="k">Clinician verification · 3 clinicians, random subset</div>
+        <div class="grid g3" style="margin-top:12px">
+          <div><div style="font-size:1.5rem;font-weight:800;color:var(--accent)">95</div><div class="muted" style="font-size:.78rem">Clinical relevance (avg /100)</div></div>
+          <div><div style="font-size:1.5rem;font-weight:800;color:var(--warn)">80</div><div class="muted" style="font-size:.78rem">Temporal reasoning complexity</div></div>
+          <div><div style="font-size:1.5rem;font-weight:800;color:var(--accent)">98</div><div class="muted" style="font-size:.78rem">Factual accuracy</div></div>
+        </div>
+        <p class="muted" style="font-size:.84rem;margin-top:12px"><strong>Two caveats the paper states itself.</strong> First, the clinicians "were not provided with the patient-protected information to do a complete factual accuracy evaluation" — so that 98 means the responses read as contextually reasonable, not that they were verified against the underlying record. Second, the complexity scores vary sharply between raters: <strong>77 / 63 / 99</strong> across the three annotators. The 80 average conceals real disagreement about how hard these questions actually are.</p>
+      </div>
+    </section>
+
+    <!-- LIMITATIONS -->
+    <section>
+      <div class="eyebrow">Reading the results with their scope attached</div>
+      <h2>What this does and doesn't establish</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>The judge is validated on a narrow base</h3><p class="muted" style="font-size:.86rem">Correctness and completeness are LLM-judged. That judge was validated by rank-correlating its scores against clinician rankings on MedAlign — strong coefficients (ρ = −0.94 correctness, −0.89 completeness), but computed over a ranking of only five model systems, which is a thinner validation than the numbers suggest.</p></div>
+        <div class="card"><h3>Gains are real but modest, and base-model dependent</h3><p class="muted" style="font-size:.86rem">The headline +7.3% / +9.2% comes from Llama-3.1-8B. On Qwen2.5-7B the same tuning moves MedAlign correctness only 58.42 → 60.40. The method generalizes in direction, not in magnitude.</p></div>
+        <div class="card"><h3>Synthetic evaluation data, acknowledged as a tradeoff</h3><p class="muted" style="font-size:.86rem">TIMER-Bench is model-generated by design — the paper's argument is that this is the price of escaping recency bias, since human curation over decade-long records is what produced that bias in the first place. It is a defensible trade, not a free one.</p></div>
+        <div class="card"><h3>One health system, one record format</h3><p class="muted" style="font-size:.86rem">Built on de-identified records from a single institution in OMOP-style structured form plus notes. The average TIMER-Bench span (1,294 days) is also notably shorter than MedAlign's (3,895 days), so it is longitudinal but not maximally so.</p></div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      "TIMER: Temporal Instruction Modeling and Evaluation for Longitudinal Clinical Records" · Cui, Unell, Chen, Fries, Alsentzer, Koyejo, Shah · ICML 2025</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  // Table 4 data, verbatim from the paper
+  const dists = {
+    recency: {
+      label: 'Recency-trained',
+      sub: 'questions in the last quarter',
+      desc: "Instructions concentrated in the final quarter of the timeline — mirroring how clinician-written benchmarks naturally distribute.",
+      rows: [
+        { bench: 'MedAlign', bsub: 'recency-distributed', correct: 55.54, complete: 34.32, aligned: true },
+        { bench: 'TIMER-Bench', bsub: 'edge-distributed', correct: 63.93, complete: 40.55, aligned: false },
+        { bench: 'TIMER-Bench', bsub: 'uniform-distributed', correct: 63.71, complete: 39.92, aligned: false }
+      ],
+      foot: "Best correctness on the recency benchmark it matches (55.54) — but the weakest of the three models on both benchmarks that ask about the wider timeline."
+    },
+    edge: {
+      label: 'Edge-trained',
+      sub: 'questions at both ends',
+      desc: "Higher instruction density at the two boundaries of the timeline — the shape an LLM produces by default when left to generate freely.",
+      rows: [
+        { bench: 'MedAlign', bsub: 'recency-distributed', correct: 53.47, complete: 37.29, aligned: false },
+        { bench: 'TIMER-Bench', bsub: 'edge-distributed', correct: 64.68, complete: 46.27, aligned: true },
+        { bench: 'TIMER-Bench', bsub: 'uniform-distributed', correct: 61.69, complete: 43.55, aligned: false }
+      ],
+      foot: "Highest completeness of any model on its matched benchmark (46.27), and the best completeness on MedAlign too (37.29) — but loses correctness on the edge benchmark to the uniform model."
+    },
+    uniform: {
+      label: 'Uniform-trained',
+      sub: 'balanced across the timeline',
+      desc: "Consistent instruction density across all relative positions — deliberately covering the middle periods that both humans and LLMs skip.",
+      rows: [
+        { bench: 'MedAlign', bsub: 'recency-distributed', correct: 50.83, complete: 33.70, aligned: false },
+        { bench: 'TIMER-Bench', bsub: 'edge-distributed', correct: 65.17, complete: 42.54, aligned: false },
+        { bench: 'TIMER-Bench', bsub: 'uniform-distributed', correct: 64.52, complete: 43.55, aligned: true }
+      ],
+      foot: "Wins correctness on both TIMER-Bench variants — including the edge-focused one it is NOT aligned to (65.17 vs. the edge model's 64.68). Its weak spot is MedAlign, the recency-heavy benchmark."
+    }
+  };
+
+  // best-per-benchmark, computed across all three models
+  const bestCorrect = { 'MedAlign': 55.54, 'TIMER-Bench|edge-distributed': 65.17, 'TIMER-Bench|uniform-distributed': 64.52 };
+  const bestComplete = { 'MedAlign': 37.29, 'TIMER-Bench|edge-distributed': 46.27, 'TIMER-Bench|uniform-distributed': 43.55 };
+
+  let curDist = 'recency';
+
+  function renderToggle(){
+    document.getElementById('distToggle').innerHTML = Object.keys(dists).map(k => {
+      const d = dists[k];
+      return '<button class="' + (k===curDist?'active':'') + '" onclick="pickDist(\'' + k + '\')">' + d.label +
+        '<br><span style="font-family:var(--mono);font-size:.68rem;opacity:.75">' + d.sub + '</span></button>';
+    }).join('');
+  }
+  function pickDist(k){ curDist = k; renderToggle(); renderDist(); }
+
+  function renderDist(){
+    const d = dists[curDist];
+    document.getElementById('distDesc').textContent = d.desc;
+    document.getElementById('benchRows').innerHTML = d.rows.map(function(r){
+      const key = r.bench === 'MedAlign' ? 'MedAlign' : (r.bench + '|' + r.bsub);
+      const cBest = Math.abs(bestCorrect[key] - r.correct) < 0.001;
+      const pBest = Math.abs(bestComplete[key] - r.complete) < 0.001;
+      return '<div class="benchrow' + (r.aligned ? ' aligned' : '') + '">' +
+        '<div class="bn">' + r.bench + '<small>' + r.bsub + (r.aligned ? ' · matched' : '') + '</small></div>' +
+        '<div class="metricpair' + (cBest ? ' best' : '') + '"><span class="mv">' + r.correct.toFixed(2) + '</span><span class="ml">correctness' + (cBest ? ' · best' : '') + '</span></div>' +
+        '<div class="metricpair' + (pBest ? ' best' : '') + '"><span class="mv">' + r.complete.toFixed(2) + '</span><span class="ml">completeness' + (pBest ? ' · best' : '') + '</span></div>' +
+        '</div>';
+    }).join('');
+    document.getElementById('distFoot').textContent = d.foot;
+  }
+  renderToggle(); renderDist();
+
+  const quiz = [
+    { q: "What temporal bias did the paper find in MedAlign, a clinician-written benchmark?", opts: [
+        "Questions were spread evenly across each patient's timeline",
+        "55.3% of questions concentrate in the last quarter of the timeline, and 29.5% in the final 5%",
+        "Questions focused only on the earliest visits",
+        "Questions ignored structured data entirely"
+      ], correct: 1, explain: "The records genuinely span ~10.7 years on average, but the questions asked about them cluster at the recent end — so a model can score well without ever reasoning about the middle of a history." },
+    { q: "What is the \"lost-in-the-middle\" phenomenon this paper identifies?", opts: [
+        "Models forget instructions given in the middle of a prompt",
+        "When an LLM generates instruction data over a long record, it clusters questions at both ends of the timeline and neglects the middle",
+        "Clinicians write questions only about the middle of a record",
+        "Middle-aged patients are underrepresented in the data"
+      ], correct: 1, explain: "It's a bias in the data generator, not the reader — and if that data is used for instruction tuning, the tuned model inherits the same blind spot." },
+    { q: "Why is the normalized position metric P = (T−Tmin)/(Tmax−Tmin) necessary?", opts: [
+        "To convert dates into a standard calendar format",
+        "To make \"where in the history this question points\" comparable across patients whose records span wildly different absolute lengths",
+        "To measure how long a model takes to answer",
+        "To count how many visits a patient had"
+      ], correct: 1, explain: "Clinical events arrive irregularly and records differ in length by years, so raw dates can't be compared. Normalizing to 0–1 is what turns temporal coverage into something that can be plotted and deliberately controlled." },
+    { q: "In the case study, what was wrong with the base model's answer about height at age 9?", opts: [
+        "It invented a height that appears nowhere in the record",
+        "It quoted a real, accurately-transcribed measurement — but one recorded at age 8, not age 9",
+        "It refused to answer",
+        "It gave the height in the wrong units"
+      ], correct: 1, explain: "This is temporal precision failure: every individual fact in the answer is true, but bound to the wrong point in time — which is exactly why it's so hard to catch by reading the answer alone." },
+  ];
+  document.getElementById('quizWrap').innerHTML = quiz.map(function(item, qi){
+    return '<div class="quiz"><div class="q">' + (qi+1) + '. ' + item.q + '</div><div class="opts">' +
+      item.opts.map(function(o, oi){ return '<button class="opt" onclick="answerQuiz(' + qi + ',' + oi + ',this)">' + o + '</button>'; }).join('') +
+      '</div><div class="explain" id="explain-' + qi + '">' + item.explain + '</div></div>';
+  }).join('');
+  function answerQuiz(qi, oi, btn){
+    const item = quiz[qi];
+    const opts = btn.parentElement.querySelectorAll('.opt');
+    opts.forEach(function(o, i){
+      o.classList.remove('correct','wrong');
+      if (i === item.correct) o.classList.add('correct');
+      else if (i === oi) o.classList.add('wrong');
+    });
+    document.getElementById('explain-' + qi).classList.add('show');
+  }
+</script>
