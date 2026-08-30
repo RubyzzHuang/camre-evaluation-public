@@ -114,6 +114,7 @@
   .skillrow.rare .sname { color: var(--gate, var(--harm)); font-weight: 650; }
   .skillrow.rare .sbar > i { background: var(--harm); }
   .skillrow.rare .scount { color: var(--harm); }
+  .subhead { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 34px 0 8px; padding-top: 22px; border-top: 1px solid var(--line); }
 
   .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
   .quiz + .quiz { margin-top: 14px; }
@@ -319,26 +320,48 @@
       </div>
       <p class="muted" style="font-size:.8rem;margin-top:10px">The paper's own framing: guideline concordance and time-sensitive audit are "the most widely sampled," while reconciliation and longitudinal synthesis are "rarer, higher-difficulty probes."</p>
 
-      <div class="grid g2" style="margin-top:20px">
+      <!-- time-sensitive audit -->
+      <div class="card" style="margin-top:20px">
+        <div class="k">Time-sensitive audit · 7 scenarios</div>
+        <h3>The hard part isn't the arithmetic — it's which timestamp counts</h3>
+        <p class="muted" style="font-size:.86rem">Examples: was empiric antibiotic therapy narrowed <em>within 48h</em> once susceptibilities returned; door-to-needle and door-to-puncture intervals against AHA stroke targets; time-to-calcium for a critical potassium (≥6.5 mEq/L); whether the DKA resolution timeline shows dextrose started when glucose dropped below 200 mg/dL; the final 72 hours of life.</p>
+        <p class="muted" style="font-size:.86rem;margin-top:10px">What makes these hard is <strong>timestamp provenance</strong>, not interval math. The AKI scenario routes a case to <em>Lack of Data</em> when "CT timing cannot be resolved — order time versus actual scan time, or multiple CTs prevent a unique first qualifying CT." The imaging scenario states plainly that "an order alone does not settle the question where a confirming radiology report is available." And "treating an order time as a performed-procedure time" is named as a prohibited MUST-NOT shortcut. The required evidence list demands the scan time be "distinguished from the order time, confirmed via the radiology report where possible."</p>
+      </div>
+
+      <!-- longitudinal synthesis, expanded -->
+      <div class="subhead">Longitudinal synthesis · 3 scenarios · the rarest skill but one</div>
+      <p class="sub">Two of the three are identifiable from the paper's text, and they turn out to be structurally different kinds of synthesis — worth seeing side by side, because "reason across a patient's history" is not one task.</p>
+
+      <div class="grid g2" style="margin-top:16px">
         <div class="card">
-          <div class="k">Time-sensitive audit · 7 scenarios</div>
-          <h3>The hard part isn't the arithmetic — it's which timestamp counts</h3>
-          <p class="muted" style="font-size:.86rem">Examples: was empiric antibiotic therapy narrowed <em>within 48h</em> once susceptibilities returned; door-to-needle and door-to-puncture intervals against AHA stroke targets; time-to-calcium for a critical potassium (≥6.5 mEq/L); whether the DKA resolution timeline shows dextrose started when glucose dropped below 200 mg/dL; the final 72 hours of life.</p>
-          <p class="muted" style="font-size:.86rem;margin-top:10px">What makes these hard is <strong>timestamp provenance</strong>, not interval math. The AKI scenario routes a case to <em>Lack of Data</em> when "CT timing cannot be resolved — order time versus actual scan time, or multiple CTs prevent a unique first qualifying CT." The imaging scenario states plainly that "an order alone does not settle the question where a confirming radiology report is available." And "treating an order time as a performed-procedure time" is named as a prohibited MUST-NOT shortcut. The required evidence list demands the scan time be "distinguished from the order time, confirmed via the radiology report where possible."</p>
+          <div class="k">Scenario 5 · Nephrology</div>
+          <h3>renal-trajectory</h3>
+          <p class="muted" style="font-size:.85rem;margin-top:6px"><strong>Asks:</strong> is renal function on a worsening trajectory (versus stable or improving) across <em>all</em> of this patient's admissions?</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Synthesizes:</strong> a continuous numeric signal into a direction of travel.</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Hard because:</strong> the obvious measure is biased (creatinine understates GFR decline as muscle mass falls), and a single reversible episode can masquerade as a trend.</p>
         </div>
         <div class="card">
-          <div class="k">Longitudinal synthesis · 3 scenarios</div>
-          <h3>Comparing across admissions, not values across time</h3>
-          <p class="muted" style="font-size:.86rem">The clearest instance is the renal-trajectory scenario: is kidney function on a worsening trajectory across <em>all</em> of a patient's admissions? Its specification is essentially a template for how to make this measurable:</p>
-          <ul class="how-steps" style="margin-top:10px">
-            <li><strong>Precondition gate</strong> — fewer than two admissions, or sampling too sparse to build per-admission baselines, is <em>Lack of Data</em>. The task is undefined without at least two comparable time points.</li>
-            <li><strong>Normalize before comparing</strong> — construct a <em>per-admission baseline</em> first, then compare baselines across admissions. Not raw value against raw value.</li>
-            <li><strong>Pick a measure that isn't systematically biased</strong> — assess by estimated GFR, not serum creatinine alone, "since creatinine understates GFR decline as muscle mass falls."</li>
-            <li><strong>Separate trend from episode</strong> — "a discrete, reversible AKI that recovers to baseline does not count as worsening."</li>
-            <li><strong>Name the measurement artifact as its own verdict</strong> — flat creatinine in an older, frail patient can't exclude real GFR decline; with coded CKD but no cystatin-C available, that is <em>Medically Ambiguous</em>, not <em>No</em>.</li>
-            <li><strong>Give an explicit precedence rule</strong> — where both the No branch and the ambiguity branch could fit the same patient, the spec states outright which one governs.</li>
-          </ul>
+          <div class="k">Scenario 24 · Cross-specialty</div>
+          <h3>frequent-admitter</h3>
+          <p class="muted" style="font-size:.85rem;margin-top:6px"><strong>Asks:</strong> synthesize a patient's recurrent admissions to extract recurring diagnoses and <em>at least one documented intervenable driver</em> — e.g. medication non-adherence, substance use, housing instability.</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Synthesizes:</strong> a repeating pattern across episodes into a root cause.</p>
+          <p class="muted" style="font-size:.85rem;margin-top:8px"><strong>Hard because:</strong> the driver has to be <em>documented</em>, not inferred — a plausible social explanation with no support in the record doesn't count.</p>
         </div>
+      </div>
+
+      <p class="muted" style="font-size:.84rem;margin-top:14px">One reads a number over time; the other reads a story across episodes. The third scenario carrying this tag can't be identified from the paper's text — the skill-by-scenario matrix is published as a dot figure with no machine-readable mapping, so this deep-read doesn't guess at it.</p>
+
+      <div class="card" style="margin-top:18px">
+        <div class="k">The renal-trajectory spec, read as a template</div>
+        <p class="muted" style="font-size:.86rem;margin-top:6px">Its adjudication criteria are unusually explicit about the traps, which makes it a usable blueprint for specifying this kind of task at all:</p>
+        <ul class="how-steps" style="margin-top:10px">
+          <li><strong>Precondition gate</strong> — fewer than two admissions, or sampling too sparse to build per-admission baselines, is <em>Lack of Data</em>. The task is undefined without at least two comparable time points.</li>
+          <li><strong>Normalize before comparing</strong> — construct a <em>per-admission baseline</em> first, then compare baselines across admissions. Not raw value against raw value.</li>
+          <li><strong>Pick a measure that isn't systematically biased</strong> — assess by estimated GFR, not serum creatinine alone, "since creatinine understates GFR decline as muscle mass falls."</li>
+          <li><strong>Separate trend from episode</strong> — "a discrete, reversible AKI that recovers to baseline does not count as worsening."</li>
+          <li><strong>Name the measurement artifact as its own verdict</strong> — flat creatinine in an older, frail patient can't exclude real GFR decline; with coded CKD but no cystatin-C available, that is <em>Medically Ambiguous</em>, not <em>No</em>.</li>
+          <li><strong>Give an explicit precedence rule</strong> — where both the No branch and the ambiguity branch could fit the same patient, the spec states outright which one governs.</li>
+        </ul>
       </div>
       <p class="callout">That last item is easy to overlook and does a lot of work: when two verdict branches can plausibly describe the same case, the specification says which wins, rather than leaving it to whoever is adjudicating. It is the difference between a rubric that produces reproducible labels and one that produces arguments.</p>
     </section>
