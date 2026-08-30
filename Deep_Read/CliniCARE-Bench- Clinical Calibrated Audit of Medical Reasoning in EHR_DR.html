@@ -92,6 +92,17 @@
   .metric-card { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); }
   .metric-card .mk { font-family: var(--mono); font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); font-weight: 700; }
 
+  /* deep metric breakdown: why / how / finding */
+  .metric-deep { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow); padding: 22px; margin-top: 18px; }
+  .metric-deep .mtitle { font-size: 1.08rem; font-weight: 750; margin: 0 0 14px; }
+  .wh-label { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--accent); display: block; margin-bottom: 6px; }
+  .wh-why { font-size: .9rem; color: var(--ink); margin-bottom: 16px; padding-left: 14px; border-left: 3px solid var(--accent); }
+  .how-steps { margin: 0 0 16px; padding-left: 20px; }
+  .how-steps li { font-size: .86rem; color: var(--muted); margin-bottom: 8px; line-height: 1.55; }
+  .how-steps li strong { color: var(--ink); }
+  .finding-box { background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; font-size: .86rem; }
+  .finding-box .wh-label { color: var(--accent); }
+
   .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
   .quiz + .quiz { margin-top: 14px; }
   .q { font-weight: 700; margin-bottom: 12px; }
@@ -147,6 +158,12 @@
         <div class="vcard amb"><span class="vt">Indeterminate — Medically Ambiguous</span>Even a complete record can't settle this; it needs expert interpretation.</div>
       </div>
       <p class="callout">The two Indeterminate classes matter because they imply different next actions — go find the missing data, or accept that reasonable clinicians could disagree — and conflating them (as a single generic "unsure") would erase exactly the distinction a deployed system needs to act on.</p>
+
+      <div class="card" style="margin-top:16px">
+        <div class="k">What "answering one question" actually requires</div>
+        <p class="muted" style="font-size:.86rem;margin-top:8px">One scenario is one reusable clinical-query template; each of its 30 patient cases still resolves to exactly one four-way verdict. But per the paper's own terminology, a run's deliverable isn't a bare label — <em>"a final report containing the system's verdict and supporting citations,"</em> graded together with the full logged tool-call trajectory. Concretely, the report must carry a stated confidence, citations to the specific record spans a claim rests on, and citations to the specific policy-document line spans behind any guideline-dependent judgment.</p>
+        <p class="muted" style="font-size:.86rem;margin-top:8px">The adjudication criteria behind that one verdict are themselves clinician-authored decision trees, not loose guidance. The AKI scenario's <strong>Yes</strong> branch alone requires: setting a baseline creatinine via a defined hierarchy (lowest value 3–12 months pre-admission, else the admission value, else an MDRD estimate under documented CKD); confirming at least one creatinine value within 48h post-scan, searched for the true peak rather than just the first reading; that value crossing a KDIGO threshold (≥0.3 mg/dL absolute rise, or ≥1.5× baseline); and the patient not being on chronic dialysis or with ESRD. Every branch — No, Lack of Data, Medically Ambiguous — is specified to the same level of detail.</p>
+      </div>
     </section>
 
     <!-- FLAGSHIP -->
@@ -182,30 +199,80 @@
     <!-- SCORING ARCHITECTURE -->
     <section>
       <div class="eyebrow">How the audit itself gets audited</div>
-      <h2>Five metric families, each scoring something different</h2>
-      <p class="sub">A run is graded on its final report <em>and</em> its full logged trajectory — tool calls, retrieved evidence, computations. Deterministic checks (does a citation resolve to a real record?) are computed by rule; substantive checks (does that record actually support the claim?) go to an LLM judge. Both are used throughout, and each metric states which it is.</p>
-      <div class="grid g2" style="margin-top:16px">
-        <div class="metric-card"><div class="mk">Verdict &amp; abstention</div><h3 style="font-size:.92rem">Four-way accuracy + directional error</h3><p class="muted" style="font-size:.84rem">Macro-F1 weights the two rare Indeterminate classes equally with Yes/No. Over-commit = giving a definitive answer when the reference says defer; over-abstain = deferring when the reference is definitive — tracked as two separate rates, not one "calibration" number.</p></div>
-        <div class="metric-card"><div class="mk">Patient-evidence grounding</div><h3 style="font-size:.92rem">Citation precision × evidence coverage</h3><p class="muted" style="font-size:.84rem">Precision: does a cited record actually exist and actually support the claim? Coverage: did the agent query the required tables and address the required findings — including cases where "confirming this data doesn't exist" is itself the correct finding.</p></div>
-        <div class="metric-card"><div class="mk">Policy grounding</div><h3 style="font-size:.92rem">Does the cited guideline exist, and apply?</h3><p class="muted" style="font-size:.84rem">Citations reference a document and line span; resolution is checked by rule, whether the passage actually supports the claim is judged. Separately: precision (do the cited documents actually govern this case) and recall (did it find every document that does).</p></div>
-        <div class="metric-card"><div class="mk">Process adherence</div><h3 style="font-size:.92rem">A weighted MUST-DO / MUST-NOT rubric</h3><p class="muted" style="font-size:.84rem">Each scenario carries clinician-authored criteria, ±1 or ±2 weighted. A violated MUST-NOT is a "process defect."</p>
-          <div class="formula" style="margin-top:8px;font-size:.76rem">score = max(0, Σ weighted credit ÷ Σ positive weights)</div>
-        </div>
-      </div>
-      <p class="callout"><strong>Defect-free accuracy</strong> — the paper's central metric — credits a run only when the verdict is correct <em>and</em> no MUST-NOT criterion was violated. It is what separates "got the right answer" from "got the right answer defensibly."</p>
-    </section>
+      <h2>Five metric families, broken down step by step</h2>
+      <p class="sub">A run is graded on its final report <em>and</em> its full logged trajectory — tool calls, retrieved evidence, computations. Deterministic checks (does a citation resolve to a real record?) are computed by rule; substantive checks (does that record actually support the claim?) go to an LLM judge — each metric below states which it uses. For each family: why it exists, exactly how it's computed, and what the 16 evaluated systems actually did.</p>
 
-    <!-- HEADLINE RESULTS -->
-    <section>
-      <div class="eyebrow">Sixteen systems, four uncomfortable patterns</div>
-      <h2>What raw accuracy alone would have hidden</h2>
-      <div class="grid g2" style="margin-top:16px">
-        <div class="card"><h3>The leaderboard reorders once shortcuts are penalized</h3><p class="muted" style="font-size:.86rem">Gemini-3.1-Pro scores 72.7% raw — within noise of the leaders — then falls to 57.9% defect-free, behind every Claude and Codex system but one. Meanwhile GPT-5.6-Sol trails Sonnet 5 by 0.7 points on raw accuracy but <em>leads</em> it by 1.9 points defect-free. The gap isn't a constant discount; it reshuffles who's actually ahead.</p></div>
-        <div class="card"><h3>Every system over-commits more than it over-abstains</h3><p class="muted" style="font-size:.86rem">Over-commitment (giving a definitive answer when deferral was correct) ranges 21.3–55.3%; over-abstention ranges only 7.3–16.5%. The asymmetry holds for all 16 systems individually, not just on average — a property of how these systems behave, not an artifact of the case mix.</p></div>
-        <div class="card"><h3>Calibration ranks the field completely differently than accuracy does</h3><p class="muted" style="font-size:.86rem">Expected calibration error spans a ~6× range (0.046–0.262) and doesn't track accuracy rank at all — the three worst-calibrated systems (all from one vendor family) sit mid-field on accuracy. Some of them simply emit only a handful of distinct confidence values — a lack of graded uncertainty, not a subtly miscalibrated curve.</p></div>
-        <div class="card"><h3>Cost and tool-call volume don't buy defensibility</h3><p class="muted" style="font-size:.86rem">A 10× spread in per-run cost corresponds to only ~10 points of accuracy. Two similarly-priced systems ($0.20 vs $0.21/run) differ by only 0.4 points in accuracy but 10 points in process adherence — and the one making <em>more</em> tool calls (42 vs 18) has the <em>worse</em> process score.</p></div>
+      <div class="metric-deep">
+        <div class="mtitle">1 · Verdict accuracy, abstention, and calibration</div>
+        <div class="wh-label">Why</div>
+        <p class="wh-why">A single accuracy number conflates three different things: does the system reach the right label, does it know when to defer instead of guessing, and when it states a confidence, does that number mean anything? A system can score well on the first while failing badly on the other two.</p>
+        <div class="wh-label">How, step by step</div>
+        <ol class="how-steps">
+          <li><strong>Four-way accuracy</strong> — exact match between the predicted verdict and the reference verdict across all four classes. <strong>Macro-F1</strong> is reported alongside it because it weights the two rare Indeterminate classes equally with Yes/No — a metric that only rewarded raw accuracy could look strong while missing almost every deferral case, since those are the minority classes.</li>
+          <li>Split reference verdicts into two sets: <strong>D</strong> = {Yes, No} (definitive) and <strong>A</strong> = {Lack of Data, Medically Ambiguous} (should-defer).</li>
+          <li><strong>Over-commitment rate</strong> = of all cases where the reference says defer (set A), what fraction did the system answer definitively anyway. <strong>Over-abstention rate</strong> = of all cases where the reference is definitive (set D), what fraction did the system defer on. These are tracked as two separate, opposite-direction error rates — not netted into one number — because a system that never defers and a system that defers on everything both have "average" error, for entirely different reasons.</li>
+          <li><strong>Calibration (ECE)</strong> — every parseable report states a confidence in its own verdict. Bin all report-present runs into 10 equal-width confidence bins; within each bin, compare the mean stated confidence to the actual accuracy of predictions in that bin; ECE is the size-weighted average gap between the two across all 10 bins. A system whose stated 90% confidence is right 90% of the time scores near 0; one whose "90% confident" calls are right half the time scores high regardless of its raw accuracy.</li>
+        </ol>
+        <div class="finding-box"><span class="wh-label">What they found</span>Accuracy ranges 65.3–76.1% across the 16 systems. Every single one over-commits more than it over-abstains (21.3–55.3% vs. 7.3–16.5%) — a property of each system individually, not an artifact of the case mix. ECE spans a nearly 6× range (0.046–0.262) and doesn't track accuracy rank at all: the three worst-calibrated systems are all one vendor's family, sitting mid-field on accuracy — some simply output only a handful of distinct confidence values, which is a lack of graded uncertainty rather than a subtly-wrong calibration curve.</div>
       </div>
-      <p class="callout">Per-class performance makes the pattern concrete: Yes/No F1 stays strong across every system, while both Indeterminate classes collapse on the weaker ones — precision on the deferral classes runs as low as 26–67%. The failure is concentrated exactly where deferral matters most.</p>
+
+      <div class="metric-deep">
+        <div class="mtitle">2 · Patient-evidence grounding</div>
+        <div class="wh-label">Why</div>
+        <p class="wh-why">A verdict can be correct by luck, or justified by a citation that doesn't actually say what the report claims it says. Grounding checks whether the investigation is auditable — whether a human could follow the citations and independently verify the conclusion — separately from whether the conclusion itself is right.</p>
+        <div class="wh-label">How, step by step</div>
+        <ol class="how-steps">
+          <li><strong>Record-identifier precision (rule-based)</strong> — of all patient/admission/note identifiers cited in the final report, what fraction actually appear among the evidence the agent retrieved during that same run. A referential check: did this citation point at something real that was actually looked at.</li>
+          <li><strong>Claim-level precision (LLM-judged)</strong> — decompose the report into atomic clinical claims (a lab value, a dose, an imaging finding, a temporal relationship, the presence or absence of an event). For each claim, a judge checks whether the evidence it cites actually substantiates it, with the correct patient, encounter, and time — versus contradicting it, or being unverifiable from that evidence.</li>
+          <li><strong>Retrieval coverage (rule-based)</strong> — each scenario specifies 3–9 required MIMIC-IV tables (e.g. labs, radiology, dialysis status for the AKI scenario). What fraction did the agent actually query with the correct patient/encounter/time scope? Querying and getting a valid empty result still counts — several scenarios require establishing that data is <em>absent</em>, which is itself the correct finding.</li>
+          <li><strong>Finding coverage (LLM-judged)</strong> — each scenario also specifies 4–11 required findings. Did the report address each one, either by presenting the evidence or by explicitly stating it couldn't be established? A judge compares the report against this checklist.</li>
+        </ol>
+        <div class="finding-box"><span class="wh-label">What they found</span>This is where verdict correctness and defensible reasoning diverge most visibly: a system can land on the right answer while citing evidence that doesn't hold up, or without ever having queried a required table at all. All four sub-metrics are scored against the agent's <em>own</em> investigation, not the reference verdict — they measure whether a determination is auditable, independent of whether it happens to be correct.</div>
+      </div>
+
+      <div class="metric-deep">
+        <div class="mtitle">3 · Policy grounding</div>
+        <div class="wh-label">Why</div>
+        <p class="wh-why">Even a perfectly-retrieved patient record means nothing without the right governing standard to interpret it against — the wrong or an invented threshold produces a wrong verdict for a reason that has nothing to do with the patient's actual data. This is scored separately from whether the standard was then applied correctly (that's Family 4).</p>
+        <div class="wh-label">How, step by step</div>
+        <ol class="how-steps">
+          <li>Agents cite policy inline as <code>[policy: document L_a–L_b]</code> — a document name plus a line span.</li>
+          <li><strong>Citation resolution (rule-based)</strong> — does that document exist in the fixed policy corpus, and is the line span valid? A citation naming an absent document or an invalid span simply doesn't resolve.</li>
+          <li><strong>Citation support (LLM-judged)</strong> — for each citation that does resolve, does the passage it points to actually substantiate the specific claim attached to it, rather than merely discussing a related topic?</li>
+          <li><strong>Governing-document precision and recall (set comparison, no judge)</strong> — each scenario has an expert-specified set of documents that actually govern it. Precision = of the documents the report cites, what fraction genuinely govern this case. Recall = of the documents that do govern it, what fraction did the report find. These can diverge sharply: citing one applicable guideline while missing two others is high precision, low recall.</li>
+        </ol>
+        <div class="finding-box"><span class="wh-label">What they found</span>The point of keeping precision and recall separate is that they fail differently — a report resting on a single correct standard while ignoring others it should have consulted looks fine on precision alone. Whether the cited policy was then correctly interpreted (its thresholds, timing windows, exceptions) is deliberately left to Family 4 rather than folded in here.</div>
+      </div>
+
+      <div class="metric-deep">
+        <div class="mtitle">4 · Process adherence and defect-free accuracy</div>
+        <div class="wh-label">Why</div>
+        <p class="wh-why">An investigation can be sound and still land on the wrong verdict through one local misstep — or it can land on the right verdict through a shortcut that happens to work this time. Verdict accuracy alone can't distinguish either case from a genuinely defensible investigation, so the observable process — the report plus the logged trajectory, never the model's private reasoning — is scored on its own terms.</p>
+        <div class="wh-label">How, step by step</div>
+        <ol class="how-steps">
+          <li>Each scenario carries a clinician-authored rubric: <strong>MUST-DO</strong> criteria (4–9 per scenario) state the actions and checks a defensible adjudication requires; <strong>MUST-NOT</strong> criteria (3–8 per scenario) state prohibited shortcuts and unsupported inferences — for example, treating an order time as if it were the time a procedure was actually performed. Each criterion carries a signed weight of ±1 or ±2, set by the authoring clinicians.</li>
+          <li>A judge grades every criterion against the final report <em>and</em> the logged trajectory together — if the trajectory shows the agent actually did something other than what the report claims, the criterion is graded on what it actually did.</li>
+          <li><strong>Process score</strong> for a run: sum the signed weighted credit across all applicable criteria (positive for a satisfied MUST-DO, negative for a triggered MUST-NOT), divide by the sum of the positive weights alone (the maximum achievable MUST-DO budget, 7–16 points depending on scenario), and floor the result at zero.
+            <div class="formula" style="margin-top:8px">score = max(0, Σ weighted credit ÷ Σ positive weights)</div>
+          </li>
+          <li><strong>Defect flag</strong> — a run is flagged as having a "process defect" if <em>any</em> applicable MUST-NOT criterion was violated, regardless of the verdict reached.</li>
+          <li><strong>Defect-free accuracy</strong> — credits a run only when the verdict is correct <em>and</em> the defect flag is clear. The gap between this and raw accuracy, on the same denominator, is the <strong>defect gap</strong>.</li>
+        </ol>
+        <div class="finding-box"><span class="wh-label">What they found</span>Every system loses 4.8–14.8 points once defects are excluded — for the worst-affected, roughly one in five otherwise-correct verdicts used a prohibited shortcut. The drop isn't a flat discount: Gemini-3.1-Pro falls from 72.7% raw (within noise of the leaders) to 57.9% defect-free, below nearly the whole field, while GPT-5.6-Sol trails Sonnet 5 on raw accuracy but leads it once shortcuts are removed. The flagship case above (the SBP shortcut) is exactly this mechanism in action on one real patient.</div>
+      </div>
+
+      <div class="metric-deep">
+        <div class="mtitle">5 · Repeated-run reliability and resource use</div>
+        <div class="wh-label">Why</div>
+        <p class="wh-why">A single attempt conflates "can this system reach the right answer" with "does it reach the right answer reliably." And a good verdict bought at ten times the cost of another isn't the same achievement as one reached efficiently.</p>
+        <div class="wh-label">How, step by step</div>
+        <ol class="how-steps">
+          <li>Run each case <strong>k</strong> times. <strong>avg@k</strong> = mean accuracy across all k attempts. <strong>pass^k</strong> = the fraction of cases correct on <em>every</em> attempt. <strong>pass@k</strong> = the fraction correct on <em>at least one</em> attempt — the two bound reliability from opposite sides.</li>
+          <li><strong>Verdict agreement</strong> = the fraction of cases where all k attempts return the identical verdict, right or wrong. This decomposes into pass^k plus the share of cases where attempts agree on a <em>wrong</em> answer — that second share identifies a system reproducing the same mistake, as distinct from one that's merely noisy.</li>
+          <li><strong>Resource use</strong>, recorded per run: number of agent turns, number of typed tool calls, work-tokens (uncached prompt tokens plus completion tokens — what was actually paid for), and cost in USD (mean, excluding the judge's own spend).</li>
+        </ol>
+        <div class="finding-box"><span class="wh-label">What they found</span>A 10× spread in per-run cost across the vendor systems corresponds to only about a 10-point spread in accuracy. Two similarly-priced systems ($0.20 vs. $0.21/run) differ by just 0.4 points in accuracy but by 10 points in process adherence — and the one issuing <em>more</em> tool calls (42 vs. 18) has the <em>worse</em> process score, showing that more retrieval activity alone doesn't produce a sounder investigation.</div>
+      </div>
     </section>
 
     <!-- JUDGE CIRCULARITY -->
