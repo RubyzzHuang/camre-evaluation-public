@@ -1,0 +1,408 @@
+<style>
+  :root {
+    --ink: #12181f; --paper: #f6f8f8; --card: #ffffff; --muted: #5c6a72; --line: #dbe3e4;
+    --accent: #0e7c86; --accent-bright: #14a3b0; --accent-soft: #e2f1f2;
+    --good: #1f9d63; --warn: #c07d18; --harm: #cf3f52;
+    --good-soft: #e4f4ea; --warn-soft: #f8eed8; --harm-soft: #f9e4e7;
+    --shadow: 0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06);
+    --radius: 14px; --maxw: 1080px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+      --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137;
+      --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+      --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+  }
+  :root[data-theme="light"] { --ink:#12181f; --paper:#f6f8f8; --card:#ffffff; --muted:#5c6a72; --line:#dbe3e4;
+    --accent:#0e7c86; --accent-bright:#14a3b0; --accent-soft:#e2f1f2; --good:#1f9d63; --warn:#c07d18; --harm:#cf3f52;
+    --good-soft:#e4f4ea; --warn-soft:#f8eed8; --harm-soft:#f9e4e7; --shadow:0 1px 2px rgba(18,24,31,.04), 0 8px 24px rgba(18,24,31,.06); }
+  :root[data-theme="dark"] { --ink:#e7edee; --paper:#0d1417; --card:#141d21; --muted:#93a1a7; --line:#24333a;
+    --accent:#38b6c2; --accent-bright:#4fd0dc; --accent-soft:#113137; --good:#45c07f; --warn:#d99b34; --harm:#e56174;
+    --good-soft:#123024; --warn-soft:#33280f; --harm-soft:#331519; --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4); }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; padding: 0 20px 100px; }
+  .container { max-width: var(--maxw); margin: 0 auto; }
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .eyebrow::before { content:""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h1 { font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 18px; text-wrap: balance; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); letter-spacing: -.015em; margin: 0 0 10px; text-wrap: balance; font-weight: 750; }
+  h3 { font-size: 1.06rem; margin: 0 0 6px; font-weight: 700; }
+  .lead { font-size: 1.12rem; color: var(--muted); max-width: 66ch; }
+  .muted { color: var(--muted); }
+  .sub { color: var(--muted); max-width: 68ch; margin-top: 4px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+
+  .hero { padding-top: 64px; padding-bottom: 20px; border: none; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-family: var(--mono); font-size: .74rem; padding: 5px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted); background: var(--card); }
+  .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .statline { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 34px; }
+  .stat .n { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l { font-size: .82rem; color: var(--muted); max-width: 18ch; }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .card .k { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
+  .plain { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; font-size: .88rem; margin: 0 0 14px; }
+  .plain b { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700; }
+
+  /* flagship SCT item */
+  .sctbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
+  .sct-toggle { display: flex; gap: 8px; padding: 20px 20px 0; flex-wrap: wrap; }
+  .sct-toggle button { cursor: pointer; font-family: var(--font); font-size: .8rem; font-weight: 650; padding: 10px 14px; border-radius: 100px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+  .sct-toggle button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .sctbody { padding: 18px 20px 20px; }
+  .stem { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: .9rem; }
+  .ifthen { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media (max-width: 620px) { .ifthen { grid-template-columns: 1fr; } }
+  .ifcell { border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; background: var(--card); }
+  .ifcell .lbl { font-family: var(--mono); font-size: .64rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; display: block; margin-bottom: 4px; }
+  .ifcell .val { font-size: .89rem; font-weight: 600; }
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 16px; }
+  @media (max-width: 700px) { .scale { grid-template-columns: 1fr 1fr; } }
+  .scale button { cursor: pointer; font-family: var(--font); font-size: .76rem; font-weight: 600; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); line-height: 1.3; }
+  .scale button .num { display: block; font-family: var(--mono); font-size: 1rem; font-weight: 800; margin-bottom: 3px; }
+  .scale button.picked { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .sctreveal { display: none; margin-top: 16px; }
+  .sctreveal.show { display: block; }
+  .rvbox { border-radius: 10px; padding: 13px 16px; font-size: .87rem; margin-bottom: 10px; }
+  .rvbox.logic { background: var(--good-soft); border: 1px solid var(--good); }
+  .rvbox.score { background: var(--accent-soft); }
+  .rvbox.model { background: var(--warn-soft); border: 1px solid var(--warn); }
+  .rvbox b.rl { font-family: var(--mono); font-size: .64rem; text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 5px; }
+
+  /* leaderboard */
+  .lbrow { display: grid; grid-template-columns: 168px 1fr 78px; gap: 12px; align-items: center; margin-bottom: 7px; }
+  @media (max-width: 620px) { .lbrow { grid-template-columns: 118px 1fr 62px; gap: 8px; } }
+  .lbrow .lbn { font-size: .84rem; text-align: right; }
+  .lbrow .lbn .tag { font-family: var(--mono); font-size: .58rem; text-transform: uppercase; letter-spacing: .04em; padding: 1px 5px; border-radius: 100px; margin-left: 5px; }
+  .tag.rz { background: var(--harm-soft); color: var(--harm); }
+  .tag.nz { background: var(--accent-soft); color: var(--accent); }
+  .lbbar { height: 20px; background: var(--line); border-radius: 5px; overflow: hidden; }
+  .lbbar > i { display: block; height: 100%; border-radius: 5px; }
+  .lbbar > i.rz { background: var(--harm); }
+  .lbbar > i.nz { background: var(--accent); }
+  .lbrow .lbv { font-family: var(--mono); font-size: .78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .quiz { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .quiz + .quiz { margin-top: 14px; }
+  .q { font-weight: 700; margin-bottom: 12px; }
+  .opts { display: grid; gap: 8px; }
+  .opt { text-align: left; cursor: pointer; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--font); font-size: .88rem; transition: .12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--harm); background: var(--harm-soft); }
+  .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: .86rem; display: none; }
+  .explain.show { display: block; }
+
+  .footer { padding-top: 40px; color: var(--muted); font-size: .84rem; text-align: center; }
+  .toggle-theme { position: fixed; top: 16px; right: 16px; z-index: 50; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 100px; padding: 7px 14px; font-family: var(--mono); font-size: .74rem; box-shadow: var(--shadow); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <button class="toggle-theme" onclick="toggleTheme()" aria-label="Toggle light/dark">◐ Theme</button>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="eyebrow">Eval Literature Deep-Read</div>
+      <h1>Script Concordance Testing<br>Measuring whether a model changes its mind by the right amount</h1>
+      <p style="font-size:.95rem;margin:-6px 0 0;color:var(--muted)"><strong style="color:var(--ink)">Full paper:</strong> "Assessment of Large Language Models in Clinical Reasoning: A Novel Benchmarking Study" · McCoy, Swamy, Sagar, Wang, Bacchi, Fong, Tan, Tan, Buckley, Brodeur, Celi, Manrai, Humbert, Rodman · NEJM AI 2025;2(10)</p>
+      <p class="lead" style="margin-top:20px">Most medical benchmarks ask whether a model knows the answer. This one borrows a decades-old medical-education instrument that asks something narrower and harder: given a hypothesis and one new piece of information, <em>how much</em> should that hypothesis shift — and is the model's shift the size an expert panel would make? Models that are explicitly optimized for reasoning turn out to do this <em>worse</em>, not better.</p>
+      <div class="statline">
+        <div class="stat"><div class="n">750</div><div class="l">SCT questions from 10 international datasets, 9 newly released</div></div>
+        <div class="stat"><div class="n">1,563</div><div class="l">humans compared: 1,070 students · 193 residents · 300 attendings</div></div>
+        <div class="stat"><div class="n">67.8%</div><div class="l">best model (o3) — well below senior residents and attendings</div></div>
+        <div class="stat"><div class="n">749/750</div><div class="l">questions previously unpublished, so effectively no data leakage</div></div>
+      </div>
+      <div class="badge-row">
+        <span class="muted" style="font-size:.82rem;width:100%;margin-bottom:2px">Dimensions this paper covers:</span>
+        <span class="chip on">Metacognition / calibration</span>
+        <span class="chip on">Reasoning-process accuracy</span>
+        <span class="chip on">Belief updating under uncertainty</span>
+        <span class="chip">Human-expert benchmarking</span>
+      </div>
+    </section>
+
+    <!-- WHAT IS SCT -->
+    <section>
+      <div class="eyebrow">The instrument</div>
+      <h2>What a script concordance item actually is</h2>
+      <p class="plain"><b>In plain terms</b>A short case, then a prompt of the form: given diagnosis X as the working hypothesis, and now finding Y — does X become more or less likely, and by how much? The answer goes on a five-point scale from −2 (much less likely) to +2 (much more likely). The point isn't the diagnosis. It's the <em>size and direction of the update</em>.</p>
+      <p class="sub" style="margin-top:14px">SCT was designed for medical education to probe one specific skill: revising judgment as information arrives, in cases built to contain genuine ambiguity. Three item types appear in the benchmark — diagnosis, investigation, and treatment — differing only in what the hypothesis is:</p>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><div class="k">Diagnosis SCT</div><p class="muted" style="font-size:.85rem;margin-top:6px">"If you were thinking of <em>[diagnosis]</em>… and then you find <em>[finding]</em>… this diagnosis becomes:" — much less likely ↔ much more likely.</p></div>
+        <div class="card"><div class="k">Investigation SCT</div><p class="muted" style="font-size:.85rem;margin-top:6px">"If you were thinking of <em>[test]</em>… and then you find <em>[finding]</em>… this management becomes:" — much less appropriate ↔ much more appropriate.</p></div>
+        <div class="card"><div class="k">Treatment SCT</div><p class="muted" style="font-size:.85rem;margin-top:6px">"If you were thinking of <em>[treatment]</em>… and then you find <em>[finding]</em>… this management becomes:" — same appropriateness scale.</p></div>
+      </div>
+      <p class="callout"><strong>Why the scoring is unusual.</strong> There is no single right answer. Each item is scored against a reference panel of experienced clinicians: the <strong>modal</strong> expert response earns full credit, and options chosen by at least some experts earn <strong>partial</strong> credit proportional to how many experts picked them. Options no expert chose earn zero. The scoring is built to reflect that expert disagreement in ambiguous cases is legitimate — which makes it a very different scoring philosophy from the right/wrong benchmarks most models are tuned against.</p>
+    </section>
+
+    <!-- FLAGSHIP -->
+    <section>
+      <div class="eyebrow">Try it — three real items from the benchmark</div>
+      <h2>Pick how much the new information should move the hypothesis</h2>
+      <p class="sub">These are the three worked examples printed in the paper, reproduced verbatim. Choose a rating, then see the clinical logic and how models systematically answer items like these.</p>
+
+      <div class="sctbox">
+        <div class="sct-toggle" id="sctToggle"></div>
+        <div class="sctbody">
+          <div class="stem" id="stemBox"></div>
+          <div class="ifthen">
+            <div class="ifcell"><span class="lbl">If you were thinking of</span><span class="val" id="hypBox"></span></div>
+            <div class="ifcell"><span class="lbl">And then you find</span><span class="val" id="newBox"></span></div>
+          </div>
+          <div class="scale" id="scaleRow"></div>
+          <div class="sctreveal" id="sctReveal"></div>
+        </div>
+      </div>
+
+      <p class="muted" style="font-size:.83rem;margin-top:12px">The paper prints these items and the scoring schema, but this deep-read does not reproduce any specific expert panel's response counts — the clinical logic below is this deep-read's own reading of the direction each item probes, not a quotation of the reference panel.</p>
+    </section>
+
+    <!-- RESULTS -->
+    <section>
+      <div class="eyebrow">The headline result</div>
+      <h2>Reasoning-optimized models are spread across the whole range</h2>
+      <p class="sub">Mean percentage of maximum possible score, averaged across four prompting conditions (zero-shot and five-shot, each with and without a request for explanatory reasoning). All models at default settings including temperature.</p>
+
+      <div style="margin-top:20px" id="leaderboard"></div>
+
+      <p class="callout">If explicit reasoning optimization reliably helped here, the red bars would cluster at the top. Instead <strong>o3 is first (67.8%) and Gemini 2.5 Pro Preview is last (52.1%)</strong> — both reasoning-optimized — while <strong>GPT-4o, a non-reasoning model, is second (63.9%)</strong>. The paper notes o3's margin is "modest compared with its dominance on standard medical benchmarks," and that Gemini 2.5 notably underperforms its own predecessor, Gemini 1.5 Pro. Friedman tests confirmed the overall differences (P&lt;0.001), with 22 significant pairwise differences on post hoc Conover testing.</p>
+
+      <p class="muted" style="font-size:.85rem">A practical note on running the benchmark: parseable response rates ran 96.2–99.7% for most models, but DeepSeek R1 fell as low as <strong>87%</strong> in one trial. Overall parseable rate across everything was 94.7%.</p>
+    </section>
+
+    <!-- HUMANS -->
+    <section>
+      <div class="eyebrow">The human comparison</div>
+      <h2>Above students, below senior clinicians — and the gradient itself is the validation</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <div class="k">Where models land</div>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Models matched or exceeded <strong>medical student</strong> performance on several of the ten tests. They <strong>consistently fell below senior residents and attending physicians</strong> — with a single exception, o3 on the Singapore Neurology SCT.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">This is a sharp reversal of the usual pattern, where models beat humans on licensing-exam-style questions.</p>
+        </div>
+        <div class="card">
+          <div class="k">Why the gradient matters more than the gap</div>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Across every test carrying multiple levels of human experience, scores rise monotonically with training level: students → junior residents → senior residents and attendings.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">The paper treats this as <strong>face validity evidence</strong> — the instrument tracks clinical expertise in humans, so a model's position on it is interpretable rather than arbitrary. A benchmark where novices and experts score the same would say nothing about where a model sits.</p>
+        </div>
+      </div>
+
+      <p class="callout"><strong>A subtler comparison, easy to miss.</strong> Correlating <em>question difficulty</em> between models and students produced only weak correlations — especially for reasoning-focused models other than o3. Models often found easy the items students found hard, and vice versa. Student scores clustered near the top of the range while model scores spread more evenly, and every model's response distribution differed significantly from the students'. Matching a human score does not mean failing in human-like places.</p>
+    </section>
+
+    <!-- DISTRIBUTION -->
+    <section>
+      <div class="eyebrow">The mechanism behind the gap</div>
+      <h2>Models almost never say "this changes nothing"</h2>
+      <p class="sub">The paper compares each model's distribution of chosen ratings against the distribution that would result from perfect concordance with the expert panels. Two systematic deviations appear.</p>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <div class="k">Deviation 1 · universal</div>
+          <h3>Every model underuses the neutral rating</h3>
+          <p class="muted" style="font-size:.86rem;margin-top:6px">All ten models chose <strong>0</strong> — "this new information does not change my hypothesis" — less often than the expert-concordant distribution requires. Mistral Small came closest to optimal.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Recognizing that a piece of information is <em>not</em> diagnostically relevant is itself a clinical skill. Models treat almost every new fact as evidence for or against.</p>
+        </div>
+        <div class="card">
+          <div class="k">Deviation 2 · concentrated in reasoning models</div>
+          <h3>A pull toward the extremes</h3>
+          <p class="muted" style="font-size:.86rem;margin-top:6px">Reasoning-tuned models showed substantial bias toward <strong>−2 and +2</strong> — the "much less / much more likely" ends. The paper singles out <strong>Gemini 2.5 and DeepSeek R1</strong> as most affected, with o4-mini and o1-preview showing it to a lesser degree. o3's distribution was more balanced but still suboptimal.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">The paper reads this as <strong>systematic overconfidence</strong>: exaggerated belief shifts where the case calls for a small probabilistic nudge.</p>
+        </div>
+      </div>
+
+      <p class="callout">The proposed explanation connects to a general finding outside medicine (Liu et al., 2024): chain-of-thought prompting systematically <em>reduces</em> performance on tasks where human verbal deliberation also hurts — implicit statistical learning, exception handling, subtle pattern recognition. Structured step-by-step reasoning may encourage premature commitment to a hypothesis, which is precisely the failure mode SCT is built to expose. The authors are careful to add that this "may be prompt sensitive" and should be read as a limitation under default prompting, not a ceiling on capability.</p>
+    </section>
+
+    <!-- SCT VS MCQ -->
+    <section>
+      <div class="eyebrow">Why this isn't just another exam</div>
+      <h2>SCT and multiple-choice measure different things — in humans too</h2>
+      <p class="sub">The argument that SCT tests reasoning rather than recall doesn't rest on the model results. It rests on prior human evidence the paper cites:</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>No correlation in trained clinicians</h3><p class="muted" style="font-size:.86rem">In one study, emergency medicine residents showed <strong>no significant correlation</strong> between their SCT scores and their MCQ scores. The two formats rank the same people differently.</p></div>
+        <div class="card"><h3>The correlation fades with expertise</h3><p class="muted" style="font-size:.86rem">Another found an MCQ–SCT correlation among medical students that <strong>disappears in later training years</strong> — as expertise deepens, SCT success depends less on encoded knowledge and more on flexible judgment.</p></div>
+      </div>
+      <p class="muted" style="font-size:.86rem;margin-top:14px">This is the strongest available argument that a model's SCT score is not a restatement of its knowledge benchmark score. It also sets up the paper's interpretive claim: given robust evidence that models encode medical knowledge well, gains on SCT would plausibly indicate improved reasoning rather than more facts.</p>
+    </section>
+
+    <!-- LIMITATIONS -->
+    <section>
+      <div class="eyebrow">Reading it with its scope attached</div>
+      <h2>Where concordance scoring strains</h2>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>The superhuman paradox</h3><p class="muted" style="font-size:.86rem">Scoring rewards agreement with the expert distribution. A model that reasons <em>better</em> than the panel would be scored <em>lower</em> for departing from consensus. The authors name this directly as an epistemic limit of concordance-based metrics — and it is a general problem for any benchmark whose ground truth is expert agreement.</p></div>
+        <div class="card"><h3>Two scoring artifacts in the format itself</h3><p class="muted" style="font-size:.86rem">Expert panels tend to avoid extreme responses, which can <strong>inflate scores for models that are simply conservative</strong>. And treating all expert opinions as equally valid risks awarding partial credit for answers that are objectively wrong.</p></div>
+        <div class="card"><h3>The scale means different things to different raters</h3><p class="muted" style="font-size:.86rem">Some respondents read the extremes as markers of <em>confidence</em>, others as the size of a <em>probability shift</em>. That inconsistency clouds both human and model scoring, and it is unresolved.</p></div>
+        <div class="card"><h3>Prompt sensitivity, and an abstracted task</h3><p class="muted" style="font-size:.86rem">Only standard prompting was tested — no retrieval augmentation, Bayesian framing, or tool use. And SCT deliberately strips context specificity: the individual, interpersonal, systems, and societal factors that shape real clinical reasoning. The authors note this limitation applies equally when SCT is used on humans.</p></div>
+      </div>
+      <p class="muted" style="font-size:.85rem;margin-top:14px">Also worth noting for interpretation: aggregate scores mask variation across the four prompting conditions; the physiotherapy dataset introduces reasoning patterns not directly comparable with physician practice; and clinical reasoning is context specific, so expert consensus in one country may not transfer to another — the same geographic diversity that strengthens generalizability also complicates it.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section>
+      <div class="eyebrow">30-second self-check</div>
+      <h2>Did the key points land?</h2>
+      <div style="margin-top:20px" id="quizWrap"></div>
+    </section>
+
+    <div class="footer container">
+      <p>Eval Literature Deep-Read<br>
+      "Assessment of Large Language Models in Clinical Reasoning: A Novel Benchmarking Study" · McCoy et al. · NEJM AI 2025;2(10) · benchmark at concor.dance</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const r = document.documentElement;
+    const cur = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    r.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+
+  const items = {
+    i1: {
+      label: 'Diagnosis',
+      stem: 'A 27-year-old male presents to the doctor with weakness affecting his right arm. He has a manually repetitive job and also suffered a shoulder dislocation while playing sport 1 week ago.',
+      hyp: 'Carpal tunnel syndrome',
+      nw: 'He also complains of "shooting" pain in his neck',
+      scaleType: 'likely',
+      logic: 'Shooting pain radiating into the neck points toward a cervical root or nerve problem rather than compression at the wrist. Carpal tunnel syndrome does not explain neck pain, so the hypothesis should move <strong>down</strong>. Whether that is −1 or −2 is exactly the kind of judgment reference panels split on — which is why partial credit exists.',
+      note: 'Note the case is deliberately ambiguous to begin with: a repetitive manual job supports carpal tunnel, while a recent shoulder dislocation offers a competing explanation. The item tests the update, not the starting guess.'
+    },
+    i2: {
+      label: 'Investigation',
+      stem: 'A 59-year-old female presents to the emergency department with fatigue. She is found to have an elevated bilirubin and elevated ALT/AST. Her liver edge is palpable and on percussion the liver is enlarged.',
+      hyp: 'Ordering an abdominal CT',
+      nw: 'She has elevated levels of AFP',
+      scaleType: 'appropriate',
+      logic: 'Alpha-fetoprotein is a tumour marker associated with hepatocellular carcinoma. In a patient who already has deranged liver enzymes and an enlarged liver, a raised AFP strengthens the case for cross-sectional imaging, so the appropriateness of the CT should move <strong>up</strong>.',
+      note: 'This is an investigation-type item: the hypothesis being updated is a proposed action, not a diagnosis. The scale reads "much less appropriate" to "much more appropriate."'
+    },
+    i3: {
+      label: 'Treatment',
+      stem: 'A 66-year-old male presents to the GP with fatigue for the past 2–4 weeks. Physical examination reveals pallor of his conjunctivae and palmar creases. He has been a vegetarian for many years.',
+      hyp: 'Treating with B12 supplementation',
+      nw: 'His MCV is 75 (80–100)',
+      scaleType: 'appropriate',
+      logic: 'B12 deficiency produces a <em>macrocytic</em> anaemia — a raised MCV. An MCV of 75 is <em>microcytic</em>, which points elsewhere (iron deficiency being the common cause). The long vegetarian history makes B12 tempting, and the new value argues against it, so appropriateness should move <strong>down</strong>.',
+      note: 'This item is a good illustration of why the format is hard: the vignette plants a strong prior (years of vegetarianism), and the update requires overriding it on a single laboratory value.'
+    }
+  };
+
+  const scaleLabels = {
+    likely:      [['−2','Much less likely'],['−1','Slightly less likely'],['0','Neither more nor less likely'],['+1','Slightly more likely'],['+2','Much more likely']],
+    appropriate: [['−2','Much less appropriate'],['−1','Slightly less appropriate'],['0','Neither more nor less appropriate'],['+1','Slightly more appropriate'],['+2','Much more appropriate']]
+  };
+
+  let curItem = 'i1';
+  function renderToggle(){
+    document.getElementById('sctToggle').innerHTML = Object.keys(items).map(function(k){
+      return '<button class="' + (k===curItem?'active':'') + '" onclick="pickItem(\'' + k + '\')">' + items[k].label + ' SCT</button>';
+    }).join('');
+  }
+  function pickItem(k){ curItem = k; renderToggle(); renderItem(); }
+  function renderItem(){
+    const it = items[curItem];
+    document.getElementById('stemBox').textContent = it.stem;
+    document.getElementById('hypBox').textContent = it.hyp;
+    document.getElementById('newBox').textContent = it.nw;
+    document.getElementById('scaleRow').innerHTML = scaleLabels[it.scaleType].map(function(s, i){
+      return '<button onclick="answerSct(' + i + ',this)"><span class="num">' + s[0] + '</span>' + s[1] + '</button>';
+    }).join('');
+    const rv = document.getElementById('sctReveal');
+    rv.classList.remove('show');
+    rv.innerHTML = '';
+  }
+  function answerSct(i, btn){
+    document.querySelectorAll('#scaleRow button').forEach(function(b){ b.classList.remove('picked'); });
+    btn.classList.add('picked');
+    const it = items[curItem];
+    const rv = document.getElementById('sctReveal');
+    rv.innerHTML =
+      '<div class="rvbox logic"><b class="rl">The clinical logic</b>' + it.logic + '</div>' +
+      '<div class="rvbox score"><b class="rl">How this would be scored</b>The modal answer from the reference panel of experienced clinicians earns full credit. Any option that at least some experts chose earns partial credit in proportion to how many chose it. Options no expert selected earn nothing. So the question is not "is this right" but "how close is this to where the expert distribution sits."</div>' +
+      '<div class="rvbox model"><b class="rl">Where models go wrong on items like this</b>Across all ten models the neutral <strong>0</strong> option was underused relative to expert concordance, and reasoning-tuned models were pulled toward <strong>−2 and +2</strong>. On an item like this one, that shows up as swinging hard when the evidence supports only a modest nudge — and as being unable to say that a piece of information simply does not move the hypothesis.</div>' +
+      '<div class="muted" style="font-size:.83rem;margin-top:8px">' + it.note + '</div>';
+    rv.classList.add('show');
+  }
+  renderToggle(); renderItem();
+
+  const models = [
+    { n: 'o3', v: 67.8, se: 1.2, r: true },
+    { n: 'GPT-4o', v: 63.9, se: 1.3, r: false },
+    { n: 'Claude 3.5 Sonnet', v: 59.7, se: 1.2, r: false },
+    { n: 'o1-preview', v: 58.2, se: 1.3, r: true },
+    { n: 'Llama 3.3 70B', v: 57.2, se: 1.4, r: false },
+    { n: 'Mistral Small 24B', v: 56.1, se: 1.3, r: false },
+    { n: 'DeepSeek R1', v: 55.5, se: 1.4, r: true },
+    { n: 'Gemini 1.5 Pro', v: 55.4, se: 1.4, r: false },
+    { n: 'Gemini 2.5 Pro Preview', v: 52.1, se: 1.4, r: true }
+  ];
+  document.getElementById('leaderboard').innerHTML =
+    models.map(function(m){
+      const pct = ((m.v - 45) / (70 - 45)) * 100;
+      return '<div class="lbrow"><div class="lbn">' + m.n +
+        '<span class="tag ' + (m.r?'rz':'nz') + '">' + (m.r?'reasoning':'standard') + '</span></div>' +
+        '<div class="lbbar"><i class="' + (m.r?'rz':'nz') + '" style="width:' + pct.toFixed(1) + '%"></i></div>' +
+        '<div class="lbv">' + m.v.toFixed(1) + '%</div></div>';
+    }).join('') +
+    '<p class="muted" style="font-size:.78rem;margin-top:10px">Bars scaled from 45% to 70% to make the spread visible; standard errors range ±1.2 to ±1.4. o4-mini was also evaluated and sits between o3 and Claude 3.5 Sonnet by the paper\'s significance testing, but its exact mean is not stated in the article text, so it is omitted here rather than estimated.</p>';
+
+  const quiz = [
+    { q: "What does a script concordance item actually measure?", opts: [
+        "Whether the model can name the correct diagnosis",
+        "How much a stated hypothesis should shift when one new piece of information arrives, scored against an expert panel's distribution",
+        "How fast the model answers",
+        "Whether the model can recall a guideline"
+      ], correct: 1, explain: "The starting hypothesis is given to the examinee — the item tests the size and direction of the update, not the initial guess. That's why it correlates poorly with multiple-choice performance even in humans." },
+    { q: "What was the counterintuitive result about reasoning-optimized models?", opts: [
+        "They all outperformed standard models by a wide margin",
+        "They spread across the whole range — o3 first at 67.8% but Gemini 2.5 last at 52.1%, with non-reasoning GPT-4o second",
+        "They refused to answer most items",
+        "They were not evaluated"
+      ], correct: 1, explain: "The paper links this to a broader finding that chain-of-thought prompting hurts on tasks where human verbal deliberation also hurts — structured reasoning may encourage premature commitment, exactly what SCT punishes." },
+    { q: "What single response pattern did every model show?", opts: [
+        "Overuse of the neutral 0 rating",
+        "Underuse of the neutral 0 rating — failing to recognize when new information should not change the hypothesis",
+        "Refusing to use negative ratings",
+        "Perfect agreement with expert panels"
+      ], correct: 1, explain: "Recognizing that a finding is not diagnostically relevant is itself a clinical skill. On top of this universal pattern, reasoning-tuned models were additionally pulled toward the ±2 extremes — read by the authors as systematic overconfidence." },
+    { q: "What is the 'superhuman paradox' the authors raise about concordance scoring?", opts: [
+        "Models score too high because the questions are easy",
+        "Because scoring rewards agreement with the expert distribution, a model that reasons better than the panel would be scored lower for departing from consensus",
+        "Experts always agree, so partial credit is unnecessary",
+        "Human scores were not collected"
+      ], correct: 1, explain: "This is a general limit of any benchmark whose ground truth is expert agreement — it can measure conformity to consensus but cannot recognize justified divergence from it." },
+  ];
+  document.getElementById('quizWrap').innerHTML = quiz.map(function(item, qi){
+    return '<div class="quiz"><div class="q">' + (qi+1) + '. ' + item.q + '</div><div class="opts">' +
+      item.opts.map(function(o, oi){ return '<button class="opt" onclick="answerQuiz(' + qi + ',' + oi + ',this)">' + o + '</button>'; }).join('') +
+      '</div><div class="explain" id="explain-' + qi + '">' + item.explain + '</div></div>';
+  }).join('');
+  function answerQuiz(qi, oi, btn){
+    const item = quiz[qi];
+    const opts = btn.parentElement.querySelectorAll('.opt');
+    opts.forEach(function(o, i){
+      o.classList.remove('correct','wrong');
+      if (i === item.correct) o.classList.add('correct');
+      else if (i === oi) o.classList.add('wrong');
+    });
+    document.getElementById('explain-' + qi).classList.add('show');
+  }
+</script>
