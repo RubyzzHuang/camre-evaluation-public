@@ -341,7 +341,7 @@
         { who: 'GPT-4 (P2) / GPT-4o / Claude', cls: 'bad', what: 'Annotated as CORRECT — no error detected.' },
         { who: 'GPT-4o-mini / o1-preview / o1-mini', cls: 'bad', what: 'Rewrote the supplementation sentence to drop vitamin B12 — again, a different sentence than the reference error.' }
       ],
-      verdict: 'Nobody got this one — not the models, not either doctor. The reference holds that this presentation (anaemia, epigastric pain, tachycardia in a 50-year-old) warrants endoscopy rather than a fecal occult blood test. This is the case that best explains why inter-doctor agreement is only 69%: the "error" here is a judgment about workup adequacy, not a factual mistake anyone can point at.'
+      verdict: 'Nobody matched the reference here — not the models, not either doctor. <strong>What the paper states:</strong> the flagged sentence is the fecal occult blood test, and the reference correction is a referral for endoscopy. <strong>This deep-read\'s reading of why</strong> (the paper gives the reference correction without a rationale): a stool test for hidden blood does not change what happens next here — positive or negative, a 50-year-old with anaemia, epigastric pain, heartburn and a pulse of 120 still needs the upper tract looked at directly, so the test delays rather than advances the workup. <strong>Also this deep-read\'s reading:</strong> nothing in the flagged sentence is factually false, which makes this a judgment about whether the workup was adequate rather than a mistake anyone can point at — a plausible reason judgment-type items are harder to agree on, though the paper never links this case to its 69% inter-doctor agreement figure.'
     }
   };
 
