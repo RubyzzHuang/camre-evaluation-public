@@ -56,6 +56,9 @@
   .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
   .plain { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; font-size: .88rem; margin: 0 0 14px; }
   .plain b { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700; }
+  .how-steps { margin: 0; padding-left: 20px; }
+  .how-steps li { font-size: .86rem; color: var(--muted); margin-bottom: 7px; }
+  .how-steps li::marker { color: var(--accent); font-weight: 700; }
 
   /* flagship SCT item */
   .sctbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
@@ -193,6 +196,13 @@
         <div class="card">
           <div class="k">Where models land</div>
           <p class="muted" style="font-size:.86rem;margin-top:8px">Models matched or exceeded <strong>medical student</strong> performance on several of the ten tests. They <strong>consistently fell below senior residents and attending physicians</strong> — with a single exception, o3 on the Singapore Neurology SCT.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">That exception carries less weight than it first appears, and the paper offers <em>no</em> explanation for it — the phrase appears once, parenthetically, and once as a figure axis label. Three details from the benchmark table are worth holding alongside it:</p>
+          <ul class="how-steps" style="margin-top:8px">
+            <li><strong>It is the smallest test in the benchmark</strong> — 53 questions, against a comparison group of 52 students, 37 residents and just 15 attendings.</li>
+            <li><strong>Its human data is summary-level.</strong> Detailed per-item response data was available for only four of the ten tests; for this one, human performance was extracted in aggregate form from a previously published article.</li>
+            <li><strong>The other neurology test disagrees.</strong> The benchmark contains a second neurology SCT (McGill, 94 questions, with detailed response data), and o3 did <em>not</em> exceed senior clinicians there.</li>
+          </ul>
+          <p class="muted" style="font-size:.83rem;margin-top:8px">Same specialty, two tests, opposite results — with the favourable one being the smaller and more coarsely measured. Reading it as a single noisy data point rather than evidence of expert-level neurology reasoning is the safer interpretation; the paper's own restraint in mentioning it only in passing points the same way. <em>(That reading is this deep-read's, not the paper's.)</em></p>
           <p class="muted" style="font-size:.86rem;margin-top:8px">This is a sharp reversal of the usual pattern, where models beat humans on licensing-exam-style questions.</p>
         </div>
         <div class="card">
@@ -203,6 +213,7 @@
       </div>
 
       <p class="callout"><strong>A subtler comparison, easy to miss.</strong> Correlating <em>question difficulty</em> between models and students produced only weak correlations — especially for reasoning-focused models other than o3. Models often found easy the items students found hard, and vice versa. Student scores clustered near the top of the range while model scores spread more evenly, and every model's response distribution differed significantly from the students'. Matching a human score does not mean failing in human-like places.</p>
+      <p class="muted" style="font-size:.83rem">Worth flagging how thin the reporting is here: the word "difficulty" appears exactly once in the article body, in the four sentences summarized above. No correlation coefficients, no method, and no statement of which tests it covers — the analysis itself lives in a supplementary figure outside the main article. Since a difficulty comparison needs per-item student responses, and those were available for only four of the ten tests, it most likely rests on that subset rather than all 750 items — though the paper does not say so, and that inference is this deep-read's.</p>
     </section>
 
     <!-- DISTRIBUTION -->
@@ -241,12 +252,52 @@
       <p class="muted" style="font-size:.86rem;margin-top:14px">This is the strongest available argument that a model's SCT score is not a restatement of its knowledge benchmark score. It also sets up the paper's interpretive claim: given robust evidence that models encode medical knowledge well, gains on SCT would plausibly indicate improved reasoning rather than more facts.</p>
     </section>
 
+    <!-- SUPERHUMAN PARADOX -->
+    <section>
+      <div class="eyebrow">The problem the paper raises but cannot solve</div>
+      <h2>The superhuman paradox</h2>
+      <p class="sub">This gets two passages in the article — one in the discussion, one in the conclusion — and it is the broadest claim the paper makes. It is worth separating what is quoted, what is inherited from older literature, and what the paper proposes to do about it.</p>
+
+      <div class="card" style="margin-top:18px">
+        <div class="k">The statement itself · discussion</div>
+        <p style="font-size:.92rem;margin-top:8px;font-style:italic">"…how should models be judged as they approach — or surpass — human performance? In real clinical practice, expert disagreement is common and often appropriate. The SCT scoring method, which rewards concordance with expert distributions, may inadvertently penalize genuinely superior reasoning that departs from consensus. A superhuman model might justifiably diverge from human patterns yet be scored lower for doing so. This paradox underscores the epistemic limits of concordance-based metrics."</p>
+      </div>
+
+      <p class="muted" style="font-size:.86rem;margin-top:16px">The conclusion restates it in deployment terms: concordance scoring "offers a more sophisticated framework for assessing clinical reasoning than traditional right/wrong evaluations," but "raises important questions about how to evaluate AI systems that may potentially exceed human consensus in certain areas, particularly as these systems move closer to clinical deployment." Note what the paper does <em>not</em> do: it offers no test for distinguishing justified divergence from ordinary error, and no proposed fix to the scoring.</p>
+
+      <h3 style="margin-top:26px">Separating the paper's own claim from the inherited critique</h3>
+      <p class="sub">Three other criticisms of SCT scoring appear nearby, and it is easy to read all four as this paper's findings. They are not — the citations show three of them are a decade-old validity argument from medical education, imported here:</p>
+      <div class="grid g2" style="margin-top:14px">
+        <div class="card">
+          <div class="k">Inherited from the SCT literature</div>
+          <ul class="how-steps" style="margin-top:8px">
+            <li>Expert panels avoid extreme responses, which can inflate scores for models that are merely conservative — cited to Lineberry, Kreiter &amp; Bordage, <em>Med Educ</em> 2013, "Threats to validity in the use and interpretation of script concordance test scores."</li>
+            <li>Treating all expert opinions as equally valid can award partial credit for objectively wrong answers — cited to the same group's 2014 follow-up, "Script concordance tests: strong inferences about examinees require stronger evidence."</li>
+            <li>Respondents read the scale inconsistently — some treat the extremes as confidence, others as the size of a probability shift — cited to Lurie, <em>Med Educ</em> 2011.</li>
+          </ul>
+          <p class="muted" style="font-size:.82rem;margin-top:8px">These are validity criticisms of SCT <em>as an instrument</em>, made about human examinees long before models existed. Their force here is that they carry over unchanged.</p>
+        </div>
+        <div class="card">
+          <div class="k">This paper's own contribution</div>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">The superhuman paradox is the new part: applying the concordance critique to a class of examinee that might genuinely outperform the reference panel. Human examinees rarely raise this problem — a medical student diverging from the expert consensus is almost always simply wrong, so scoring against consensus is safe.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">A model changes that assumption, and the paper's point is that the scoring method has no way to tell the two cases apart. Divergence from the panel is scored identically whether it reflects worse reasoning or better.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">The tension the paper leaves open</h3>
+      <p class="sub">The paradox sits awkwardly against the paper's own positive program, and the citation makes that visible. At the point where it argues that "the most robust assessments are those validated against expert performance," the reference is Rodman, Zwaan, Olson &amp; Manrai, <em>NEJM AI</em> 2025 — <strong>"When it comes to benchmarks, humans are the only way"</strong> — a paper co-authored by one of this paper's own authors.</p>
+      <p class="muted" style="font-size:.86rem;margin-top:10px">So the article holds two positions at once: human performance is the only trustworthy anchor for a benchmark, <em>and</em> a human anchor breaks down precisely when a model exceeds it. Both are defensible, and the paper does not pretend to reconcile them.</p>
+
+      <p class="callout"><strong>What it proposes instead is an exit rather than a fix.</strong> The escape route offered is not better concordance scoring but moving beyond benchmarks altogether: the paper notes that medical education itself shifted toward competency-based frameworks and workplace-based assessment — "broader, often subjective, assessments, which are difficult to replicate algorithmically" — and argues LLM evaluation must follow the same path toward "richer, trial-based assessments." It is also sceptical of the obvious middle option, warning that simulating entire encounters with LLM role-play "offers technological sophistication but risks further abstraction from real clinical reasoning," and preferring human-validated benchmarks aimed at specific, high-value reasoning tasks in the meantime.</p>
+
+      <p class="muted" style="font-size:.86rem">This bookends the article's opening framing, where benchmarks are described as unable to replace clinical trials but "indispensable early filters." The superhuman paradox is presented as one reason the filter has a shelf life: it works while models sit below the expert panel, and becomes uninterpretable around the point they pass it. On this benchmark that point has not arrived — the best model reached 67.8% and stayed below senior clinicians — so the paradox is raised as a forward-looking limit rather than a present confound.</p>
+    </section>
+
     <!-- LIMITATIONS -->
     <section>
       <div class="eyebrow">Reading it with its scope attached</div>
       <h2>Where concordance scoring strains</h2>
       <div class="grid g2" style="margin-top:16px">
-        <div class="card"><h3>The superhuman paradox</h3><p class="muted" style="font-size:.86rem">Scoring rewards agreement with the expert distribution. A model that reasons <em>better</em> than the panel would be scored <em>lower</em> for departing from consensus. The authors name this directly as an epistemic limit of concordance-based metrics — and it is a general problem for any benchmark whose ground truth is expert agreement.</p></div>
         <div class="card"><h3>Two scoring artifacts in the format itself</h3><p class="muted" style="font-size:.86rem">Expert panels tend to avoid extreme responses, which can <strong>inflate scores for models that are simply conservative</strong>. And treating all expert opinions as equally valid risks awarding partial credit for answers that are objectively wrong.</p></div>
         <div class="card"><h3>The scale means different things to different raters</h3><p class="muted" style="font-size:.86rem">Some respondents read the extremes as markers of <em>confidence</em>, others as the size of a <em>probability shift</em>. That inconsistency clouds both human and model scoring, and it is unresolved.</p></div>
         <div class="card"><h3>Prompt sensitivity, and an abstracted task</h3><p class="muted" style="font-size:.86rem">Only standard prompting was tested — no retrieval augmentation, Bayesian framing, or tool use. And SCT deliberately strips context specificity: the individual, interpersonal, systems, and societal factors that shape real clinical reasoning. The authors note this limitation applies equally when SCT is used on humans.</p></div>
