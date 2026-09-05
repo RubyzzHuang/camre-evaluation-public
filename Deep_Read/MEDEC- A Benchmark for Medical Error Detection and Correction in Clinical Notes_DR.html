@@ -56,6 +56,20 @@
   .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 20px 0; color: var(--muted); font-size: .94rem; }
   .plain { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; font-size: .88rem; margin: 0 0 14px; }
   .plain b { font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700; }
+  .typecard { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); }
+  .typecard .tt { font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+  .typecard.ta .tt { color: var(--accent); }
+  .typecard.tb .tt { color: var(--good); }
+  .typecard.tc .tt { color: var(--harm); }
+  .typecard.tc { border-color: var(--harm); background: var(--harm-soft); }
+  .typecard .tq { font-size: .8rem; font-style: italic; color: var(--muted); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .dtable { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: .84rem; }
+  .dtable th, .dtable td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+  .dtable th { font-family: var(--mono); font-size: .64rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+  .dtable td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  .dtable td.gap { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; color: var(--harm); }
+  .dtable tr.exc td { color: var(--muted); }
+  .tblwrap { overflow-x: auto; }
 
   /* subtask chain */
   .chain { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
@@ -186,6 +200,56 @@
           <div class="answers" id="answers"></div>
         </div>
       </div>
+    </section>
+
+    <!-- ERROR TYPOLOGY -->
+    <section>
+      <div class="eyebrow">A distinction the three cases make visible</div>
+      <h2>Not every "error" is the same kind of thing</h2>
+      <p class="sub">The benchmark labels five error types by clinical domain — diagnosis, management, treatment, pharmacotherapy, causal organism. But the three cases above differ along a second axis the labels don't capture: <strong>what actually makes the sentence wrong</strong>. <em>The grouping below is this deep-read's own framing, not the paper's.</em></p>
+
+      <div class="grid g3" style="margin-top:18px">
+        <div class="typecard ta">
+          <div class="tt">Type A · Internal contradiction</div>
+          <h3 style="font-size:.98rem">The note disagrees with itself</h3>
+          <p class="muted" style="font-size:.84rem;margin-top:6px">Two statements in the same note cannot both be true. Detecting it means cross-comparing within the record — though medical knowledge is still needed to know the two things <em>ought</em> to agree.</p>
+          <div class="tq">Case 1: the note says aortic stenosis and also says there are no audible murmurs.</div>
+        </div>
+        <div class="typecard tb">
+          <div class="tt">Type B · Mismatch with knowledge</div>
+          <h3 style="font-size:.98rem">The note is self-consistent but wrong</h3>
+          <p class="muted" style="font-size:.84rem;margin-top:6px">Nothing inside the note conflicts; the stated conclusion just isn't what the described picture corresponds to. Detecting it means checking against outside medical knowledge.</p>
+          <div class="tq">Case 2: a 4-year-old boy, two maternal uncles dead of the same thing, all immunoglobulins undetectable — that picture is not common variable immunodeficiency.</div>
+        </div>
+        <div class="typecard tc">
+          <div class="tt">Type C · Suboptimal plan</div>
+          <h3 style="font-size:.98rem">Nothing stated is false at all</h3>
+          <p class="muted" style="font-size:.84rem;margin-top:6px">No claim is incorrect and nothing contradicts anything. What is wrong is that the action taken is not the best next action — a judgment about adequacy rather than a mistake that can be pointed at.</p>
+          <div class="tq">Case 3: ordering a fecal occult blood test is a real test, correctly named, and not a false statement about the patient.</div>
+        </div>
+      </div>
+
+      <p class="callout">The structural difference is in whether a <strong>unique</strong> correct answer exists. Types A and B have essentially one defensible correction. Type C does not — several different next steps can each be argued for, which is exactly what case 3 shows: two doctors and several models each flagged a different sentence, and most of those flags identified something arguably worth raising in that note.</p>
+
+      <h3 style="margin-top:26px">The benchmark's own numbers point the same way</h3>
+      <p class="sub">Diagnosis (174 test cases) and Management (168) are the two largest categories and are close enough in size to compare directly. Diagnosis items skew toward types A and B; Management items skew toward type C.</p>
+
+      <div class="tblwrap">
+        <table class="dtable">
+          <thead><tr><th>Annotator / model</th><th style="text-align:right">Diagnosis</th><th style="text-align:right">Management</th><th style="text-align:right">Difference</th></tr></thead>
+          <tbody>
+            <tr><td>o1-preview</td><td class="num">0.767</td><td class="num">0.595</td><td class="gap">−0.172</td></tr>
+            <tr><td>Medical Doctor #1</td><td class="num">0.537</td><td class="num">0.351</td><td class="gap">−0.185</td></tr>
+            <tr><td>Medical Doctor #2</td><td class="num">0.789</td><td class="num">0.668</td><td class="gap">−0.121</td></tr>
+            <tr class="exc"><td>Claude 3.5 Sonnet</td><td class="num">0.295</td><td class="num">0.267</td><td class="num">−0.029</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="font-size:.8rem;margin-top:6px">Error-correction aggregate scores by error type (paper's Table 4). Claude's near-flat gap is consistent with its correction scores being compressed at the bottom across every category.</p>
+
+      <p class="muted" style="font-size:.88rem;margin-top:16px"><strong>The contrast sharpens when detection is separated from correction.</strong> On <em>detecting</em> that something is wrong, the two categories are nearly identical — o1-preview 96.6% vs 93.5% recall, Doctor #1 83.3% vs 82.7%, Doctor #2 72.3% vs 68.9%, and Claude actually scores slightly <em>higher</em> on Management (61.3% vs 59.8%). It is only on <em>correcting</em> that Management falls away, for three of the four above.</p>
+
+      <p class="callout">Noticing that a management step is off appears to be about as easy as noticing a wrong diagnosis. <strong>Agreeing on what it should have been instead is markedly harder</strong> — which is what one would expect if the category genuinely lacks a single right answer. This has a direct consequence for how such items can be scored: measuring type-C performance as accuracy against one reference correction will understate systems that produce a different but defensible plan, and the benchmark's own 69% inter-doctor agreement is the same effect seen from the human side.</p>
     </section>
 
     <!-- RANK FLIP -->
