@@ -62,6 +62,15 @@
   .how-steps { margin: 0; padding-left: 20px; }
   .how-steps li { font-size: .86rem; color: var(--muted); margin-bottom: 7px; }
   .how-steps li::marker { color: var(--accent); font-weight: 700; }
+  .ours { background: var(--warn-soft); border: 1px solid var(--warn); border-radius: 10px; padding: 13px 16px; font-size: .87rem; margin: 16px 0; }
+  .ours .ol { font-family: var(--mono); font-size: .63rem; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); font-weight: 700; display: block; margin-bottom: 5px; }
+  .countchain { display: flex; flex-direction: column; gap: 0; margin-top: 14px; }
+  .cstep { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--line); align-items: start; }
+  .cstep:last-child { border-bottom: none; }
+  .cstep .ci { font-family: var(--mono); font-size: .74rem; font-weight: 800; color: var(--accent); background: var(--accent-soft); border-radius: 100px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .cstep .ct { font-size: .86rem; }
+  .cstep.hot .ci { background: var(--harm); color: #fff; }
+  .cstep.hot .ct { color: var(--ink); }
 
   /* flagship */
   .monbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
@@ -204,6 +213,29 @@
         </ul>
       </div>
 
+      <div class="card" style="margin-top:14px">
+        <div class="k">How a claim actually gets counted — the step that is easy to misread</div>
+        <p class="muted" style="font-size:.86rem;margin-top:6px">The reported figures are averages of a count, and it matters where that count comes from:</p>
+        <div class="countchain">
+          <div class="cstep"><span class="ci">1</span><span class="ct">The summary is chunked and each chunk gets its top-200 retrieved source chunks.</span></div>
+          <div class="cstep hot"><span class="ci">2</span><span class="ct"><strong>The entailment prompt returns ONE boolean per chunk</strong> — <code>all_relevant_facts_entailed</code> — not one judgement per fact. It asks whether <em>every</em> clinically relevant fact in that chunk is entailed, and returns true/false plus a short explanation.</span></div>
+          <div class="cstep"><span class="ci">3</span><span class="ct">For chunks marked false, the explanation describing what failed is collected.</span></div>
+          <div class="cstep hot"><span class="ci">4</span><span class="ct"><strong>The classification prompt reads those explanations and emits two arrays</strong> — <code>inaccuracies[]</code> and <code>hallucinations[]</code> — each a list of strings.</span></div>
+          <div class="cstep"><span class="ci">5</span><span class="ct"><strong>The count is the length of those arrays.</strong> So "0.73 hallucinations per generation" is the mean length of the hallucinations array across 719 summaries.</span></div>
+        </div>
+      </div>
+
+      <div class="ours">
+        <span class="ol">This deep-read's reading</span>
+        Three consequences follow from steps 2 and 4, none of which the paper discusses:
+        <ul class="how-steps" style="margin-top:8px">
+          <li><strong>The unit of "one claim" is decided by a language model, not a parser.</strong> The same underlying error, described in slightly different words at stage 3, could be enumerated as one item or two at stage 4.</li>
+          <li><strong>The paper reports no human validation of this pipeline.</strong> The only inter-rater figures in the article (73.5% / 69.5%) validate the <em>task categoriser</em>, not the claim detector. The error bars on 2.33 are therefore unknown.</li>
+          <li><strong>The bar is deliberately conservative, in a way that inflates the count.</strong> A fact counts as not entailed if it is "missing, contradicted, <em>or only inferable by external knowledge</em>" — so a clinically sound inference the record does not explicitly state is scored as unsupported.</li>
+        </ul>
+        <p style="margin:8px 0 0"><strong>What 2.33 therefore is and is not.</strong> It is an internally consistent number, comparable across versions and across time — which is exactly what monitoring needs. It is <em>not</em> "2.33 clinical errors per summary"; it is closer to "2.33 statements per summary that could not be verified directly against the retrieved source", reasonable inferences included.</p>
+      </div>
+
       <div class="pipe">
         <div class="pstage">
           <div class="pn">Stage 1 · Entailment</div>
@@ -266,7 +298,30 @@
         <div class="card"><div class="k">3</div><h3 style="font-size:.95rem">Role attribution</h3><p class="muted" style="font-size:.83rem">Misstating <em>who</em> performed an action.</p></div>
         <div class="card"><div class="k">4</div><h3 style="font-size:.95rem">"Gestalt" care plans</h3><p class="muted" style="font-size:.83rem">Inferring the wrong overall intent — e.g. reading a pulmonary workup as a cardiovascular one.</p></div>
       </div>
+      <p class="muted" style="font-size:.86rem;margin-top:12px"><strong>The evidence behind this list is thin, and worth stating plainly.</strong> It is a single sentence attributed to "manual review" — with no sample size, no per-category counts, and no examples beyond the one parenthetical each. The categories are useful; the distribution is unknown.</p>
+
       <p class="muted" style="font-size:.86rem;margin-top:12px">Three of the four are failures of <strong>binding</strong> rather than of knowledge: attaching a real value to the wrong time, the wrong measurement, or the wrong actor. The paper names this directly in its limitations — "handling of time and attribution of facts" is listed as an unresolved technical challenge.</p>
+
+      <h3 style="margin-top:26px">Which of these already have methods, and which do not</h3>
+      <p class="sub"><em>Cross-mapping against the rest of this reading library — this is the deep-read's own comparison, not the paper's.</em></p>
+      <div class="tblwrap">
+        <table class="dtable">
+          <thead><tr><th>Error type</th><th>Nearest existing method</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>① Temporal sequence</strong></td><td>TIMER's boundary adherence and temporal precision; CliniCARE-Bench's timestamp provenance (order time vs. performed time)</td><td><span style="color:var(--good);font-weight:700">Mature methods exist</span></td></tr>
+            <tr><td><strong>② Numeric confusion</strong></td><td>This paper's own inaccuracy definition (record says 3.5, summary says 5.0); MEDEC's case of a model editing a pulse from 120 to 100</td><td><span style="color:var(--good);font-weight:700">Automatable — exact match</span></td></tr>
+            <tr><td><strong>③ Role attribution</strong></td><td>Appears in this paper's inaccuracy definition ("attributing a note to the wrong author") — but <strong>no benchmark in the library tests it</strong></td><td><span style="color:var(--harm);font-weight:700">Gap — nothing tests this</span></td></tr>
+            <tr><td><strong>④ Gestalt care plans</strong></td><td>Structurally the same as MEDEC's management-plan items: inferring overall intent, where several readings can be defended</td><td><span style="color:var(--warn);font-weight:700">Hard — no unique right answer</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ours">
+        <span class="ol">This deep-read's reading</span>
+        Two things stand out from that mapping.
+        <p style="margin:8px 0 0"><strong>Role attribution is a genuine blind spot.</strong> Nothing in this literature evaluates whether a system correctly identifies <em>who</em> did something — yet in a medication-reconciliation or "why was this changed" feature, the difference between a specialist adjusting a drug, a GP adjusting it, and a patient stopping it on their own carries completely different clinical meaning. It is an attribution error like the others, but about the actor rather than the source or the date.</p>
+        <p style="margin:8px 0 0"><strong>Types ①–③ cannot be scored the same way as ④.</strong> The first three admit exact matching against the record — the right date, the right number, the right actor. The fourth is a judgement about overall intent with several defensible answers, and scoring it against a single reference will penalise reasonable alternatives. Any error taxonomy used for scoring needs to keep the two kinds apart.</p>
+      </div>
     </section>
 
     <!-- THE PILOT CONTRAST -->
@@ -286,7 +341,24 @@
           <p class="muted" style="font-size:.85rem">Drafted a shift summary from flowsheets, medications and measurements. Evaluated by 6 nurses on correctness, completeness, conciseness and harm. Required <em>significant</em> context and prompt refinement.</p>
         </div>
       </div>
-      <p class="callout">A five-fold difference in usable output between two summarisation tasks at the same institution. The paper's reading is that both pilots "underscored the importance of having subject matter experts refine prompts in a close feedback loop within the clinical or operational workflow" — and that delivering output <em>into</em> the existing workflow, rather than beside it, was necessary for usage at all.</p>
+      <p class="callout"><strong>The paper offers no causal explanation for the gap.</strong> It reports both numbers and then draws three general lessons — custom data retrieval is needed; subject-matter experts must refine prompts "in a close feedback loop within the clinical or operational workflow"; and output must be delivered <em>into</em> the existing workflow rather than beside it. None of the three is tied to the specific difference, and no before/after prompts, failure lists, or iteration counts are given.</p>
+
+      <div class="ours">
+        <span class="ol">This deep-read's reading — what actually differs between the two tasks</span>
+        <div class="tblwrap">
+          <table class="dtable" style="margin-top:6px">
+            <thead><tr><th></th><th>Otolaryngology · ⅔ usable</th><th>Nursing shift · ⅛ usable</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Source data</strong></td><td>Narrative text — progress, orders, H&amp;P, procedure and consult notes</td><td>Structured time-series — flowsheets, medications, measurements</td></tr>
+              <tr><td><strong>Time span</strong></td><td>One year</td><td>One shift</td></tr>
+              <tr><td><strong>What the task is</strong></td><td><strong>Compress</strong> narrative that already exists</td><td><strong>Generate</strong> narrative that exists nowhere in the source</td></tr>
+              <tr><td><strong>Judged on</strong></td><td>"Usable" + agreement with physician consensus</td><td>Correctness, completeness, conciseness <em>and harm</em> — four criteria</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:12px"><strong>Row 3 is a genuine difficulty difference.</strong> A year of notes is redundant — the same fact recurs across documents, so missing one instance is recoverable. A single shift's flowsheet records each value once; miss it and it is gone. And turning a table into prose is a harder generation problem than shortening prose that already reads as prose.</p>
+        <p style="margin-top:10px"><strong>Row 4 is a measurement trap, and it may absorb a real share of the five-fold gap.</strong> The two "usability" rates were not produced by the same instrument — the nursing rubric had four criteria including harm, and <em>a stricter rubric mechanically yields a lower pass rate</em>. The nursing prompt was also built around a highly specified target ("an ideal note for patients with acute chest pain"), and the more precisely a target is specified, the easier deviation is to score as failure. The two numbers are presented side by side without this caveat.</p>
+      </div>
 
       <div class="card" style="margin-top:18px">
         <div class="k">The repeatable process the pilots produced</div>
@@ -303,7 +375,8 @@
       <div class="grid g2" style="margin-top:16px">
         <div class="card">
           <div class="k">Feedback is sparse and self-selected</div>
-          <p class="muted" style="font-size:.86rem;margin-top:8px">Roughly <strong>5% of users provide any feedback at all</strong>; of that, two-thirds positive and one-third negative. Any metric built on thumbs-up rates rests on a 5% sample that chose to respond.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">The mechanism is minimal: a <strong>thumbs up / thumbs down on each response</strong>, plus <strong>a free-text field that appears only when thumbs-down is selected</strong>, asking the user to describe the nature of the error.</p>
+          <p class="muted" style="font-size:.86rem;margin-top:8px">Roughly <strong>5% of users provide any feedback at all</strong>; of that, two-thirds positive and one-third negative. Any metric built on thumbs-up rates rests on a 5% sample that chose to respond — and that free-text box is the deployment's <em>only</em> qualitative error signal, reachable only through a negative rating.</p>
           <p class="muted" style="font-size:.86rem;margin-top:8px">Positive-feedback rate by medical task:</p>
           <div style="margin-top:10px">
             <div class="fbrow"><span class="fn">Summarise patient clinical history</span><span class="fbbar"><i style="width:72.6%"></i></span><span class="fv">72.6%</span></div>
@@ -351,6 +424,26 @@
       </div>
 
       <p class="callout">The most honest passage in the paper is about why this is hard: saved minutes "often occur in fragments that cannot be used to perform other tasks." One automation avoids manual review of ~120 charts a day — about four hours of case-management time — which "do not translate directly into additional work completed." A separate case describes ChatEHR surfacing an outside diagnosis that changed a patient's pathology workup and produced a definitive diagnosis; the paper simply says the value of that better care is "near impossible to quantify."</p>
+
+      <h3 style="margin-top:26px">Read carefully, the framework does not fail uniformly — it splits</h3>
+      <p class="sub">Grouping the paper's own figures by how well-grounded they are makes the pattern clear:</p>
+      <div class="tblwrap">
+        <table class="dtable">
+          <thead><tr><th>Benefit type</th><th>Grounded in</th><th>Examples from the paper</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Revenue / capacity</strong><br><span class="muted" style="font-size:.78rem">automations</span></td><td><strong>Observed operational metrics</strong> — bed-days, transfer counts</td><td>Lower-acuity transfers: <strong>$2.4–3.3M</strong> from 1,700 transfers/year. Community-hospital transfers: <strong>$2.3–3.2M</strong> from 5 beds/day</td></tr>
+            <tr><td><strong>Time savings</strong></td><td>Counted hours — but the authors label these <strong>"soft"</strong> themselves</td><td>Hospice automation ~6,570 hours/year (≈3 FTE), but "difficult to quantify" with no dedicated hospice unit</td></tr>
+            <tr><td><strong>Chat UI value</strong></td><td><strong>An assumption</strong> — 10 minutes saved per query</td><td>≈$2.2M/year. <strong>No revenue growth is attributed to the UI at all</strong></td></tr>
+            <tr><td><strong>Patient benefit</strong></td><td>Nothing — explicitly left unaccounted</td><td>The pathology case that reached a definitive diagnosis: "near impossible to quantify"</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ours">
+        <span class="ol">This deep-read's reading</span>
+        The conclusion is not that financial benefit cannot be computed. It is that <strong>the computable benefit comes from task-specific automations tied to a measurable operational outcome, and not from the general-purpose assistant.</strong> "1,700 transfers a year" is counted; "10 minutes saved per query" is assumed, and the paper says so.
+        <p style="margin:8px 0 0">For anyone building a financial case for a similar system, that suggests anchoring on a specific workflow with an observable downstream event — a transfer that happened, a referral that was made, a duplicate test avoided — rather than on aggregate minutes saved, which is the category this paper itself declines to defend.</p>
+      </div>
     </section>
 
     <!-- LIMITATIONS -->
@@ -359,7 +452,9 @@
       <h2>Reading it with its scope attached</h2>
       <div class="grid g2" style="margin-top:16px">
         <div class="card"><h3>Verification behaviour may erode over time</h3><p class="muted" style="font-size:.86rem">The paper's sharpest forward-looking worry: as users grow used to AI-generated content, they may stop checking it. Its proposed response is a metric — <strong>monitor whether and how often users open the source documents</strong>, not just whether outputs are good. That is a usage signal standing in for a trust signal.</p></div>
-        <div class="card"><h3>Time and attribution remain unsolved</h3><p class="muted" style="font-size:.86rem">Named directly as open technical challenges. Planned fixes: <strong>automatic citations linking each extracted fact to its exact location in the record</strong>, and <strong>UI guardrails that flag outputs with high uncertainty</strong>. Also in development: automated fact verification and <strong>synthetic truth-set generation</strong>.</p></div>
+        <div class="card"><h3>Time and attribution remain unsolved</h3><p class="muted" style="font-size:.86rem">Named directly as open technical challenges. Planned fixes: <strong>automatic citations linking each extracted fact to its exact location in the record</strong>, and <strong>UI guardrails that flag outputs with high uncertainty</strong>. Also in development: automated fact verification and <strong>synthetic truth-set generation</strong>.</p>
+        <p class="muted" style="font-size:.84rem;margin-top:8px"><strong>Both are single clauses with no implementation detail.</strong> For citations: no stated granularity (per sentence? per extracted fact?), no locating mechanism, no interface design. For the uncertainty guardrail: no method, no signal source, no threshold. Notably, the citation feature is framed as a <em>verification-enablement</em> measure — the paper's answer to its own worry that checking behaviour will erode is to make checking cheaper.</p>
+        <p class="muted" style="font-size:.84rem;margin-top:8px"><em>This deep-read's inference, not the paper's:</em> the two features are plausibly one mechanism seen twice. The entailment pipeline already computes, for every statement, whether a supporting source chunk exists. Run inline rather than offline, that same computation yields both outputs at once — <strong>where a citation can be generated, the claim is grounded; where none can be, that is exactly the statement to flag.</strong></p></div>
         <div class="card"><h3>Results are one institution's</h3><p class="muted" style="font-size:.86rem">Single academic medical centre plus a community hospital, with an established responsible-AI lifecycle, an embedded data-science team inside IT, and mandatory user training. The error rates should be read as achievable under those conditions, not as generic.</p></div>
         <div class="card"><h3>Equity of benefit is raised, not measured</h3><p class="muted" style="font-size:.86rem">The paper notes data disparities can produce performance gaps "even when demographic variables are not explicit inputs", and recommends monitoring performance across patient subgroups. No subgroup analysis is reported here.</p></div>
         <div class="card"><h3>Effective use depends on user skill</h3><p class="muted" style="font-size:.86rem">Query-writing and choosing the right data context both matter, and most users were new to generative AI. The 10-point phrasing effect above is this limitation showing up in the data. Mitigations used: a prompt library, "prompt-a-thons", a Teams channel, and a mandatory training video.</p></div>
